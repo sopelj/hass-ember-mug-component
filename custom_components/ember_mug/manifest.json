@@ -1,0 +1,9 @@
+{
+  "codeowners": ["@sopelj"],
+  "config_flow": false,
+  "dependencies": [],
+  "documentation": "https://github.com/sopelj/hass_ember_mug",
+  "domain": "ember_mug",
+  "name": "Ember Mug",
+  "requirements": []
+}

@@ -1,0 +1,8 @@
+{
+  "name": "Ember Mug",
+  "render_readme": true,
+  "iot_class": "Local Polling",
+  "requirements": [
+    "bleak"
+  ]
+}
