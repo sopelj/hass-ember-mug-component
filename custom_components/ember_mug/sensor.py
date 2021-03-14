@@ -8,7 +8,7 @@ from bleak.exc import BleakError
 
 from homeassistant.components.sensor import PLATFORM_SCHEMA
 from homeassistant.const import CONF_MAC, CONF_NAME, CONF_TEMPERATURE_UNIT, TEMP_CELSIUS, TEMP_FAHRENHEIT, CONF_ENTITY_ID
-from homeassistant.helpers.entity import CoordinatorEntity
+from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.typing import (
     ConfigType,
     DiscoveryInfoType,
@@ -16,7 +16,7 @@ from homeassistant.helpers.typing import (
 )
 import homeassistant.helpers.config_validation as cv
 
-from const import (
+from .const import (
     TARGET_TEMP_UUID, LED_COLOUR_UUID, CURRENT_TEMP_UUID, BATTERY_UUID, ICON_DEFAULT, ICON_UNAVAILABLE
 )
 
@@ -42,7 +42,7 @@ async def async_setup_platform(
     async_add_entities([EmberMugSensor(config)], update_before_add=True)
 
 
-class EmberMugSensor(CoordinatorEntity):
+class EmberMugSensor(Entity):
     """
     Config for an Ember Mug
     """
