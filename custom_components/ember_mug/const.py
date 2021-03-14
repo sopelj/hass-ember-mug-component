@@ -17,9 +17,8 @@ STATE_UUID = "fc540012-236c-4c94-8fa9-944a3e5353fa"  # Get current State (READ/N
 
 UNKNOWN_NOTIFY_UUID = "fc540013-236c-4c94-8fa9-944a3e5353fa"
 
-ALL_UUIDS = [
-    TARGET_TEMP_UUID, LED_COLOUR_UUID, CURRENT_TEMP_UUID, BATTERY_UUID, STATE_UUID, UNKNOWN_NOTIFY_UUID,
-]
+ICON_DEFAULT = 'mdi:coffee'
+ICON_UNAVAILABLE = 'mdi:coffee-off'
 
 
 # https://aarongodfrey.dev/home%20automation/building_a_home_assistant_custom_component_part_1/
