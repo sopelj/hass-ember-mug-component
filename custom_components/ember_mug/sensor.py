@@ -26,7 +26,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
         vol.Required(CONF_MAC): cv.matches_regex(r'^([0-9A-Fa-f]{2}:){5}([0-9A-Fa-f]{2})$'),
         vol.Required(CONF_TEMPERATURE_UNIT, default=TEMP_CELSIUS): cv.temperature_unit,
         vol.Optional(CONF_NAME): cv.string,
-        vol.Optional(CONF_ENTITY_ID): cv.entity_id,
+        vol.Optional(CONF_ENTITY_ID): cv.string,
     }
 )
 
