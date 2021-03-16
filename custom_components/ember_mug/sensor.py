@@ -15,7 +15,6 @@ from homeassistant.helpers.typing import (
 from homeassistant.helpers.device_registry import format_mac
 import homeassistant.helpers.config_validation as cv
 
-from . import logger
 from .mug import EmberMug
 from .const import ICON_DEFAULT, ICON_UNAVAILABLE
 
