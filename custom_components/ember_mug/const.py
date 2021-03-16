@@ -3,19 +3,19 @@ from uuid import UUID
 DOMAIN = "ember_mug"
 
 # https://github.com/orlopau/ember-mug/blob/master/docs/target-temp.md
-TARGET_TEMP_UUID = 'fc540003-236c-4c94-8fa9-944a3e5353fa'   # Target Temp (READ/WRITE)
+TARGET_TEMP_UUID = UUID('fc540003-236c-4c94-8fa9-944a3e5353fa')   # Target Temp (READ/WRITE)
 
 # https://github.com/orlopau/ember-mug/blob/master/docs/mug-color.md
-LED_COLOUR_UUID = 'fc540014-236c-4c94-8fa9-944a3e5353fa'  # LED Colour (READ/WRITE)
+LED_COLOUR_UUID = UUID('fc540014-236c-4c94-8fa9-944a3e5353fa')  # LED Colour (READ/WRITE)
 
 # https://github.com/orlopau/ember-mug/blob/master/docs/current-temp.md
-CURRENT_TEMP_UUID = 'fc540002-236c-4c94-8fa9-944a3e5353fa'  # Current Temp (READ)
+CURRENT_TEMP_UUID = UUID('fc540002-236c-4c94-8fa9-944a3e5353fa')  # Current Temp (READ)
 
 # https://github.com/orlopau/ember-mug/blob/master/docs/battery.md
-BATTERY_UUID = 'fc540007-236c-4c94-8fa9-944a3e5353fa'  # Current Battery (READ)
+BATTERY_UUID = UUID('fc540007-236c-4c94-8fa9-944a3e5353fa')  # Current Battery (READ)
 
 # https://github.com/orlopau/ember-mug/blob/master/docs/mug-state.md
-STATE_UUID = 'fc540012-236c-4c94-8fa9-944a3e5353fa'  # Get current State (READ/NOTIFICATION)
+STATE_UUID = UUID('fc540012-236c-4c94-8fa9-944a3e5353fa')  # Get current State (READ/NOTIFICATION)
 
 UNKNOWN_NOTIFY_UUID = UUID('fc540013-236c-4c94-8fa9-944a3e5353fa')
 

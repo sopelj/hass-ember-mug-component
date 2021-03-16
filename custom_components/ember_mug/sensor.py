@@ -75,7 +75,6 @@ class EmberMugSensor(Entity):
     def unique_id(self) -> str:
         return self._unique_id
 
-
     @property
     def available(self) -> bool:
         return self._available

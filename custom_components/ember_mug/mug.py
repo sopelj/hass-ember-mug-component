@@ -63,7 +63,7 @@ class EmberMug:
 
     async def update_all(self) -> bool:
         try:
-            if not self.client.is_connected():
+            if not await self.client.is_connected():
                 await self.client.connect()
             await self.update_battery()
             await self.update_current_temp()
