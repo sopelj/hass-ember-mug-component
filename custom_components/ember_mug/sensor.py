@@ -15,6 +15,7 @@ from homeassistant.helpers.typing import (
 from homeassistant.helpers.device_registry import format_mac
 import homeassistant.helpers.config_validation as cv
 
+from . import _LOGGER
 from .mug import EmberMug
 from .const import ICON_DEFAULT, ICON_UNAVAILABLE
 
@@ -39,6 +40,7 @@ async def async_setup_platform(
     async_add_entities: Callable,
     discovery_info: Optional[DiscoveryInfoType] = None,
 ) -> None:
+    _LOGGER.debug("Starting Ember Mug Setup")
     ember_mug = EmberMug(config[CONF_MAC], config.get(CONF_TEMPERATURE_UNIT) != TEMP_FAHRENHEIT)
     async_add_entities([EmberMugSensor(ember_mug, config)], update_before_add=True)
 
@@ -55,13 +57,7 @@ class EmberMugSensor(Entity):
         self._unique_id = f'ember_mug_{format_mac(self.mac_address)}'
         self._name = config.get(CONF_NAME, f'Ember Mug {self.mac_address}')
         self._unit_of_measurement = config.get(CONF_TEMPERATURE_UNIT, TEMP_CELSIUS)
-        
-        self.attrs: Dict[str, Any] = {
-            'color': None,
-            'current_temp': None,
-            'target_temp': None,
-            'battery': None,
-        }
+
         self._icon = ICON_DEFAULT
         self._device_class = 'temperature'
         self._state = None
@@ -85,7 +81,7 @@ class EmberMugSensor(Entity):
 
     @property
     def device_state_attributes(self) -> Dict[str, Any]:
-        return self.attrs
+        return self.mug.attrs
 
     @property
     def icon(self) -> str:
@@ -101,12 +97,6 @@ class EmberMugSensor(Entity):
 
     async def async_update(self) -> None:
         if await self.mug.update_all() is True:
-            self.attrs = {
-                'color': self.mug.colour_hex,
-                'current_temp': self.mug.current_temp,
-                'target_temp': self.mug.target_temp,
-                'battery': self.mug.battery,
-            }
             self._state = self.mug.current_temp
             self._available = True
         else:

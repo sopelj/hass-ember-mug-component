@@ -23,7 +23,6 @@ async def find_mugs():
                     print(device.details)
 
                     async with BleakClient(device) as client:
-                        self.client = client
                         x = await client.is_connected()
                         print(f"Connected: {x}")
                         y = await client.pair()

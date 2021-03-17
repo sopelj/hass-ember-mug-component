@@ -16,8 +16,24 @@ BATTERY_UUID = UUID('fc540007-236c-4c94-8fa9-944a3e5353fa')  # Current Battery (
 
 # https://github.com/orlopau/ember-mug/blob/master/docs/mug-state.md
 STATE_UUID = UUID('fc540012-236c-4c94-8fa9-944a3e5353fa')  # Get current State (READ/NOTIFICATION)
+# + Descriptor 00002902-0000-1000-8000-00805f9b34fb
 
 UNKNOWN_NOTIFY_UUID = UUID('fc540013-236c-4c94-8fa9-944a3e5353fa')
+# Descriptor 00002902-0000-1000-8000-00805f9b34fb
+
+UNKNOWN_READ_UUIDS = (
+    'fc540010-236c-4c94-8fa9-944a3e5353fa',
+    'fc54000f-236c-4c94-8fa9-944a3e5353fa',
+    'fc54000e-236c-4c94-8fa9-944a3e5353fa',
+    'fc54000d-236c-4c94-8fa9-944a3e5353fa',
+    'fc54000c-236c-4c94-8fa9-944a3e5353fa',
+    'fc540008-236c-4c94-8fa9-944a3e5353fa',
+    'fc540006-236c-4c94-8fa9-944a3e5353fa',
+    'fc540005-236c-4c94-8fa9-944a3e5353fa',
+    'fc540004-236c-4c94-8fa9-944a3e5353fa',
+)
+
+SERIAL_NUMBER_UUID = UUID('fc54000d-236c-4c94-8fa9-944a3e5353fa')
 
 ICON_DEFAULT = 'mdi:coffee'
 ICON_UNAVAILABLE = 'mdi:coffee-off'
@@ -26,6 +42,7 @@ ICON_UNAVAILABLE = 'mdi:coffee-off'
 # https://aarongodfrey.dev/home%20automation/building_a_home_assistant_custom_component_part_1/
 # https://github.com/karepiu/custom_components/blob/master/lasko_bt_fan_w9560/fan.py
 # https://github.com/pledi/EmberControl/blob/d19b7867ae5572a7da0e2ca9e68866fd28c613ed/main.py#L95
+
 
 
 """
@@ -40,7 +57,7 @@ ICON_UNAVAILABLE = 'mdi:coffee-off'
         [Characteristic] fc540010-236c-4c94-8fa9-944a3e5353fa: (read,write) | Name: Unknown, Value: b'\x00' 
         [Characteristic] fc54000f-236c-4c94-8fa9-944a3e5353fa: (read,write) | Name: Unknown, Value: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00' 
         [Characteristic] fc54000e-236c-4c94-8fa9-944a3e5353fa: (read) | Name: Unknown, Value: b'\xf6\x05\xc6]\xab\x86\x10b\x86\xa4,\x06\x94\x8fN\x18]\x95\xd5\xdb' 
-        [Characteristic] fc54000d-236c-4c94-8fa9-944a3e5353fa: (read) | Name: Unknown, Value: b'\xc9\x0fY\xd63\xf9-BBG04811704' 
+        [Characteristic] fc54000d-236c-4c94-8fa9-944a3e5353fa: (read) | Name: Unknown, Value: b'\xc9\x0fY\xd63\xf9-BBG04811704' # serial number?
         [Characteristic] fc54000c-236c-4c94-8fa9-944a3e5353fa: (read) | Name: Unknown, Value: b't\x01\n\x00' 
         [Characteristic] fc54000a-236c-4c94-8fa9-944a3e5353fa: (write) | Name: Unknown, Value: None 
         [Characteristic] fc540008-236c-4c94-8fa9-944a3e5353fa: (read) | Name: Unknown, Value: b'\x01' 
