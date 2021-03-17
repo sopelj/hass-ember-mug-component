@@ -86,7 +86,7 @@ class EmberMug:
     
             success = True
         except BleakError as e:
-            _LOGGER.error(str(vars(e)))
+            _LOGGER.error(str(e))
             success = False
         finally:
             await self.client.disconnect()
