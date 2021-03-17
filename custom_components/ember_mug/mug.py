@@ -77,9 +77,8 @@ class EmberMug:
 
     async def update_all(self) -> bool:
         try:
-            if not await self.client.is_connected():
-                await self.client.connect()
-                await self.client.pair()
+            await self.client.connect()
+            await self.client.pair()
 
             for attr in self.attrs:
                 await getattr(self, f'update_{attr}')()
