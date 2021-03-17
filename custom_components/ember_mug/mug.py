@@ -1,4 +1,4 @@
-from types import Dict, Union
+from typing import Dict, Union
 import asyncio
 
 from bleak import BleakClient
@@ -25,7 +25,7 @@ class EmberMug:
 
     @property
     def colour(self) -> str:
-        r, g, b = self.colour_rgb
+        r, g, b = self.led_colour_rgb
         return f'#{r:02x}{g:02x}{b:02x}'
 
     @property
@@ -70,10 +70,10 @@ class EmberMug:
         self.state = str(await self.client.read_gatt_char(STATE_UUID))
 
     async def update_uuid_debug(self):
-        self.uuid_debug = {
-            str(uuid): str(await self.client.read_gatt_char(uuid))
-            for uuid in self.uuid_debug
-        }
+        for uuid in self.uuid_debug:
+            value = await self.client.read_gatt_char(uuid)
+            _LOGGER.debug(f'Current value of {uuid}: {self.current_temp}')
+            self.uuid_debug[uuid] = str(value)
 
     async def update_all(self) -> bool:
         try:
