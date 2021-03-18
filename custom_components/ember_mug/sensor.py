@@ -122,10 +122,12 @@ class EmberMugSensor(Entity):
         self._loop = False
         await self.mug.disconnect()
 
-    # async def async_update(self) -> None:
-    #     if await self.mug.update_all() is True:
-    #         self._state = self.mug.current_temp
-    #         self._available = True
-    #     else:
-    #         self._available = False
-    #         self._state = None
+    async def async_update(self) -> None:
+        _LOGGER.warning(f'Async update called for {self._name}')
+
+        if await self.mug.update_all() is True:
+            self._state = self.mug.current_temp
+            self._available = True
+        else:
+            self._available = False
+            self._state = None

@@ -86,13 +86,13 @@ class EmberMug:
                 _LOGGER.error(f'Failed to update {uuid}: {e}')
 
     async def init(self) -> None:
-        for _ in range(5):
+        for i in range(5):
             try:
                 await self.client.connect()
                 await self.client.pair()
                 _LOGGER.info(f'Connected to {self.mac_address}')
             except BleakError as e:
-                _LOGGER.error(f'Init: {e}')
+                _LOGGER.error(f'Init: {e} on attempt {i}')
                 asyncio.sleep(5)
 
         _LOGGER.info(f'Subscribed to STATE')
