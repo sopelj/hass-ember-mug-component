@@ -44,7 +44,7 @@ class EmberMug:
             'current_temp': self.current_temp,
             'target_temp': self.target_temp,
             'battery': self.battery,
-            # 'battery_icon': self.battery_icon,
+            'battery_icon': self.battery_icon,
             'uuid_debug': self.uuid_debug,
             'state': self.state,
         }
@@ -103,9 +103,10 @@ class EmberMug:
         self._state = str(list(data))
 
     async def update_all(self) -> bool:
+        update_attrs = ['led_colour', 'current_temp', 'target_temp', 'battery']
         try:
             await self.client.connect()
-            for attr in self.attrs:
+            for attr in update_attrs:
                 await getattr(self, f'update_{attr}')()
             success = True
         except BleakError as e:
