@@ -1,5 +1,8 @@
 from typing import Dict, Union
 import asyncio
+import contextlib
+
+from homeassistant.helpers.icon import icon_for_battery_level
 
 from bleak import BleakClient
 from bleak.exc import BleakError
@@ -12,9 +15,11 @@ from .const import (
 
 class EmberMug:
     def __init__(self, mac_address: str, use_metric = True):
+        self.mac_address = mac_address
         self.client = BleakClient(mac_address)
         self.use_metric = use_metric
         self.state = None
+        self.charging = False  # TODO from state?
         self.led_colour_rgb = [255, 255, 255]
         self.current_temp: float = None
         self.target_temp: float = None
@@ -29,12 +34,17 @@ class EmberMug:
         return f'#{r:02x}{g:02x}{b:02x}'
 
     @property
+    def battery_icon(self) -> str:
+        return icon_for_battery_level(self.battery)
+
+    @property
     def attrs(self) -> Dict[str, Union[str, float]]:
         return {
             'led_colour': self.colour,
             'current_temp': self.current_temp,
             'target_temp': self.target_temp,
             'battery': self.battery,
+            # 'battery_icon': self.battery_icon,
             'uuid_debug': self.uuid_debug,
             'state': self.state,
         }
@@ -66,23 +76,37 @@ class EmberMug:
         self.current_temp = await self._temp_from_bytes(temp_bytes)
         _LOGGER.debug(f'Current temp {self.current_temp}')
 
-    async def update_state(self) -> None:
-        self.state = str(await self.client.read_gatt_char(STATE_UUID))
-
-    async def update_uuid_debug(self):
+    async def update_uuid_debug(self) -> None:
         for uuid in self.uuid_debug:
-            value = await self.client.read_gatt_char(uuid)
-            _LOGGER.debug(f'Current value of {uuid}: {self.current_temp}')
-            self.uuid_debug[uuid] = str(value)
+            try:
+                value = await self.client.read_gatt_char(uuid)
+                _LOGGER.debug(f'Current value of {uuid}: {self.current_temp}')
+                self.uuid_debug[uuid] = str(value)
+            except BleakError as e:
+                _LOGGER.error(f'Failed to update {uuid}: {e}')
+
+    async def init(self) -> None:
+        for _ in range(5):
+            try:
+                await self.client.connect()
+                await self.client.pair()
+                _LOGGER.info(f'Connected to {self.mac_address}')
+            except BleakError as e:
+                _LOGGER.error(f'Init: {e}')
+                asyncio.sleep(5)
+
+        _LOGGER.info(f'Subscribed to STATE')
+        await self.client.start_notify(STATE_UUID, self.state_notify)
+
+    async def state_notify(self, sender: int, data: bytearray):
+        _LOGGER.info(f'State from {sender}: {data} ({list(data)})')
+        self._state = str(list(data))
 
     async def update_all(self) -> bool:
         try:
             await self.client.connect()
-            await self.client.pair()
-
             for attr in self.attrs:
                 await getattr(self, f'update_{attr}')()
-    
             success = True
         except BleakError as e:
             _LOGGER.error(str(e))
@@ -91,5 +115,11 @@ class EmberMug:
             await self.client.disconnect()
         return success
 
+    async def disconnect(self) -> None:
+        with contextlib.suppress(BleakError):
+            await self.client.stop_notify(STATE_UUID)
+        with contextlib.suppress(BleakError):
+            await self.client.disconnect()
+
     def __del__(self) -> None:
-        asyncio.ensure_future(self.client.disconnect())
+        asyncio.ensure_future(self.disconnect())

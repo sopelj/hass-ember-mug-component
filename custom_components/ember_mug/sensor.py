@@ -5,13 +5,17 @@ from datetime import timedelta
 from typing import Any, Callable, Dict, Optional
 
 from homeassistant.components.sensor import PLATFORM_SCHEMA
-from homeassistant.const import CONF_MAC, CONF_NAME, CONF_FRIENDLY_NAME, CONF_TEMPERATURE_UNIT, TEMP_CELSIUS, TEMP_FAHRENHEIT
+from homeassistant.const import (
+    CONF_MAC, CONF_NAME, CONF_FRIENDLY_NAME, CONF_TEMPERATURE_UNIT, 
+    TEMP_CELSIUS, TEMP_FAHRENHEIT, DEVICE_CLASS_TEMPERATURE,
+)
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.typing import (
     ConfigType,
     DiscoveryInfoType,
     HomeAssistantType,
 )
+from homeassistant.core import callback
 from homeassistant.helpers.device_registry import format_mac
 import homeassistant.helpers.config_validation as cv
 
@@ -42,7 +46,7 @@ async def async_setup_platform(
 ) -> None:
     _LOGGER.debug("Starting Ember Mug Setup")
     ember_mug = EmberMug(config[CONF_MAC], config.get(CONF_TEMPERATURE_UNIT) != TEMP_FAHRENHEIT)
-    async_add_entities([EmberMugSensor(ember_mug, config)], update_before_add=True)
+    async_add_entities([EmberMugSensor(ember_mug, config)])
 
 
 class EmberMugSensor(Entity):
@@ -59,9 +63,11 @@ class EmberMugSensor(Entity):
         self._unit_of_measurement = config.get(CONF_TEMPERATURE_UNIT, TEMP_CELSIUS)
 
         self._icon = ICON_DEFAULT
-        self._device_class = 'temperature'
         self._state = None
         self._available = True
+        self._loop = False
+
+        _LOGGER.info(f"Ember Mug {self._name} Setup")
 
     @property
     def name(self) -> str:
@@ -77,15 +83,11 @@ class EmberMugSensor(Entity):
 
     @property
     def state(self) -> Optional[str]:
-        return self._state
+        return self.mug.current_temp
 
     @property
-    def extra_state_attributes(self) -> Dict[str, Any]:
+    def device_state_attributes(self) -> Dict[str, Any]:
         return self.mug.attrs
-
-    @property
-    def icon(self) -> str:
-        return self._icon
 
     @property
     def unit_of_measurement(self) -> str:
@@ -93,12 +95,37 @@ class EmberMugSensor(Entity):
 
     @property
     def device_class(self) -> str:
-        return self._device_class
+        return DEVICE_CLASS_TEMPERATURE
 
-    async def async_update(self) -> None:
-        if await self.mug.update_all() is True:
-            self._state = self.mug.current_temp
-            self._available = True
-        else:
-            self._available = False
-            self._state = None
+    @property
+    def icon(self) -> str:
+        return self._icon
+
+    @property
+    def should_poll(self) -> bool:
+        return False
+
+    async def async_added_to_hass(self) -> None:
+        _LOGGER.info(f'Starting Init for {self._name}')
+        await self.mug.init()
+
+        self._loop = True
+        _LOGGER.info(f'Starting loop {self._name}')
+
+        while self._loop:
+            _LOGGER.debug(f"Mug Update")
+            await self.mug.update_all()
+            self.async_schedule_update_ha_state()
+            await asyncio.sleep(60)
+
+    async def async_will_remove_from_hass(self) -> None:
+        self._loop = False
+        await self.mug.disconnect()
+
+    # async def async_update(self) -> None:
+    #     if await self.mug.update_all() is True:
+    #         self._state = self.mug.current_temp
+    #         self._available = True
+    #     else:
+    #         self._available = False
+    #         self._state = None
