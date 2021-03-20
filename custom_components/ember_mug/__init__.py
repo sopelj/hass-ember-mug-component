@@ -7,7 +7,6 @@ from homeassistant.helpers.typing import ConfigType, HomeAssistantType
 import voluptuous as vol
 
 from .const import ATTR_RGB_COLOR, DOMAIN, SERVICE_SET_LED_COLOUR
-from .services import set_led_colour
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -21,6 +20,8 @@ SET_LED_COLOUR_SCHEMA = {
 
 async def async_setup(hass: HomeAssistantType, config: ConfigType) -> None:
     """Create EntityComponent to facilitate service calls."""
+    from .services import set_led_colour
+    
     component = hass.data[DOMAIN] = EntityComponent(_LOGGER, DOMAIN, hass)
     await component.async_setup(config)
 
