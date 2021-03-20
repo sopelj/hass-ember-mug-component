@@ -96,7 +96,7 @@ class EmberMug:
                 asyncio.sleep(5)
 
         _LOGGER.info(f'Subscribed to STATE')
-        await self.client.start_notify(STATE_UUID, self.state_notify)
+        # await self.client.start_notify(STATE_UUID, self.state_notify)
 
     async def state_notify(self, sender: int, data: bytearray):
         _LOGGER.info(f'State from {sender}: {data} ({list(data)})')
@@ -117,8 +117,8 @@ class EmberMug:
         return success
 
     async def disconnect(self) -> None:
-        with contextlib.suppress(BleakError):
-            await self.client.stop_notify(STATE_UUID)
+        # with contextlib.suppress(BleakError):
+        #     await self.client.stop_notify(STATE_UUID)
         with contextlib.suppress(BleakError):
             await self.client.disconnect()
 
