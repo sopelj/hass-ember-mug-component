@@ -58,9 +58,8 @@ class EmberMug:
         """Connect, pair and set unchanging values."""
         _LOGGER.info(f"Starting mug init {self.mac_address}")
         await self.connect()
-        self.serial_number = await self.client.read_gatt_char(SERIAL_NUMBER_UUID)[
-            7:
-        ].decode("utf8")
+        serial_number = await self.client.read_gatt_char(SERIAL_NUMBER_UUID)
+        self.serial_number = serial_number[7:].decode("utf8")
 
     async def async_run(self) -> None:
         """Start a the task loop."""
