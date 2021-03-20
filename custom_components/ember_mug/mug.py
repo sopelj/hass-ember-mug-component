@@ -13,6 +13,7 @@ from .const import (
     BATTERY_UUID,
     CURRENT_TEMP_UUID,
     LED_COLOUR_UUID,
+    SERIAL_NUMBER_UUID,
     STATE_UUID,
     TARGET_TEMP_UUID,
     UNKNOWN_READ_UUIDS,
@@ -31,12 +32,14 @@ class EmberMug:
     ) -> None:
         """Set default values in for mug attributes."""
         self._loop = False
+        self._first_run = True
         self.hass = hass
         self.async_update_callback = async_update_callback
         self.mac_address = mac_address
         self.client = BleakClient(mac_address)
         self.use_metric = use_metric
         self.state = None
+        self.serial_number = None
         self.charging = False  # TODO from state?
         self.led_colour_rgb = [255, 255, 255]
         self.current_temp: float = None
@@ -45,14 +48,19 @@ class EmberMug:
         self.available = True
         self.uuid_debug = {uuid: None for uuid in UNKNOWN_READ_UUIDS}
 
-        # Start loop
-        self.hass.async_create_task(self.async_run())
-
     @property
     def colour(self) -> str:
         """Return colour as hex value."""
         r, g, b = self.led_colour_rgb
         return f"#{r:02x}{g:02x}{b:02x}"
+
+    async def init(self) -> None:
+        """Connect, pair and set unchanging values."""
+        _LOGGER.info(f"Starting mug init {self.mac_address}")
+        await self.connect()
+        self.serial_number = await self.client.read_gatt_char(SERIAL_NUMBER_UUID)[
+            7:
+        ].decode("utf8")
 
     async def async_run(self) -> None:
         """Start a the task loop."""
@@ -114,9 +122,10 @@ class EmberMug:
         """Not sure what all these UUIDs do, so fetch and log them for future investigation."""
         for uuid in self.uuid_debug:
             try:
-                value = await self.client.read_gatt_char(uuid)
-                _LOGGER.debug(f"Current value of {uuid}: {value}")
-                self.uuid_debug[uuid] = str(value)
+                value = str(await self.client.read_gatt_char(uuid))
+                if value != self.uuid_debug[uuid]:
+                    _LOGGER.debug(f"Current value of {uuid}: {value}")
+                    self.uuid_debug[uuid] = value
             except BleakError as e:
                 _LOGGER.error(f"Failed to update {uuid}: {e}")
 

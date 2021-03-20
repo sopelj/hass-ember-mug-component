@@ -101,6 +101,7 @@ class EmberMugSensor(Entity):
             "target_temp": self.mug.target_temp,
             "uuid_debug": self.mug.uuid_debug,
             "state": self.mug.state,
+            "serial_number": self.mug.serial_number,
         }
 
     @property
@@ -128,6 +129,13 @@ class EmberMugSensor(Entity):
         """Is called in Mug `async_run` to signal change to hass."""
         _LOGGER.debug("Update in HASS requested")
         self.async_schedule_update_ha_state()
+
+    async def async_added_to_hass(self) -> None:
+        """Stop polling on remove."""
+        _LOGGER.info(f"Start running {self._name}")
+        await self.mug.init()
+        # Start loop
+        self.hass.async_create_task(self.mug.async_run())
 
     async def async_will_remove_from_hass(self) -> None:
         """Stop polling on remove."""
