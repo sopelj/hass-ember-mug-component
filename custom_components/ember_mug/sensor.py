@@ -1,28 +1,35 @@
-import voluptuous as vol
-import logging
+from __future__ import annotations
+
 import asyncio
 from datetime import timedelta
+import logging
 from typing import Any, Callable, Dict, Optional, Union
 
 from homeassistant.components.sensor import PLATFORM_SCHEMA
 from homeassistant.const import (
-    CONF_MAC, CONF_NAME, CONF_FRIENDLY_NAME, CONF_TEMPERATURE_UNIT, 
-    TEMP_CELSIUS, TEMP_FAHRENHEIT, DEVICE_CLASS_TEMPERATURE, ATTR_BATTERY_LEVEL,
+    ATTR_BATTERY_LEVEL,
+    CONF_FRIENDLY_NAME,
+    CONF_MAC,
+    CONF_NAME,
+    CONF_TEMPERATURE_UNIT,
+    DEVICE_CLASS_TEMPERATURE,
+    TEMP_CELSIUS,
+    TEMP_FAHRENHEIT,
 )
+from homeassistant.core import callback
+import homeassistant.helpers.config_validation as cv
+from homeassistant.helpers.device_registry import format_mac
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.typing import (
     ConfigType,
     DiscoveryInfoType,
     HomeAssistantType,
 )
-from homeassistant.core import callback
-from homeassistant.helpers.device_registry import format_mac
-import homeassistant.helpers.config_validation as cv
+import voluptuous as vol
 
 from . import _LOGGER
-from .mug import EmberMug
 from .const import ICON_DEFAULT, ICON_UNAVAILABLE
-
+from .mug import EmberMug
 
 # Schema
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
@@ -85,7 +92,7 @@ class EmberMugSensor(Entity):
         return self.mug.current_temp
 
     @property
-    def extra_state_attributes(self) -> Dict[str, Union[str, float]]:
+    def state_attributes(self) -> Dict[str, Union[str, float]]:
         return {
             ATTR_BATTERY_LEVEL: self.mug.battery,
             'led_colour': self.mug.colour,
@@ -126,4 +133,3 @@ class EmberMugSensor(Entity):
     async def async_will_remove_from_hass(self) -> None:
         _LOGGER.info(f'Stop running {self._name}')
         await self.mug.disconnect()
-

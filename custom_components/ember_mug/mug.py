@@ -1,16 +1,22 @@
-from typing import Dict, Union, Callable
 import asyncio
 import contextlib
-
-from homeassistant.helpers.icon import icon_for_battery_level
-from homeassistant.const import ATTR_BATTERY_LEVEL
+from typing import Callable, Dict, Union
 
 from bleak import BleakClient
 from bleak.exc import BleakError
+from homeassistant.const import ATTR_BATTERY_LEVEL
+from homeassistant.helpers.icon import icon_for_battery_level
 
 from . import _LOGGER
 from .const import (
-    TARGET_TEMP_UUID, LED_COLOUR_UUID, CURRENT_TEMP_UUID, BATTERY_UUID, ICON_DEFAULT, ICON_UNAVAILABLE, STATE_UUID, UNKNOWN_READ_UUIDS
+    BATTERY_UUID,
+    CURRENT_TEMP_UUID,
+    ICON_DEFAULT,
+    ICON_UNAVAILABLE,
+    LED_COLOUR_UUID,
+    STATE_UUID,
+    TARGET_TEMP_UUID,
+    UNKNOWN_READ_UUIDS,
 )
 
 
@@ -39,6 +45,9 @@ class EmberMug:
         return f'#{r:02x}{g:02x}{b:02x}'
 
     async def async_run(self):
+        """
+        Start a the task loop
+        """
         try:
             self._loop = True
             _LOGGER.info(f'Starting mug loop {self.mac_address}')
@@ -56,7 +65,7 @@ class EmberMug:
                     await asyncio.sleep(2)
 
         except Exception as e:
-            _LOGGER.error(f'An unexcpected error occurred during loop {e}. Restarting.')
+            _LOGGER.error(f'An unexpected error occurred during loop {e}. Restarting.')
             self._sensor.hass.async_create_task(self.async_run())
 
     async def _temp_from_bytes(self, temp_bytes: bytearray) -> float:
@@ -96,6 +105,10 @@ class EmberMug:
                 _LOGGER.error(f'Failed to update {uuid}: {e}')
 
     async def connect(self) -> None:
+        """
+        Try 10 times to connect and if we fail wait five minutes and try again
+        If connected also subscribe to state notifications
+        """
         connected = False
         for i in range(1, 10 + 1):
             try:
@@ -109,7 +122,7 @@ class EmberMug:
                 asyncio.sleep(30)
 
         if connected is False:
-            self.available = False
+            # self.available = False
             self._sensor.async_update_callback()
             _LOGGER.warning(f'Failed to connect to {self.mac_address} after 10 tries. Will try again in 5min')
             await asyncio.sleep(5 * 60)
@@ -123,10 +136,14 @@ class EmberMug:
         except Exception as e:
             _LOGGER.error(f'Unexpected error occurred connecting to notify {e}')
 
-
     def state_notify(self, sender: int, data: bytearray):
-        _LOGGER.info(f'State from {sender}: {data} ({list(data)})')
-        self._state = str(list(data))
+        """
+        https://github.com/orlopau/ember-mug/blob/master/docs/mug-state.md
+        """
+        new_state = data[0]
+        if new_state not in [1, self.state]:
+            _LOGGER.info(f'State changed from {self.state} to {new_state}')
+            self.state = new_state
 
     async def update_all(self) -> bool:
         update_attrs = ['led_colour', 'current_temp', 'target_temp', 'battery']
