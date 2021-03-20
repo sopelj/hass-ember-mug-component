@@ -138,10 +138,10 @@ class EmberMug:
             self.available = False
             self.async_update_callback()
             _LOGGER.warning(
-                f"Failed to connect to {self.mac_address} after 10 tries. Will try again in 5min"
+                f"Failed to connect to {self.mac_address} after 10 tries. Will try again in 2min"
             )
-            await asyncio.sleep(5 * 60)
-            await self.connect()
+            await asyncio.sleep(2 * 60)
+            return await self.connect()
 
         self.available = True
         try:
