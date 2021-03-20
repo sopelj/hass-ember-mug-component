@@ -2,12 +2,12 @@ import voluptuous as vol
 import logging
 import asyncio
 from datetime import timedelta
-from typing import Any, Callable, Dict, Optional
+from typing import Any, Callable, Dict, Optional, Union
 
 from homeassistant.components.sensor import PLATFORM_SCHEMA
 from homeassistant.const import (
     CONF_MAC, CONF_NAME, CONF_FRIENDLY_NAME, CONF_TEMPERATURE_UNIT, 
-    TEMP_CELSIUS, TEMP_FAHRENHEIT, DEVICE_CLASS_TEMPERATURE,
+    TEMP_CELSIUS, TEMP_FAHRENHEIT, DEVICE_CLASS_TEMPERATURE, ATTR_BATTERY_LEVEL,
 )
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.typing import (
@@ -60,7 +60,7 @@ class EmberMugSensor(Entity):
         self.mug = EmberMug(
             self.mac_address, 
             self._unit_of_measurement != TEMP_FAHRENHEIT,
-            self.__refresh_callback,
+            self.async_update_callback,
         )
 
         self._icon = ICON_DEFAULT
@@ -86,8 +86,15 @@ class EmberMugSensor(Entity):
         return self.mug.current_temp
 
     @property
-    def device_state_attributes(self) -> Dict[str, Any]:
-        return self.mug.attrs
+    def device_state_attributes(self) -> Dict[str, Union[str, float]]:
+        return {
+            ATTR_BATTERY_LEVEL: self.mug.battery,
+            'led_colour': self.mug.colour,
+            'current_temp': self.mug.current_temp,
+            'target_temp': self.mug.target_temp,
+            'uuid_debug': self.mug.uuid_debug,
+            'state': self.mug.state,
+        }
 
     @property
     def unit_of_measurement(self) -> str:
@@ -105,7 +112,8 @@ class EmberMugSensor(Entity):
     def should_poll(self) -> bool:
         return False
 
-    def __refresh_callback(self) -> None:
+    @callback
+    def async_update_callback(self) -> None:
         """
         Called in Mug `async_run` to signal change to hass
         """

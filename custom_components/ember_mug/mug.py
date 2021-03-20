@@ -3,6 +3,7 @@ import asyncio
 import contextlib
 
 from homeassistant.helpers.icon import icon_for_battery_level
+from homeassistant.const import ATTR_BATTERY_LEVEL
 
 from bleak import BleakClient
 from bleak.exc import BleakError
@@ -15,6 +16,9 @@ from .const import (
 
 class EmberMug:
     def __init__(self, mac_address: str, use_metric, update_callback: Callable) -> None:
+        self._loop = False
+        self._update_callback = update_callback
+
         self.mac_address = mac_address
         self.client = BleakClient(mac_address)
         self.use_metric = use_metric
@@ -24,33 +28,15 @@ class EmberMug:
         self.current_temp: float = None
         self.target_temp: float = None
         self.battery: float = None
-        self._loop = False
         self.available = False
         self.uuid_debug = {
             uuid: None for uuid in UNKNOWN_READ_UUIDS
         }
-        self.update_callback = update_callback
 
     @property
     def colour(self) -> str:
         r, g, b = self.led_colour_rgb
         return f'#{r:02x}{g:02x}{b:02x}'
-
-    @property
-    def battery_icon(self) -> str:
-        return icon_for_battery_level(self.battery, charging=self.charging)
-
-    @property
-    def attrs(self) -> Dict[str, Union[str, float]]:
-        return {
-            'led_colour': self.colour,
-            'current_temp': self.current_temp,
-            'target_temp': self.target_temp,
-            'battery': self.battery,
-            'battery_icon': self.battery_icon,
-            'uuid_debug': self.uuid_debug,
-            'state': self.state,
-        }
 
     async def async_run(self):
         self._loop = True
@@ -61,7 +47,7 @@ class EmberMug:
                 await self.connect()
 
             await self.update_all()
-            self.update_callback()
+            self._update_callback()
 
             # Maintain connection for 30 seconds until next update
             for _ in range(15):
@@ -112,13 +98,14 @@ class EmberMug:
                 await self.client.pair()
                 connected = True
                 _LOGGER.info(f'Connected to {self.mac_address}')
+                continue
             except BleakError as e:
                 _LOGGER.error(f'Init: {e} on attempt {i}. waiting 30sec')
                 asyncio.sleep(30)
 
         if connected is False:
             self.available = False
-            self.update_callback()
+            self._update_callback()
             _LOGGER.warning(f'Failed to connect to {self.mac_address} after 10 tries. Will try again in 5min')
             await asyncio.sleep(5 * 60)
             await self.connect()
