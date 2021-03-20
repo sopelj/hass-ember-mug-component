@@ -42,7 +42,7 @@ class EmberMug:
         self.current_temp: float = None
         self.target_temp: float = None
         self.battery: float = None
-        self.available = False
+        self.available = True
         self.uuid_debug = {uuid: None for uuid in UNKNOWN_READ_UUIDS}
 
         # Start loop
@@ -135,7 +135,7 @@ class EmberMug:
                 asyncio.sleep(30)
 
         if connected is False:
-            # self.available = False
+            self.available = False
             self.async_update_callback()
             _LOGGER.warning(
                 f"Failed to connect to {self.mac_address} after 10 tries. Will try again in 5min"
@@ -143,6 +143,7 @@ class EmberMug:
             await asyncio.sleep(5 * 60)
             await self.connect()
 
+        self.available = True
         try:
             _LOGGER.info("Try to subscribe to STATE")
             await self.client.start_notify(STATE_UUID, self.state_notify)
