@@ -21,7 +21,7 @@ SET_LED_COLOUR_SCHEMA = {
 async def async_setup(hass: HomeAssistantType, config: ConfigType) -> None:
     """Create EntityComponent to facilitate service calls."""
     from .services import set_led_colour
-    
+
     component = hass.data[DOMAIN] = EntityComponent(_LOGGER, DOMAIN, hass)
     await component.async_setup(config)
 
@@ -30,3 +30,4 @@ async def async_setup(hass: HomeAssistantType, config: ConfigType) -> None:
         cv.make_entity_service_schema(SET_LED_COLOUR_SCHEMA),
         set_led_colour,
     )
+    return True

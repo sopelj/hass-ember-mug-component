@@ -49,6 +49,7 @@ async def async_setup_platform(
     """Add Mug Sensor Entity to HASS."""
     _LOGGER.debug("Starting Ember Mug Setup")
     async_add_entities([EmberMugSensor(hass, config)])
+    return True
 
 
 class EmberMugSensor(Entity):
