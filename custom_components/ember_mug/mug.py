@@ -56,7 +56,7 @@ class EmberMug:
                     await asyncio.sleep(2)
 
         except Exception as e:
-            _LOGGER.error(e'An unexcpected error occurred during loop {e}. Restarting.')
+            _LOGGER.error(f'An unexcpected error occurred during loop {e}. Restarting.')
             self._sensor.hass.async_create_task(self.async_run())
 
     async def _temp_from_bytes(self, temp_bytes: bytearray) -> float:
