@@ -133,7 +133,6 @@ class EmberMugSensor(Entity):
     async def async_added_to_hass(self) -> None:
         """Stop polling on remove."""
         _LOGGER.info(f"Start running {self._name}")
-        await self.mug.init()
         # Start loop
         self.hass.async_create_task(self.mug.async_run())
 

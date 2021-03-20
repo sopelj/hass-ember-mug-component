@@ -54,18 +54,12 @@ class EmberMug:
         r, g, b = self.led_colour_rgb
         return f"#{r:02x}{g:02x}{b:02x}"
 
-    async def init(self) -> None:
-        """Connect, pair and set unchanging values."""
-        _LOGGER.info(f"Starting mug init {self.mac_address}")
-        await self.connect()
-        serial_number = await self.client.read_gatt_char(SERIAL_NUMBER_UUID)
-        self.serial_number = serial_number[7:].decode("utf8")
-
     async def async_run(self) -> None:
         """Start a the task loop."""
         try:
             self._loop = True
             _LOGGER.info(f"Starting mug loop {self.mac_address}")
+            await self.connect()
 
             while self._loop:
                 if not await self.client.is_connected():
@@ -152,6 +146,16 @@ class EmberMug:
             return await self.connect()
 
         self.available = True
+
+        if self.serial_number is None:
+            try:
+                serial_number = await self.client.read_gatt_char(SERIAL_NUMBER_UUID)
+                self.serial_number = serial_number[7:].decode("utf8")
+            except BleakError:
+                _LOGGER.warning("Failed to subscribe to state attr")
+            except Exception as e:
+                _LOGGER.error(f"Unexpected error occurred connecting to notify {e}")
+
         try:
             _LOGGER.info("Try to subscribe to STATE")
             await self.client.start_notify(STATE_UUID, self.state_notify)
