@@ -15,9 +15,9 @@ from .const import (
 
 
 class EmberMug:
-    def __init__(self, mac_address: str, use_metric, update_callback: Callable) -> None:
+    def __init__(self, mac_address: str, use_metric, sensor: 'EmberMugSensor') -> None:
         self._loop = False
-        self._update_callback = update_callback
+        self._sensor = sensor
 
         self.mac_address = mac_address
         self.client = BleakClient(mac_address)
@@ -39,20 +39,25 @@ class EmberMug:
         return f'#{r:02x}{g:02x}{b:02x}'
 
     async def async_run(self):
-        self._loop = True
-        _LOGGER.info(f'Starting mug loop {self.mac_address}')
+        try:
+            self._loop = True
+            _LOGGER.info(f'Starting mug loop {self.mac_address}')
 
-        while self._loop:
-            if not await self.client.is_connected():
-                await self.connect()
+            while self._loop:
+                if not await self.client.is_connected():
+                    await self.connect()
 
-            await self.update_all()
-            self._update_callback()
+                await self.update_all()
+                self._sensor.async_update_callback()
 
-            # Maintain connection for 30 seconds until next update
-            for _ in range(15):
-                await self.client.is_connected()
-                await asyncio.sleep(2)
+                # Maintain connection for 30 seconds until next update
+                for _ in range(15):
+                    await self.client.is_connected()
+                    await asyncio.sleep(2)
+
+        except Exception as e:
+            _LOGGER.error(e'An unexcpected error occurred during loop {e}. Restarting.')
+            self._sensor.hass.async_create_task(self.async_run())
 
     async def _temp_from_bytes(self, temp_bytes: bytearray) -> float:
         temp = float(int.from_bytes(temp_bytes, byteorder='little', signed=False)) * 0.01
@@ -105,7 +110,7 @@ class EmberMug:
 
         if connected is False:
             self.available = False
-            self._update_callback()
+            self._sensor.async_update_callback()
             _LOGGER.warning(f'Failed to connect to {self.mac_address} after 10 tries. Will try again in 5min')
             await asyncio.sleep(5 * 60)
             await self.connect()
@@ -115,6 +120,9 @@ class EmberMug:
             await self.client.start_notify(STATE_UUID, self.state_notify)
         except BleakError:
             _LOGGER.warning('Failed to subscribe to state attr')
+        except Exception as e:
+            _LOGGER.error(f'Unexpected error occurred connecting to notify {e}')
+
 
     def state_notify(self, sender: int, data: bytearray):
         _LOGGER.info(f'State from {sender}: {data} ({list(data)})')

@@ -60,7 +60,7 @@ class EmberMugSensor(Entity):
         self.mug = EmberMug(
             self.mac_address, 
             self._unit_of_measurement != TEMP_FAHRENHEIT,
-            self.async_update_callback,
+            self.hass,
         )
 
         self._icon = ICON_DEFAULT
@@ -85,7 +85,7 @@ class EmberMugSensor(Entity):
         return self.mug.current_temp
 
     @property
-    def device_state_attributes(self) -> Dict[str, Union[str, float]]:
+    def extra_state_attributes(self) -> Dict[str, Union[str, float]]:
         return {
             ATTR_BATTERY_LEVEL: self.mug.battery,
             'led_colour': self.mug.colour,
