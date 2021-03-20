@@ -1,30 +1,22 @@
-[Service] 00001530-1212-efde-1523-785feabcd123: Device Firmware Update Service
-        [Characteristic] 00001534-1212-efde-1523-785feabcd123: (read) | Name: DFU Version, Value: b'\x01\x00', Type: <class 'bytearray'>
-        [Characteristic] 00001531-1212-efde-1523-785feabcd123: (write,notify) | Name: DFU Control Point, Value: None, Type: None
-                [Descriptor] 00002902-0000-1000-8000-00805f9b34fb: (Handle: 57) | Value: b'\x00\x00' | Type: <class 'bytearray'>
-        [Characteristic] 00001532-1212-efde-1523-785feabcd123: (write-without-response) | Name: DFU Packet, Value: None, Type: None
 [Service] fc543622-236c-4c94-8fa9-944a3e5353fa: Unknown
-        [Characteristic] fc540013-236c-4c94-8fa9-944a3e5353fa: (notify) | Name: Unknown, Value: None, Type: None
-                [Descriptor] 00002902-0000-1000-8000-00805f9b34fb: (Handle: 51) | Value: b'\x00\x00' | Type: <class 'bytearray'>
-        [Characteristic] fc540014-236c-4c94-8fa9-944a3e5353fa: (read,write) | Name: Unknown, Value: b'\xff\xff\xff\xff', Type: <class 'bytearray'>
-        [Characteristic] fc540012-236c-4c94-8fa9-944a3e5353fa: (notify) | Name: Unknown, Value: None, Type: None
-                [Descriptor] 00002902-0000-1000-8000-00805f9b34fb: (Handle: 46) | Value: b'\x00\x00' | Type: <class 'bytearray'>
-        [Characteristic] fc540011-236c-4c94-8fa9-944a3e5353fa: (read,write) | Name: Unknown, Value: b'', Type: <class 'bytearray'>
-                [Descriptor] 00002908-0000-1000-8000-00805f9b34fb: (Handle: 43) | Value: b' \x80\xf5u\x08\x00\xff\xff\x14\x00\xff\xff\x96@\xfe\xdf\x7f\xff\x14h' | Type: <class 'bytearray'>
-        [Characteristic] fc540010-236c-4c94-8fa9-944a3e5353fa: (read,write) | Name: Unknown, Value: b'\x00', Type: <class 'bytearray'>
-        [Characteristic] fc54000f-236c-4c94-8fa9-944a3e5353fa: (read,write) | Name: Unknown, Value: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00', Type: <class 'bytearray'>
-        [Characteristic] fc54000e-236c-4c94-8fa9-944a3e5353fa: (read) | Name: Unknown, Value: b'\xf6\x05\xc6]\xab\x86\x10b\x86\xa4,\x06\x94\x8fN\x18]\x95\xd5\xdb', Type: <class 'bytearray'>
-        [Characteristic] fc54000d-236c-4c94-8fa9-944a3e5353fa: (read) | Name: Unknown, Value: b'\xc9\x0fY\xd63\xf9-BBG04811704', Type: <class 'bytearray'>
-        [Characteristic] fc54000c-236c-4c94-8fa9-944a3e5353fa: (read) | Name: Unknown, Value: b't\x01\n\x00', Type: <class 'bytearray'>
-        [Characteristic] fc54000a-236c-4c94-8fa9-944a3e5353fa: (write) | Name: Unknown, Value: None, Type: None
-        [Characteristic] fc540008-236c-4c94-8fa9-944a3e5353fa: (read) | Name: Unknown, Value: b'\x06', Type: <class 'bytearray'>
-        [Characteristic] fc540007-236c-4c94-8fa9-944a3e5353fa: (read) | Name: Unknown, Value: b'7\x00\x04\x10\x00', Type: <class 'bytearray'>
-        [Characteristic] fc540006-236c-4c94-8fa9-944a3e5353fa: (read,write) | Name: Unknown, Value: b'\x00\x00\x00\x00\x00', Type: <class 'bytearray'>
-        [Characteristic] fc540005-236c-4c94-8fa9-944a3e5353fa: (read) | Name: Unknown, Value: b'\x06', Type: <class 'bytearray'>
-        [Characteristic] fc540004-236c-4c94-8fa9-944a3e5353fa: (read,write) | Name: Unknown, Value: b'\x01', Type: <class 'bytearray'>
-        [Characteristic] fc540003-236c-4c94-8fa9-944a3e5353fa: (read,write) | Name: Unknown, Value: b'Z\x16', Type: <class 'bytearray'>
-        [Characteristic] fc540002-236c-4c94-8fa9-944a3e5353fa: (read) | Name: Unknown, Value: b'[\x16', Type: <class 'bytearray'>
-        [Characteristic] fc540001-236c-4c94-8fa9-944a3e5353fa: (read,write) | Name: Unknown, Value: b'EMBER', Type: <class 'bytearray'>
-[Service] 00001801-0000-1000-8000-00805f9b34fb: Generic Attribute Profile
-        [Characteristic] 00002a05-0000-1000-8000-00805f9b34fb: (indicate) | Name: Service Changed, Value: None, Type: None
-                [Descriptor] 00002902-0000-1000-8000-00805f9b34fb: (Handle: 11) | Value: b'\x02\x00' | Type: <class 'bytearray'>
+        [Characteristic] fc540013-236c-4c94-8fa9-944a3e5353fa: (notify) | Name: Unknown, Value: None 
+                [Descriptor] 00002902-0000-1000-8000-00805f9b34fb: (Handle: 51) | Value: b'\x00\x00' 
+        [Characteristic] fc540014-236c-4c94-8fa9-944a3e5353fa: (read,write) | Name: Unknown, Value: b'\xff\xff\xff\xff'   # Colour
+        [Characteristic] fc540012-236c-4c94-8fa9-944a3e5353fa: (notify) | Name: Unknown, Value: None     # State
+                [Descriptor] 00002902-0000-1000-8000-00805f9b34fb: (Handle: 46) | Value: b'\x00\x00' 
+        [Characteristic] fc540011-236c-4c94-8fa9-944a3e5353fa: (read,write) | Name: Unknown, Value: b'' 
+                [Descriptor] 00002908-0000-1000-8000-00805f9b34fb: (Handle: 43) | Value: b' \x80\xf5u\x08\x00\xff\xff\x14\x00\xff\xff\x96@\xfe\xdf\x7f\xff\x14h' 
+        [Characteristic] fc540010-236c-4c94-8fa9-944a3e5353fa: (read,write) | Name: Unknown, Value: b'\x00' 
+        [Characteristic] fc54000f-236c-4c94-8fa9-944a3e5353fa: (read,write) | Name: Unknown, Value: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00' 
+        [Characteristic] fc54000e-236c-4c94-8fa9-944a3e5353fa: (read) | Name: Unknown, Value: b'\xf6\x05\xc6]\xab\x86\x10b\x86\xa4,\x06\x94\x8fN\x18]\x95\xd5\xdb' 
+        [Characteristic] fc54000d-236c-4c94-8fa9-944a3e5353fa: (read) | Name: Unknown, Value: b'\xc9\x0fY\xd63\xf9-BBG04811704' # serial number?
+        [Characteristic] fc54000c-236c-4c94-8fa9-944a3e5353fa: (read) | Name: Unknown, Value: b't\x01\n\x00' 
+        [Characteristic] fc54000a-236c-4c94-8fa9-944a3e5353fa: (write) | Name: Unknown, Value: None 
+        [Characteristic] fc540008-236c-4c94-8fa9-944a3e5353fa: (read) | Name: Unknown, Value: b'\x01' 
+        [Characteristic] fc540007-236c-4c94-8fa9-944a3e5353fa: (read) | Name: Unknown, Value: b'@\x00\xd8\x0e\x00'    # battery
+        [Characteristic] fc540006-236c-4c94-8fa9-944a3e5353fa: (read,write) | Name: Unknown, Value: b'\x00\x00\x00\x00\x00' 
+        [Characteristic] fc540005-236c-4c94-8fa9-944a3e5353fa: (read) | Name: Unknown, Value: b'\x00' 
+        [Characteristic] fc540004-236c-4c94-8fa9-944a3e5353fa: (read,write) | Name: Unknown, Value: b'\x01' 
+        [Characteristic] fc540003-236c-4c94-8fa9-944a3e5353fa: (read,write) | Name: Unknown, Value: b'Z\x16'  # Target Temp
+        [Characteristic] fc540002-236c-4c94-8fa9-944a3e5353fa: (read) | Name: Unknown, Value: b'\xc4\t'   # Current Temp
+        [Characteristic] fc540001-236c-4c94-8fa9-944a3e5353fa: (read,write) | Name: Unknown, Value: b'EMBER' 

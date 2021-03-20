@@ -1,0 +1,1 @@
+"""Ember Mug components Folder."""
