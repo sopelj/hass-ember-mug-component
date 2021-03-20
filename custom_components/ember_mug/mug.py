@@ -136,20 +136,22 @@ class EmberMug:
     async def update_all(self) -> bool:
         update_attrs = ['led_colour', 'current_temp', 'target_temp', 'battery']
         try:
-            await self.client.connect()
+            if not await self.client.is_connected():
+                await self.connect()
             for attr in update_attrs:
                 await getattr(self, f'update_{attr}')()
             success = True
         except BleakError as e:
             _LOGGER.error(str(e))
             success = False
-        finally:
-            await self.client.disconnect()
         return success
 
     async def disconnect(self) -> None:
         self._loop = False
+    
         with contextlib.suppress(BleakError):
             await self.client.stop_notify(STATE_UUID)
+    
         with contextlib.suppress(BleakError):
-            await self.client.disconnect()
+            if self.client and await self.client.is_connected():
+                await self.client.disconnect()
