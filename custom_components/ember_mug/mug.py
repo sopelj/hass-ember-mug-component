@@ -1,4 +1,4 @@
-from typing import Dict, Union
+from typing import Dict, Union, Callable
 import asyncio
 import contextlib
 
@@ -14,7 +14,7 @@ from .const import (
 
 
 class EmberMug:
-    def __init__(self, mac_address: str, use_metric = True):
+    def __init__(self, mac_address: str, use_metric, update_callback: Callable) -> None:
         self.mac_address = mac_address
         self.client = BleakClient(mac_address)
         self.use_metric = use_metric
@@ -24,9 +24,12 @@ class EmberMug:
         self.current_temp: float = None
         self.target_temp: float = None
         self.battery: float = None
+        self._loop = False
+        self.available = False
         self.uuid_debug = {
             uuid: None for uuid in UNKNOWN_READ_UUIDS
         }
+        self.update_callback = update_callback
 
     @property
     def colour(self) -> str:
@@ -35,7 +38,7 @@ class EmberMug:
 
     @property
     def battery_icon(self) -> str:
-        return icon_for_battery_level(self.battery)
+        return icon_for_battery_level(self.battery, charging=self.charging)
 
     @property
     def attrs(self) -> Dict[str, Union[str, float]]:
@@ -48,6 +51,22 @@ class EmberMug:
             'uuid_debug': self.uuid_debug,
             'state': self.state,
         }
+
+    async def async_run(self):
+        self._loop = True
+        _LOGGER.info(f'Starting mug loop {self.mac_address}')
+
+        while self._loop:
+            if not await self.client.is_connected():
+                await self.connect()
+
+            await self.update_all()
+            self.update_callback()
+
+            # Maintain connection for 30 seconds until next update
+            for _ in range(15):
+                await self.client.is_connected()
+                await asyncio.sleep(2)
 
     async def _temp_from_bytes(self, temp_bytes: bytearray) -> float:
         temp = float(int.from_bytes(temp_bytes, byteorder='little', signed=False)) * 0.01
@@ -85,20 +104,32 @@ class EmberMug:
             except BleakError as e:
                 _LOGGER.error(f'Failed to update {uuid}: {e}')
 
-    async def init(self) -> None:
-        for i in range(5):
+    async def connect(self) -> None:
+        connected = False
+        for i in range(1, 10 + 1):
             try:
                 await self.client.connect()
                 await self.client.pair()
+                connected = True
                 _LOGGER.info(f'Connected to {self.mac_address}')
             except BleakError as e:
-                _LOGGER.error(f'Init: {e} on attempt {i}')
-                asyncio.sleep(5)
+                _LOGGER.error(f'Init: {e} on attempt {i}. waiting 30sec')
+                asyncio.sleep(30)
 
-        _LOGGER.info(f'Subscribed to STATE')
-        # await self.client.start_notify(STATE_UUID, self.state_notify)
+        if connected is False:
+            self.available = False
+            self.update_callback()
+            _LOGGER.warning(f'Failed to connect to {self.mac_address} after 10 tries. Will try again in 5min')
+            await asyncio.sleep(5 * 60)
+            await self.connect()
 
-    async def state_notify(self, sender: int, data: bytearray):
+        try:
+            _LOGGER.info(f'Try to subscribe to STATE')
+            await self.client.start_notify(STATE_UUID, self.state_notify)
+        except BleakError:
+            _LOGGER.warning('Failed to subscribe to state attr')
+
+    def state_notify(self, sender: int, data: bytearray):
         _LOGGER.info(f'State from {sender}: {data} ({list(data)})')
         self._state = str(list(data))
 
@@ -117,10 +148,8 @@ class EmberMug:
         return success
 
     async def disconnect(self) -> None:
-        # with contextlib.suppress(BleakError):
-        #     await self.client.stop_notify(STATE_UUID)
+        self._loop = False
+        with contextlib.suppress(BleakError):
+            await self.client.stop_notify(STATE_UUID)
         with contextlib.suppress(BleakError):
             await self.client.disconnect()
-
-    def __del__(self) -> None:
-        asyncio.ensure_future(self.disconnect())

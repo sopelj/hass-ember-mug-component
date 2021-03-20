@@ -34,10 +34,6 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
 )
 
 
-CONNECT_TIMEOUT = 30
-SCAN_INTERVAL = timedelta(seconds=60)
-
-
 async def async_setup_platform(
     hass: HomeAssistantType,
     config: ConfigType,
@@ -45,8 +41,7 @@ async def async_setup_platform(
     discovery_info: Optional[DiscoveryInfoType] = None,
 ) -> None:
     _LOGGER.debug("Starting Ember Mug Setup")
-    ember_mug = EmberMug(config[CONF_MAC], config.get(CONF_TEMPERATURE_UNIT) != TEMP_FAHRENHEIT)
-    async_add_entities([EmberMugSensor(ember_mug, config)])
+    async_add_entities([EmberMugSensor(config)])
 
 
 class EmberMugSensor(Entity):
@@ -54,17 +49,22 @@ class EmberMugSensor(Entity):
     Config for an Ember Mug
     """
 
-    def __init__(self, mug: EmberMug, config: ConfigType):
+    def __init__(self, config: ConfigType):
         super().__init__()
-        self.mug = mug
+ 
         self.mac_address = config[CONF_MAC]
         self._unique_id = f'ember_mug_{format_mac(self.mac_address)}'
         self._name = config.get(CONF_NAME, f'Ember Mug {self.mac_address}')
         self._unit_of_measurement = config.get(CONF_TEMPERATURE_UNIT, TEMP_CELSIUS)
 
+        self.mug = EmberMug(
+            self.mac_address, 
+            self._unit_of_measurement != TEMP_FAHRENHEIT,
+            self.__refresh_callback,
+        )
+
         self._icon = ICON_DEFAULT
         self._state = None
-        self._available = True
         self._loop = False
 
         _LOGGER.info(f"Ember Mug {self._name} Setup")
@@ -79,7 +79,7 @@ class EmberMugSensor(Entity):
 
     @property
     def available(self) -> bool:
-        return self._available
+        return self.mug.available
 
     @property
     def state(self) -> Optional[str]:
@@ -105,29 +105,17 @@ class EmberMugSensor(Entity):
     def should_poll(self) -> bool:
         return False
 
+    def __refresh_callback(self) -> None:
+        """
+        Called in Mug `async_run` to signal change to hass
+        """
+        _LOGGER.debug('Update in HASS requested')
+        self.async_schedule_update_ha_state()
+
     async def async_added_to_hass(self) -> None:
-        _LOGGER.info(f'Starting Init for {self._name}')
-        await self.mug.init()
-
-        self._loop = True
-        _LOGGER.info(f'Starting loop {self._name}')
-
-        while self._loop:
-            _LOGGER.debug(f"Mug Update")
-            await self.async_update()
-            self.async_schedule_update_ha_state()
-            await asyncio.sleep(30)
+        _LOGGER.info(f'Starting run for {self._name}')
+        await self.mug.async_run()
 
     async def async_will_remove_from_hass(self) -> None:
-        self._loop = False
         await self.mug.disconnect()
 
-    async def async_update(self) -> None:
-        _LOGGER.warning(f'Async update called for {self._name}')
-
-        if await self.mug.update_all() is True:
-            self._state = self.mug.current_temp
-            self._available = True
-        else:
-            self._available = False
-            self._state = None
