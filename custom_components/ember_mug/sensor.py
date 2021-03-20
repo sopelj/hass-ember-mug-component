@@ -100,9 +100,10 @@ class EmberMugSensor(Entity):
             "led_colour": self.mug.colour,
             "current_temp": self.mug.current_temp,
             "target_temp": self.mug.target_temp,
-            "uuid_debug": self.mug.uuid_debug,
             "state": self.mug.state,
+            "second_state": self.mug.second_state,
             "serial_number": self.mug.serial_number,
+            "uuid_debug": self.mug.uuid_debug,
         }
 
     @property

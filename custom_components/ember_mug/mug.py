@@ -17,6 +17,8 @@ from .const import (
     STATE_UUID,
     TARGET_TEMP_UUID,
     UNKNOWN_READ_UUIDS,
+    UNKNOWN_STATE_UUID,
+    UNKNOWN_NOTIFY_UUID,
 )
 
 
@@ -38,7 +40,8 @@ class EmberMug:
         self.mac_address = mac_address
         self.client = BleakClient(mac_address)
         self.use_metric = use_metric
-        self.state = None
+        self.state: int = None
+        self.second_state: int = None
         self.serial_number = None
         self.charging = False  # TODO from state?
         self.led_colour_rgb = [255, 255, 255]
@@ -102,14 +105,26 @@ class EmberMug:
     async def update_target_temp(self) -> None:
         """Get target temp form mug gatt."""
         temp_bytes = await self.client.read_gatt_char(TARGET_TEMP_UUID)
-        self.target_temp = await self._temp_from_bytes(temp_bytes)
-        _LOGGER.debug(f"Target temp {self.target_temp}")
+        target_temp = await self._temp_from_bytes(temp_bytes)
+        if self.target_temp != target_temp:
+            _LOGGER.debug(f"Target temp {self.target_temp}")
+            self.target_temp = target_temp
 
     async def update_current_temp(self) -> None:
         """Get current temp from mug gatt."""
         temp_bytes = await self.client.read_gatt_char(CURRENT_TEMP_UUID)
-        self.current_temp = await self._temp_from_bytes(temp_bytes)
-        _LOGGER.debug(f"Current temp {self.current_temp}")
+        current_temp = await self._temp_from_bytes(temp_bytes)
+        if self.current_temp != current_temp:
+            _LOGGER.debug(f"Current temp {self.current_temp}")
+            self.current_temp = current_temp
+
+    async def update_second_state(self) -> None:
+        """Get second state uuid from mug gatt."""
+        state_bytes = await self.client.read_gatt_char(UNKNOWN_STATE_UUID)
+        second_state = int(second_state[0])
+        if self.second_state != second_state:
+            _LOGGER.debug(f"Other state {self.second_state}")
+            self.second_state = second_state
 
     async def update_uuid_debug(self) -> None:
         """Not sure what all these UUIDs do, so fetch and log them for future investigation."""
@@ -164,6 +179,14 @@ class EmberMug:
         except Exception as e:
             _LOGGER.error(f"Unexpected error occurred connecting to notify {e}")
 
+        try:
+            _LOGGER.info("Try to subscribe to UNKNOWN NOTIFY")
+            await self.client.start_notify(UNKNOWN_NOTIFY_UUID, self.unknown_notify)
+        except BleakError:
+            _LOGGER.warning("Failed to subscribe to unknown notify attr")
+        except Exception as e:
+            _LOGGER.error(f"Unexpected error occurred connecting to notify {e}")
+
     def state_notify(self, sender: int, data: bytearray):
         """
         Not 100% certain what all the state numbers mean.
@@ -181,6 +204,10 @@ class EmberMug:
             self.state = new_state
             self.async_update_callback()
 
+    def unknown_notify(self, sender: int, data: bytearray):
+        """Not sure what this one does, but log events."""
+        _LOGGER.debug(f"Singal from unknown sender: {sender}, value: {data}")
+
     async def update_all(self) -> bool:
         """Update all attributes."""
         update_attrs = [
@@ -188,6 +215,7 @@ class EmberMug:
             "current_temp",
             "target_temp",
             "battery",
+            "second_state",
             "uuid_debug",
         ]
         try:
@@ -203,11 +231,13 @@ class EmberMug:
 
     async def disconnect(self) -> None:
         """Stop Loop and disconnect."""
-        self._loop = False
-
         with contextlib.suppress(BleakError):
             await self.client.stop_notify(STATE_UUID)
 
+        with contextlib.suppress(BleakError):
+            await self.client.stop_notify(UNKNOWN_NOTIFY_UUID)
+
+        self._loop = False
         with contextlib.suppress(BleakError):
             if self.client and await self.client.is_connected():
                 await self.client.disconnect()
