@@ -3,6 +3,6 @@
   "render_readme": true,
   "iot_class": "Local Polling",
   "requirements": [
-    "bleak"
+    "bleak==0.11.0"
   ]
 }

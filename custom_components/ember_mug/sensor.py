@@ -114,9 +114,9 @@ class EmberMugSensor(Entity):
 
         while self._loop:
             _LOGGER.debug(f"Mug Update")
-            await self.mug.update_all()
-            await self.async_schedule_update_ha_state()
-            await asyncio.sleep(60)
+            await self.async_update()
+            self.async_schedule_update_ha_state()
+            await asyncio.sleep(30)
 
     async def async_will_remove_from_hass(self) -> None:
         self._loop = False
