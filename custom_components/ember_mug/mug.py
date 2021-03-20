@@ -162,10 +162,17 @@ class EmberMug:
         if new_state not in [1, self.state]:
             _LOGGER.info(f"State changed from {self.state} to {new_state}")
             self.state = new_state
+            self.async_update_callback()
 
     async def update_all(self) -> bool:
         """Update all attributes."""
-        update_attrs = ["led_colour", "current_temp", "target_temp", "battery"]
+        update_attrs = [
+            "led_colour",
+            "current_temp",
+            "target_temp",
+            "battery",
+            "uuid_debug",
+        ]
         try:
             if not await self.client.is_connected():
                 await self.connect()
