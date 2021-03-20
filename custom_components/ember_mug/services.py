@@ -2,16 +2,19 @@
 from bleak import BleakClient, discover
 
 from . import _LOGGER
-from .const import LED_COLOUR_UUID, TARGET_TEMP_UUID
+from .const import ATTR_RGB_COLOR, LED_COLOUR_UUID, TARGET_TEMP_UUID
+from .sensor import EmberMugSensor
 
 
-async def set_led_colour(
-    self, red: int = 255, green: int = 255, blue: int = 255, alpha: int = 255
-) -> None:
+async def set_led_colour(entity: EmberMugSensor, call) -> None:
     """Set LED colour of mug."""
-    colour = bytearray([red, green, blue, alpha])
+    params = dict(call.data["params"])
+    _LOGGER.info(
+        f"Called service set led colour with entity {entity} and data {params})"
+    )
+    colour = bytearray([*params[ATTR_RGB_COLOR], 255])
     _LOGGER.debug(f"Set colour to {colour}")
-    await self.client.write_gatt_char(LED_COLOUR_UUID, colour, False)
+    await entity.mug.client.write_gatt_char(LED_COLOUR_UUID, colour, False)
 
 
 async def set_target_temp(self, temp: float) -> None:

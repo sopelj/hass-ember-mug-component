@@ -1,0 +1,13 @@
+set_led_colour:
+  name: Set LED Colour
+  description: >
+    Set the colour of the LED on the mug
+  target:
+  fields:
+    rgb_color:
+      name: rgb-color
+      description: Color for the LED in RGB format.
+      advanced: true
+      example: "[255, 100, 100]"
+      selector:
+        object:

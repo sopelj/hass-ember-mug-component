@@ -49,3 +49,6 @@ UNKNOWN_READ_UUIDS = (
 
 ICON_DEFAULT = "mdi:coffee"
 ICON_UNAVAILABLE = "mdi:coffee-off"
+
+ATTR_RGB_COLOR = "rgb_color"
+SERVICE_SET_LED_COLOUR = "set_led_colour"
