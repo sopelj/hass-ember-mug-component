@@ -60,7 +60,7 @@ class EmberMugSensor(Entity):
         self.mug = EmberMug(
             self.mac_address, 
             self._unit_of_measurement != TEMP_FAHRENHEIT,
-            self.hass,
+            self,
         )
 
         self._icon = ICON_DEFAULT
