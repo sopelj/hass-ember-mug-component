@@ -173,6 +173,11 @@ class EmberMug:
         new_state = data[0]
         if new_state not in [1, self.state]:
             _LOGGER.info(f"State changed from {self.state} to {new_state}")
+            # 2 : On Charger/Charging ?
+            # 2 -> 3 : Removed from charger (ie. discharging)
+            # 3 -> 2 : Placed on charger.
+            # 2 -> 5 : Liquid added whilst on charger?
+            # 2 -> 5 : On charger with liquid. Not charging?
             self.state = new_state
             self.async_update_callback()
 
