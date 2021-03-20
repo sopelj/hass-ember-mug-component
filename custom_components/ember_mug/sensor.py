@@ -41,7 +41,7 @@ async def async_setup_platform(
     discovery_info: Optional[DiscoveryInfoType] = None,
 ) -> None:
     _LOGGER.debug("Starting Ember Mug Setup")
-    async_add_entities([EmberMugSensor(config)])
+    async_add_entities([EmberMugSensor(hass, config)])
 
 
 class EmberMugSensor(Entity):
@@ -49,9 +49,9 @@ class EmberMugSensor(Entity):
     Config for an Ember Mug
     """
 
-    def __init__(self, config: ConfigType):
+    def __init__(self, hass: HomeAssistantType, config: ConfigType):
         super().__init__()
- 
+        self.hass = hass
         self.mac_address = config[CONF_MAC]
         self._unique_id = f'ember_mug_{format_mac(self.mac_address)}'
         self._name = config.get(CONF_NAME, f'Ember Mug {self.mac_address}')
@@ -64,7 +64,6 @@ class EmberMugSensor(Entity):
         )
 
         self._icon = ICON_DEFAULT
-        self._state = None
         self._loop = False
 
         _LOGGER.info(f"Ember Mug {self._name} Setup")
@@ -82,7 +81,7 @@ class EmberMugSensor(Entity):
         return self.mug.available
 
     @property
-    def state(self) -> Optional[str]:
+    def state(self) -> Optional[float]:
         return self.mug.current_temp
 
     @property
@@ -122,8 +121,9 @@ class EmberMugSensor(Entity):
 
     async def async_added_to_hass(self) -> None:
         _LOGGER.info(f'Starting run for {self._name}')
-        await self.mug.async_run()
+        self.hass.async_create_task(self.mug.async_run())
 
     async def async_will_remove_from_hass(self) -> None:
+        _LOGGER.info(f'Stop running {self._name}')
         await self.mug.disconnect()
 
