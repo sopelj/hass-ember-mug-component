@@ -53,7 +53,7 @@ async def async_setup_platform(
     discovery_info: Optional[DiscoveryInfoType] = None,
 ) -> None:
     """Add Mug Sensor Entity to HASS."""
-    return True
+    pass
 
 
 async def async_setup_entry(
