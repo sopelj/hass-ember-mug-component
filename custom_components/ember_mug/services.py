@@ -7,7 +7,7 @@ from bleak import BleakClient, discover
 from homeassistant.core import ServiceCall
 
 from . import _LOGGER
-from .const import ATTR_RGB_COLOR, ATTR_TARGET_TEMP, LED_COLOUR_UUID, TARGET_TEMP_UUID
+from .const import ATTR_RGB_COLOR, ATTR_TARGET_TEMP, UUID_LED, UUID_TARGET_TEMPERATURE
 
 if TYPE_CHECKING:
     from .sensor import EmberMugSensor
@@ -18,7 +18,7 @@ async def set_led_colour(entity: EmberMugSensor, service_call: ServiceCall) -> N
     led_colour: Tuple[int, int, int] = service_call.data[ATTR_RGB_COLOR]
     _LOGGER.info(f"Called service set led colour of {entity} to {led_colour})")
     colour = bytearray([*led_colour, 255])  # To RGBA bytearray
-    resp = await entity.mug.client.write_gatt_char(LED_COLOUR_UUID, colour, False)
+    resp = await entity.mug.client.write_gatt_char(UUID_LED, colour, False)
     _LOGGER.debug(resp)
 
 
@@ -27,7 +27,7 @@ async def set_target_temp(entity: EmberMugSensor, service_call: ServiceCall) -> 
     target_temp = service_call.data[ATTR_TARGET_TEMP]
     _LOGGER.debug(f"Set to {target_temp}")
     target = bytearray(int(target_temp / 0.01).to_bytes(2, "little"))
-    resp = await entity.client.write_gatt_char(TARGET_TEMP_UUID, target, False)
+    resp = await entity.client.write_gatt_char(UUID_TARGET_TEMPERATURE, target, False)
     _LOGGER.debug(resp)
 
 
