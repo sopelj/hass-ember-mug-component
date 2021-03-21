@@ -25,7 +25,7 @@ from homeassistant.helpers.typing import (
 import voluptuous as vol
 
 from . import _LOGGER
-from .const import ATTR_RGB_COLOR, ICON_DEFAULT, LED_COLOUR_UUID, SERVICE_SET_LED_COLOUR
+from .const import ATTR_RGB_COLOR, ICON_DEFAULT, SERVICE_SET_LED_COLOUR
 from .mug import EmberMug
 
 # Schema
@@ -53,30 +53,18 @@ async def async_setup_platform(
     discovery_info: Optional[DiscoveryInfoType] = None,
 ) -> None:
     """Add Mug Sensor Entity to HASS."""
-    pass
+    from .services import set_led_colour
 
-
-async def async_setup_entry(
-    hass: HomeAssistantType, config: ConfigType, async_add_entities: Callable
-):
-    """Set up services for Entry."""
-    _LOGGER.debug("Setup entry {entry}")
+    _LOGGER.debug("Setup platform")
     platform = entity_platform.current_platform.get()
-
-    async def set_led_colour(entity, service_call) -> None:
-        """Set LED colour of mug."""
-        params = dict(service_call.data["params"])
-        _LOGGER.info(
-            f"Called service set led colour with entity {entity} and {service_call} {params})"
-        )
-        colour = bytearray([*params[ATTR_RGB_COLOR], 255])
-        _LOGGER.debug(f"Set colour to {colour}")
-        await entity.mug.client.write_gatt_char(LED_COLOUR_UUID, colour, False)
-
-    async_add_entities([EmberMugSensor(hass, config)])
     platform.async_register_entity_service(
         SERVICE_SET_LED_COLOUR, SET_LED_COLOUR_SCHEMA, set_led_colour
     )
+
+
+async def async_setup_entry(hass: HomeAssistantType, config: ConfigType):
+    """Set up services for Entry."""
+    _LOGGER.debug(f"Setup entry {config}")
 
 
 class EmberMugSensor(Entity):
