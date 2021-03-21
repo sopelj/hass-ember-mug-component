@@ -9,45 +9,6 @@ from uuid import UUID
 
 DOMAIN = "ember_mug"
 
-# https://github.com/orlopau/ember-mug/blob/master/docs/target-temp.md
-TARGET_TEMP_UUID = UUID(
-    "fc540003-236c-4c94-8fa9-944a3e5353fa"
-)  # Target Temp (READ/WRITE)
-
-# https://github.com/orlopau/ember-mug/blob/master/docs/mug-color.md
-LED_COLOUR_UUID = UUID(
-    "fc540014-236c-4c94-8fa9-944a3e5353fa"
-)  # LED Colour (READ/WRITE)
-
-# https://github.com/orlopau/ember-mug/blob/master/docs/current-temp.md
-CURRENT_TEMP_UUID = UUID("fc540002-236c-4c94-8fa9-944a3e5353fa")  # Current Temp (READ)
-
-# https://github.com/orlopau/ember-mug/blob/master/docs/battery.md
-BATTERY_UUID = UUID("fc540007-236c-4c94-8fa9-944a3e5353fa")  # Current Battery (READ)
-
-# https://github.com/orlopau/ember-mug/blob/master/docs/mug-state.md
-STATE_UUID = UUID(
-    "fc540012-236c-4c94-8fa9-944a3e5353fa"
-)  # Get current State (READ/NOTIFICATION)
-# + Descriptor 00002902-0000-1000-8000-00805f9b34fb
-
-SERIAL_NUMBER_UUID = UUID("fc54000d-236c-4c94-8fa9-944a3e5353fa")
-# Seems to be an int that changes when heating
-UNKNOWN_STATE_UUID = UUID("fc540005-236c-4c94-8fa9-944a3e5353fa")
-
-UNKNOWN_NOTIFY_UUID = UUID("fc540013-236c-4c94-8fa9-944a3e5353fa")
-# Descriptor 00002902-0000-1000-8000-00805f9b34fb
-
-UNKNOWN_READ_UUIDS = (
-    "fc540010-236c-4c94-8fa9-944a3e5353fa",
-    "fc54000f-236c-4c94-8fa9-944a3e5353fa",
-    "fc54000e-236c-4c94-8fa9-944a3e5353fa",
-    "fc54000c-236c-4c94-8fa9-944a3e5353fa",
-    "fc540008-236c-4c94-8fa9-944a3e5353fa",
-    "fc540006-236c-4c94-8fa9-944a3e5353fa",
-    "fc540004-236c-4c94-8fa9-944a3e5353fa",
-)
-
 ICON_DEFAULT = "mdi:coffee"
 ICON_UNAVAILABLE = "mdi:coffee-off"
 
@@ -56,3 +17,56 @@ SERVICE_SET_LED_COLOUR = "set_led_colour"
 
 ATTR_TARGET_TEMP = "target_temp"
 SERVICE_SET_TARGET_TEMP = "set_target_temp"
+
+
+# 17: FORMAT_SINT8 -> 1 byte
+# 18: FORMAT_UINT16 -> 2 bytes
+
+
+UUID_MUG_NAME = UUID("FC540001-236C-4C94-8FA9-944A3E5353FA")
+
+UUID_DRINK_TEMPERATURE = UUID("FC540002-236C-4C94-8FA9-944A3E5353FA")
+# intValue(18, 0) -> temp
+
+UUID_TARGET_TEMPERATURE = UUID("FC540003-236C-4C94-8FA9-944A3E5353FA")
+# intValue(18, 0) -> temp
+
+UUID_TEMPERATURE_UNIT = UUID("FC540004-236C-4C94-8FA9-944A3E5353FA")
+# intValue(17, 0) == 0 -> Celsius
+
+UUID_LIQUID_LEVEL = UUID("FC540005-236C-4C94-8FA9-944A3E5353FA")
+# intValue(17, 0) -> Level
+
+UUID_TIME_DATE_AND_ZONE = UUID("FC540006-236C-4C94-8FA9-944A3E5353FA")
+
+UUID_BATTERY = UUID("FC540007-236C-4C94-8FA9-944A3E5353FA")
+# intValue(17, 0) -> float %
+# intValue(17, 1) -> int == 1 -> connected to charger
+
+UUID_LIQUID_STATE = UUID("FC540008-236C-4C94-8FA9-944A3E5353FA")
+LIQUID_STATES = {
+    1: "Empty",
+    2: "Filling",
+    4: "Cooling",
+    5: "Heating",
+    6: "Air temp",
+}
+
+UUID_VOLUME = UUID("FC540009-236C-4C94-8FA9-944A3E5353FA")
+# intValue(17, 0) -> Volume ?
+
+UUID_LAST_LOCATION = UUID("FC54000A-236C-4C94-8FA9-944A3E5353FA")
+UUID_ACCELERATION = UUID("FC54000B-236C-4C94-8FA9-944A3E5353FA")
+UUID_OTA = UUID("FC54000C-236C-4C94-8FA9-944A3E5353FA")
+UUID_MUG_ID = UUID("FC54000D-236C-4C94-8FA9-944A3E5353FA")
+# [7:] -> Serial number?
+
+UUID_DSK = UUID("FC54000E-236C-4C94-8FA9-944A3E5353FA")
+UUID_UDSK = UUID("FC54000F-236C-4C94-8FA9-944A3E5353FA")
+UUID_CONTROL_REGISTER_ADDRESS = UUID("FC540010-236C-4C94-8FA9-944A3E5353FA")
+UUID_CONTROL_REGISTER_DATA = UUID("FC540011-236C-4C94-8FA9-944A3E5353FA")
+UUID_PUSH_EVENT = UUID("FC540012-236C-4C94-8FA9-944A3E5353FA")
+UUID_STATISTICS = UUID("FC540013-236C-4C94-8FA9-944A3E5353FA")
+
+UUID_LED = UUID("FC540014-236C-4C94-8FA9-944A3E5353FA")
+# RGBA

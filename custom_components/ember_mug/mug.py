@@ -2,23 +2,28 @@
 
 import asyncio
 import contextlib
-from typing import Callable
+from typing import Callable, Tuple
 
 from bleak import BleakClient
 from bleak.exc import BleakError
 from homeassistant.helpers.typing import HomeAssistantType
 
 from . import _LOGGER
-from .const import (
-    BATTERY_UUID,
-    CURRENT_TEMP_UUID,
-    LED_COLOUR_UUID,
-    SERIAL_NUMBER_UUID,
-    STATE_UUID,
-    TARGET_TEMP_UUID,
-    UNKNOWN_NOTIFY_UUID,
-    UNKNOWN_READ_UUIDS,
-    UNKNOWN_STATE_UUID,
+from .const import (  # UUID_TEMPERATURE_UNIT,
+    LIQUID_STATES,
+    UUID_BATTERY,
+    UUID_DRINK_TEMPERATURE,
+    UUID_DSK,
+    UUID_LED,
+    UUID_LIQUID_LEVEL,
+    UUID_LIQUID_STATE,
+    UUID_MUG_ID,
+    UUID_MUG_NAME,
+    UUID_PUSH_EVENT,
+    UUID_STATISTICS,
+    UUID_TARGET_TEMPERATURE,
+    UUID_UDSK,
+    UUID_VOLUME,
 )
 
 
@@ -40,22 +45,32 @@ class EmberMug:
         self.mac_address = mac_address
         self.client = BleakClient(mac_address)
         self.use_metric = use_metric
-        self.state: int = None
-        self.second_state: int = None
+        self.available = True
+
+        self.latest_push: int = None
+        self.liquid_level: int = None
         self.serial_number = None
-        self.charging = False  # TODO from state?
-        self.led_colour_rgb = [255, 255, 255]
+        self.led_colour_rgba = [255, 255, 255, 255]
         self.current_temp: float = None
         self.target_temp: float = None
         self.battery: float = None
-        self.available = True
-        self.uuid_debug = {uuid: None for uuid in UNKNOWN_READ_UUIDS}
+        self.on_charging_base: bool = None
+        self.liquid_state = None
+        self.name = None
+        self.udsk = None
+        self.dsk = None
+        self.volume = None
 
     @property
     def colour(self) -> str:
         """Return colour as hex value."""
-        r, g, b = self.led_colour_rgb
-        return f"#{r:02x}{g:02x}{b:02x}"
+        r, g, b, a = self.led_colour_rgba
+        return f"#{r:02x}{g:02x}{b:02x}{a:02x}"
+
+    @property
+    def liquid_state_label(self) -> str:
+        """Return human readable liquid state."""
+        return LIQUID_STATES.get(self.liquid_state, str(self.liquid_state))
 
     async def async_run(self) -> None:
         """Start a the task loop."""
@@ -92,50 +107,74 @@ class EmberMug:
 
     async def update_battery(self) -> None:
         """Get Battery percent from mug gatt."""
-        current_battery = await self.client.read_gatt_char(BATTERY_UUID)
-        battery_percent = float(current_battery[0])
-        _LOGGER.debug(f"Battery is at {battery_percent}")
+        battery = await self.client.read_gatt_char(UUID_BATTERY)
+        battery_percent = float(battery[0])
+        _LOGGER.debug(f"Battery is at {battery_percent}. On base: {battery[1] == 1}")
         self.battery = round(battery_percent, 2)
+        self.on_charging_base = battery[1] == 1
 
     async def update_led_colour(self) -> None:
         """Get RGBA colours from mug gatt."""
-        r, g, b, _ = await self.client.read_gatt_char(LED_COLOUR_UUID)
-        self.led_colour_rgb = [r, g, b]
+        self.led_colour_rgba = list(await self.client.read_gatt_char(UUID_LED))
+
+    async def set_led_colour(self, colour: Tuple[int, int, int, int]) -> None:
+        """Set new target temp for mug."""
+        _LOGGER.debug(f"Set led colour to {colour}")
+        colour = bytearray(colour)  # To RGBA bytearray
+        await self.client.is_connected()
+        await self.client.write_gatt_char(UUID_LED, colour, False)
 
     async def update_target_temp(self) -> None:
         """Get target temp form mug gatt."""
-        temp_bytes = await self.client.read_gatt_char(TARGET_TEMP_UUID)
+        temp_bytes = await self.client.read_gatt_char(UUID_TARGET_TEMPERATURE)
         target_temp = await self._temp_from_bytes(temp_bytes)
         if self.target_temp != target_temp:
             _LOGGER.debug(f"Target temp {self.target_temp}")
             self.target_temp = target_temp
 
+    async def set_target_temp(self, target_temp: float) -> None:
+        """Set new target temp for mug."""
+        _LOGGER.debug(f"Set target temp to {target_temp}")
+        target = bytearray(int(target_temp / 0.01).to_bytes(2, "little"))
+        await self.client.is_connected()
+        await self.client.write_gatt_char(UUID_TARGET_TEMPERATURE, target, False)
+
     async def update_current_temp(self) -> None:
         """Get current temp from mug gatt."""
-        temp_bytes = await self.client.read_gatt_char(CURRENT_TEMP_UUID)
+        temp_bytes = await self.client.read_gatt_char(UUID_DRINK_TEMPERATURE)
         current_temp = await self._temp_from_bytes(temp_bytes)
         if self.current_temp != current_temp:
             _LOGGER.debug(f"Current temp {self.current_temp}")
             self.current_temp = current_temp
 
-    async def update_second_state(self) -> None:
-        """Get second state uuid from mug gatt."""
-        state_bytes = await self.client.read_gatt_char(UNKNOWN_STATE_UUID)
-        second_state = int(state_bytes[0])
-        if self.second_state != second_state:
-            _LOGGER.debug(f"Other state {self.second_state}")
-            self.second_state = second_state
+    async def update_liquid_level(self) -> None:
+        """Get liquid level from mug gatt."""
+        liquid_level_bytes = await self.client.read_gatt_char(UUID_LIQUID_LEVEL)
+        liquid_level = int(liquid_level_bytes[0])
+        if self.liquid_level != liquid_level:
+            _LOGGER.debug(f"Liquid level now: {self.liquid_level}")
+            self.liquid_level = liquid_level
 
-    async def update_uuid_debug(self) -> None:
-        """Not sure what all these UUIDs do, so fetch and log them for future investigation."""
-        for uuid in self.uuid_debug:
-            try:
-                value = str(await self.client.read_gatt_char(uuid))
-                if value != self.uuid_debug[uuid]:
-                    _LOGGER.debug(f"Current value of {uuid}: {value}")
-                    self.uuid_debug[uuid] = value
-            except BleakError as e:
-                _LOGGER.error(f"Failed to update {uuid}: {e}")
+    async def update_liquid_state(self) -> None:
+        """Get liquid state from mug gatt."""
+        liquid_state_bytes = await self.client.read_gatt_char(UUID_LIQUID_STATE)
+        self.liquid_state = int(liquid_state_bytes[0])
+
+    async def update_name(self) -> None:
+        """Get mug name from gatt."""
+        self.name = str(await self.client.read_gatt_char(UUID_MUG_NAME))
+
+    async def update_udsk(self) -> None:
+        """Get mug udsk from gatt."""
+        self.name = str(await self.client.read_gatt_char(UUID_UDSK))
+
+    async def update_dsk(self) -> None:
+        """Get mug dsk from gatt."""
+        self.name = str(await self.client.read_gatt_char(UUID_DSK))
+
+    async def update_volume(self) -> None:
+        """Get mug volume from gatt."""
+        self.name = str(await self.client.read_gatt_char(UUID_VOLUME))
 
     async def connect(self) -> None:
         """Try 10 times to connect and if we fail wait five minutes and try again. If connected also subscribe to state notifications."""
@@ -164,7 +203,7 @@ class EmberMug:
 
         if self.serial_number is None:
             try:
-                serial_number = await self.client.read_gatt_char(SERIAL_NUMBER_UUID)
+                serial_number = await self.client.read_gatt_char(UUID_MUG_ID)
                 self.serial_number = serial_number[7:].decode("utf8")
             except BleakError:
                 _LOGGER.warning("Failed to subscribe to state attr")
@@ -172,40 +211,36 @@ class EmberMug:
                 _LOGGER.error(f"Unexpected error occurred connecting to notify {e}")
 
         try:
-            _LOGGER.info("Try to subscribe to STATE")
-            await self.client.start_notify(STATE_UUID, self.state_notify)
-        except BleakError:
-            _LOGGER.warning("Failed to subscribe to state attr")
+            _LOGGER.info("Try to subscribe to Push Events")
+            await self.client.start_notify(UUID_PUSH_EVENT, self.push_notify)
         except Exception as e:
-            _LOGGER.error(f"Unexpected error occurred connecting to notify {e}")
+            _LOGGER.warning(f"Failed to subscribe to state attr {e}")
 
         try:
-            _LOGGER.info("Try to subscribe to UNKNOWN NOTIFY")
-            await self.client.start_notify(UNKNOWN_NOTIFY_UUID, self.unknown_notify)
-        except BleakError:
-            _LOGGER.warning("Failed to subscribe to unknown notify attr")
+            _LOGGER.info("Try to subscribe to Statistics")
+            await self.client.start_notify(UUID_STATISTICS, self.statistics_notify)
         except Exception as e:
-            _LOGGER.error(f"Unexpected error occurred connecting to notify {e}")
+            _LOGGER.warning(f"Failed to subscribe to statistics {e}")
 
-    def state_notify(self, sender: int, data: bytearray):
+    def push_notify(self, sender: int, data: bytearray):
         """
         Not 100% certain what all the state numbers mean.
 
         https://github.com/orlopau/ember-mug/blob/master/docs/mug-state.md
         """
-        new_state = data[0]
-        if new_state not in [1, self.state]:
-            _LOGGER.info(f"State changed from {self.state} to {new_state}")
+        latest_push = data[0]
+        if latest_push not in [1, self.latest_push]:
+            _LOGGER.info(f"State changed from {self.latest_push} to {latest_push}")
             # 2 : On Charger/Charging ?
             # 2 -> 3 : Removed from charger (ie. discharging)
             # 3 -> 2 : Placed on charger.
             # 2 -> 5 : Liquid added whilst on charger?
             # 2 -> 5 : On charger with liquid. Not charging?
-            self.state = new_state
+            self.latest_push = latest_push
             self.async_update_callback()
 
-    def unknown_notify(self, sender: int, data: bytearray):
-        """Not sure what this one does, but log events."""
+    def statistics_notify(self, sender: int, data: bytearray):
+        """Notify when stats received."""
         _LOGGER.debug(f"Signal from unknown sender: {sender}, value: {data}")
 
     async def update_all(self) -> bool:
@@ -215,8 +250,12 @@ class EmberMug:
             "current_temp",
             "target_temp",
             "battery",
-            "second_state",
-            "uuid_debug",
+            "liquid_level",
+            "liquid_state",
+            "volume",
+            "udsk",
+            "dsk",
+            "name",
         ]
         try:
             if not await self.client.is_connected():
@@ -232,10 +271,10 @@ class EmberMug:
     async def disconnect(self) -> None:
         """Stop Loop and disconnect."""
         with contextlib.suppress(BleakError):
-            await self.client.stop_notify(STATE_UUID)
+            await self.client.stop_notify(UUID_PUSH_EVENT)
 
         with contextlib.suppress(BleakError):
-            await self.client.stop_notify(UNKNOWN_NOTIFY_UUID)
+            await self.client.stop_notify(UUID_STATISTICS)
 
         self._loop = False
         with contextlib.suppress(BleakError):
