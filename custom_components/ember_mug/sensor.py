@@ -56,6 +56,9 @@ async def async_setup_platform(
     from .services import set_led_colour
 
     _LOGGER.debug("Setup platform")
+
+    async_add_entities([EmberMugSensor(hass, config)])
+
     platform = entity_platform.current_platform.get()
     platform.async_register_entity_service(
         SERVICE_SET_LED_COLOUR, SET_LED_COLOUR_SCHEMA, set_led_colour
