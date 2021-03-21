@@ -44,6 +44,7 @@ class EmberMug:
         self.client = BleakClient(mac_address)
         self.use_metric = use_metric
         self.available = True
+        self.updates_queued = set()
 
         self.latest_push: int = None
         self.liquid_level: int = None
@@ -81,12 +82,14 @@ class EmberMug:
                     await self.connect()
 
                 await self.update_all()
+                self.updates_queued.clear()
                 self.async_update_callback()
 
                 # Maintain connection for 5min seconds until next update
                 # We will be notified of most changes during this time
                 for _ in range(150):
                     await self.client.is_connected()
+                    await self.update_queued_attributes()
                     await asyncio.sleep(2)
 
         except Exception as e:
@@ -208,11 +211,22 @@ class EmberMug:
         except Exception as e:
             _LOGGER.warning(f"Failed to subscribe to state attr {e}")
 
+    async def update_queued_attributes(self) -> None:
+        """Update all attributes in queue."""
+        if not self.updates_queued:
+            return
+        _LOGGER.debug(f"Queued updates {self.updates_queued}")
+        queued_attributes = set(self.updates_queued)
+        self.updates_queued.clear()
+        for attr in queued_attributes:
+            await getattr(self, f"update_{attr}")()
+        self.async_update_callback()
+
     def push_notify(self, sender: int, data: bytearray):
         """Push events from the mug to indicate changes."""
         event_id = data[0]
         _LOGGER.info(f"Push received from Mug ({event_id})")
-        update = None
+
         # Check known IDs
         if event_id in [1, 2, 3]:
             # 1, 2 and 3 : Battery Change
@@ -220,27 +234,21 @@ class EmberMug:
                 # 2 -> Placed on charger, 3 -> Removed from charger
                 self.on_charging_base = event_id == 2
             # All indicate changes in battery
-            update = self.update_battery()
+            self.updates_queued.add("battery")
         elif event_id == 4:
             # 4 : Check target temp?
-            update = self.update_target_temp()
+            self.updates_queued.add("target_temp")
         elif event_id == 5:
             # 5 : Check current temp
-            update = self.update_current_temp()
+            self.updates_queued.add("current_temp")
         elif event_id == 7:
             # 7 : Check level
-            update = self.update_liquid_level()
+            self.updates_queued.add("liquid_level")
         elif event_id == 8:
             # 8 : Check liquid state
-            update = self.update_liquid_state()
+            self.updates_queued.add("liquid_state")
         else:
             _LOGGER.warning(f"Unknown event_id pushed: {event_id}")
-
-        if update is not None:
-            # run async update function in hass loop
-            asyncio.run_coroutine_threadsafe(update, self.hass.loop).result()
-            # Trigger update in HASS
-            self.async_update_callback()
 
     async def update_all(self) -> bool:
         """Update all attributes."""
