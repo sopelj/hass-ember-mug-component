@@ -7,7 +7,7 @@ from .const import ATTR_RGB_COLOR, LED_COLOUR_UUID, TARGET_TEMP_UUID
 
 async def set_led_colour(entity, service_call) -> None:
     """Set LED colour of mug."""
-    params = dict(service_call.data["params"])
+    params = service_call.data.get("params")
     _LOGGER.info(
         f"Called service set led colour with entity {entity} and {service_call} {params})"
     )
