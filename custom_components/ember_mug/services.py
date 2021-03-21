@@ -3,7 +3,7 @@ from bleak import BleakClient, discover
 
 from . import _LOGGER
 from .const import ATTR_RGB_COLOR, LED_COLOUR_UUID, TARGET_TEMP_UUID
-from .sensor import EmberMugSensor
+from .ember_mug import EmberMugSensor
 
 
 async def set_led_colour(entity: EmberMugSensor, call) -> None:

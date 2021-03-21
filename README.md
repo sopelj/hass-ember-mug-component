@@ -15,14 +15,13 @@ Add to HACS as custom repository:
 
 <https://github.com/sopelj/hass-ember-mug-component>
 
-And then add to your configuration.yaml and choose which Gyms you want to add sensors for:
+And then add to your configuration.yaml and add your mugs:
 
 ```yaml
-sensors:
-  - platform: ember_mug
-    mac: C9:0F:59:D6:33:F9
-    name: "Jesse's Ember Mug"  # Optional Name
-    temperature_unit: "C"  # Optional: Default [C]
+ember_mug:
+  mac: C9:0F:59:D6:33:F9
+  name: "Jesse's Ember Mug"  # Optional Name
+  temperature_unit: "C"  # Optional: Default [C]
 ```
 
 For some reason, when Home Assistant boots up it will only pair with the mug if it is in pairing mode.
