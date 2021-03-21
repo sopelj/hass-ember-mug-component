@@ -15,7 +15,7 @@ Add to HACS as custom repository:
 
 <https://github.com/sopelj/hass-ember-mug-component>
 
-And then add to your configuration.yaml and add your mug(s):
+And then add to your configuration.yaml and choose which Gyms you want to add sensors for:
 
 ```yaml
 sensors:

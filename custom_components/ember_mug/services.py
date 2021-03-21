@@ -1,15 +1,9 @@
 """Services for updating Mug information."""
-from __future__ import annotations
-
-from typing import TYPE_CHECKING
-
 from bleak import BleakClient, discover
 
 from . import _LOGGER
 from .const import ATTR_RGB_COLOR, LED_COLOUR_UUID, TARGET_TEMP_UUID
-
-if TYPE_CHECKING:
-    from . import EmberMugSensor
+from .sensor import EmberMugSensor
 
 
 async def set_led_colour(entity: EmberMugSensor, call) -> None:

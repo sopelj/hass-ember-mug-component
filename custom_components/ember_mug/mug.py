@@ -1,15 +1,14 @@
 """Reusable class for Ember Mug connection and data."""
-from __future__ import annotations
 
 import asyncio
 import contextlib
-import logging
 from typing import Callable
 
 from bleak import BleakClient
 from bleak.exc import BleakError
 from homeassistant.helpers.typing import HomeAssistantType
 
+from . import _LOGGER
 from .const import (
     BATTERY_UUID,
     CURRENT_TEMP_UUID,
@@ -21,8 +20,6 @@ from .const import (
     UNKNOWN_READ_UUIDS,
     UNKNOWN_STATE_UUID,
 )
-
-_LOGGER = logging.getLogger(__name__)
 
 
 class EmberMug:
