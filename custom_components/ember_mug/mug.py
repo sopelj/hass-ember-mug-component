@@ -20,7 +20,6 @@ from .const import (  # UUID_TEMPERATURE_UNIT,
     UUID_MUG_ID,
     UUID_MUG_NAME,
     UUID_PUSH_EVENT,
-    UUID_STATISTICS,
     UUID_TARGET_TEMPERATURE,
     UUID_UDSK,
 )
@@ -84,8 +83,9 @@ class EmberMug:
                 await self.update_all()
                 self.async_update_callback()
 
-                # Maintain connection for 30 seconds until next update
-                for _ in range(15):
+                # Maintain connection for 5min seconds until next update
+                # We will be notified of most changes during this time
+                for _ in range(150):
                     await self.client.is_connected()
                     await asyncio.sleep(2)
 
@@ -164,11 +164,11 @@ class EmberMug:
 
     async def update_udsk(self) -> None:
         """Get mug udsk from gatt."""
-        self.name = str(await self.client.read_gatt_char(UUID_UDSK))
+        self.udsk = str(await self.client.read_gatt_char(UUID_UDSK))
 
     async def update_dsk(self) -> None:
         """Get mug dsk from gatt."""
-        self.name = str(await self.client.read_gatt_char(UUID_DSK))
+        self.dsk = str(await self.client.read_gatt_char(UUID_DSK))
 
     async def connect(self) -> None:
         """Try 10 times to connect and if we fail wait five minutes and try again. If connected also subscribe to state notifications."""
@@ -199,10 +199,8 @@ class EmberMug:
             try:
                 serial_number = await self.client.read_gatt_char(UUID_MUG_ID)
                 self.serial_number = serial_number[7:].decode("utf8")
-            except BleakError:
-                _LOGGER.warning("Failed to subscribe to state attr")
             except Exception as e:
-                _LOGGER.error(f"Unexpected error occurred connecting to notify {e}")
+                _LOGGER.warning(f"Failed to get mug ID {e}")
 
         try:
             _LOGGER.info("Try to subscribe to Push Events")
@@ -210,32 +208,39 @@ class EmberMug:
         except Exception as e:
             _LOGGER.warning(f"Failed to subscribe to state attr {e}")
 
-        try:
-            _LOGGER.info("Try to subscribe to Statistics")
-            await self.client.start_notify(UUID_STATISTICS, self.statistics_notify)
-        except Exception as e:
-            _LOGGER.warning(f"Failed to subscribe to statistics {e}")
-
     def push_notify(self, sender: int, data: bytearray):
-        """
-        Not 100% certain what all the state numbers mean.
+        """Push events from the mug to indicate changes."""
+        event_id = data[0]
+        _LOGGER.info(f"Push received from Mug ({event_id})")
+        update = None
+        # Check known IDs
+        if event_id in [1, 2, 3]:
+            # 1, 2 and 3 : Battery Change
+            if event_id in [2, 3]:
+                # 2 -> Placed on charger, 3 -> Removed from charger
+                self.on_charging_base = event_id == 2
+            # All indicate changes in battery
+            update = self.update_battery()
+        elif event_id == 4:
+            # 4 : Check target temp?
+            update = self.update_target_temp()
+        elif event_id == 5:
+            # 5 : Check current temp
+            update = self.update_current_temp()
+        elif event_id == 7:
+            # 7 : Check level
+            update = self.update_liquid_level()
+        elif event_id == 8:
+            # 8 : Check liquid state
+            update = self.update_liquid_state()
+        else:
+            _LOGGER.warning(f"Unknown event_id pushed: {event_id}")
 
-        https://github.com/orlopau/ember-mug/blob/master/docs/mug-state.md
-        """
-        latest_push = data[0]
-        if latest_push not in [1, self.latest_push]:
-            _LOGGER.info(f"State changed from {self.latest_push} to {latest_push}")
-            # 2 : On Charger/Charging ?
-            # 2 -> 3 : Removed from charger (ie. discharging)
-            # 3 -> 2 : Placed on charger.
-            # 2 -> 5 : Liquid added whilst on charger?
-            # 2 -> 5 : On charger with liquid. Not charging?
-            self.latest_push = latest_push
+        if update is not None:
+            # run async update function in hass loop
+            asyncio.run_coroutine_threadsafe(update, self.hass.loop).result()
+            # Trigger update in HASS
             self.async_update_callback()
-
-    def statistics_notify(self, sender: int, data: bytearray):
-        """Notify when stats received."""
-        _LOGGER.debug(f"Signal from unknown sender: {sender}, value: {data}")
 
     async def update_all(self) -> bool:
         """Update all attributes."""
@@ -265,9 +270,6 @@ class EmberMug:
         """Stop Loop and disconnect."""
         with contextlib.suppress(BleakError):
             await self.client.stop_notify(UUID_PUSH_EVENT)
-
-        with contextlib.suppress(BleakError):
-            await self.client.stop_notify(UUID_STATISTICS)
 
         self._loop = False
         with contextlib.suppress(BleakError):
