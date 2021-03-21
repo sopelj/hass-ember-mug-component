@@ -23,7 +23,6 @@ from .const import (  # UUID_TEMPERATURE_UNIT,
     UUID_STATISTICS,
     UUID_TARGET_TEMPERATURE,
     UUID_UDSK,
-    UUID_VOLUME,
 )
 
 
@@ -59,7 +58,6 @@ class EmberMug:
         self.name = None
         self.udsk = None
         self.dsk = None
-        self.volume = None
 
     @property
     def colour(self) -> str:
@@ -172,10 +170,6 @@ class EmberMug:
         """Get mug dsk from gatt."""
         self.name = str(await self.client.read_gatt_char(UUID_DSK))
 
-    async def update_volume(self) -> None:
-        """Get mug volume from gatt."""
-        self.name = str(await self.client.read_gatt_char(UUID_VOLUME))
-
     async def connect(self) -> None:
         """Try 10 times to connect and if we fail wait five minutes and try again. If connected also subscribe to state notifications."""
         connected = False
@@ -252,7 +246,6 @@ class EmberMug:
             "battery",
             "liquid_level",
             "liquid_state",
-            "volume",
             "udsk",
             "dsk",
             "name",

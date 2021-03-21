@@ -136,7 +136,6 @@ class EmberMugSensor(Entity):
             "on_charging_base": self.mug.on_charging_base,
             "liquid_level": self.mug.liquid_level,
             "liquid_state": self.mug.liquid_state_label,
-            "volume": self.mug.volume,
             "udsk": self.mug.udsk,
             "dsk": self.mug.dsk,
             "name": self.mug.name,
