@@ -1,14 +1,15 @@
 """Reusable class for Ember Mug connection and data."""
+from __future__ import annotations
 
 import asyncio
 import contextlib
+import logging
 from typing import Callable
 
 from bleak import BleakClient
 from bleak.exc import BleakError
 from homeassistant.helpers.typing import HomeAssistantType
 
-from . import _LOGGER
 from .const import (
     BATTERY_UUID,
     CURRENT_TEMP_UUID,
@@ -16,10 +17,12 @@ from .const import (
     SERIAL_NUMBER_UUID,
     STATE_UUID,
     TARGET_TEMP_UUID,
+    UNKNOWN_NOTIFY_UUID,
     UNKNOWN_READ_UUIDS,
     UNKNOWN_STATE_UUID,
-    UNKNOWN_NOTIFY_UUID,
 )
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class EmberMug:
@@ -121,7 +124,7 @@ class EmberMug:
     async def update_second_state(self) -> None:
         """Get second state uuid from mug gatt."""
         state_bytes = await self.client.read_gatt_char(UNKNOWN_STATE_UUID)
-        second_state = int(second_state[0])
+        second_state = int(state_bytes[0])
         if self.second_state != second_state:
             _LOGGER.debug(f"Other state {self.second_state}")
             self.second_state = second_state
@@ -206,7 +209,7 @@ class EmberMug:
 
     def unknown_notify(self, sender: int, data: bytearray):
         """Not sure what this one does, but log events."""
-        _LOGGER.debug(f"Singal from unknown sender: {sender}, value: {data}")
+        _LOGGER.debug(f"Signal from unknown sender: {sender}, value: {data}")
 
     async def update_all(self) -> bool:
         """Update all attributes."""
