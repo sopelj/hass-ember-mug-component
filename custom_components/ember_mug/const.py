@@ -53,3 +53,6 @@ ICON_UNAVAILABLE = "mdi:coffee-off"
 
 ATTR_RGB_COLOR = "rgb_color"
 SERVICE_SET_LED_COLOUR = "set_led_colour"
+
+ATTR_TARGET_TEMP = "target_temp"
+SERVICE_SET_TARGET_TEMP = "set_target_temp"

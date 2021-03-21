@@ -25,7 +25,13 @@ from homeassistant.helpers.typing import (
 import voluptuous as vol
 
 from . import _LOGGER
-from .const import ATTR_RGB_COLOR, ICON_DEFAULT, SERVICE_SET_LED_COLOUR
+from .const import (
+    ATTR_RGB_COLOR,
+    ATTR_TARGET_TEMP,
+    ICON_DEFAULT,
+    SERVICE_SET_LED_COLOUR,
+    SERVICE_SET_TARGET_TEMP,
+)
 from .mug import EmberMug
 
 # Schema
@@ -45,6 +51,10 @@ SET_LED_COLOUR_SCHEMA = {
     ),
 }
 
+SET_TARGET_TEMP_SCHEMA = {
+    vol.Required(ATTR_TARGET_TEMP): cv.positive_float,
+}
+
 
 async def async_setup_platform(
     hass: HomeAssistantType,
@@ -53,7 +63,7 @@ async def async_setup_platform(
     discovery_info: Optional[DiscoveryInfoType] = None,
 ) -> None:
     """Add Mug Sensor Entity to HASS."""
-    from .services import set_led_colour
+    from .services import set_led_colour, set_target_temp
 
     _LOGGER.debug("Setup platform")
 
@@ -62,6 +72,9 @@ async def async_setup_platform(
     platform = entity_platform.current_platform.get()
     platform.async_register_entity_service(
         SERVICE_SET_LED_COLOUR, SET_LED_COLOUR_SCHEMA, set_led_colour
+    )
+    platform.async_register_entity_service(
+        SERVICE_SET_TARGET_TEMP, SET_TARGET_TEMP_SCHEMA, set_target_temp
     )
 
 
