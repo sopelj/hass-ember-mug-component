@@ -2,7 +2,6 @@
 import logging
 
 import homeassistant.helpers.config_validation as cv
-from homeassistant.helpers.entity_component import EntityComponent
 from homeassistant.helpers.typing import ConfigType, HomeAssistantType
 import voluptuous as vol
 
@@ -19,19 +18,10 @@ SET_LED_COLOUR_SCHEMA = {
 
 
 async def async_setup(hass: HomeAssistantType, config: ConfigType) -> bool:
-    """Create EntityComponent to facilitate service calls."""
+    """Register service calls."""
     from .services import set_led_colour
 
-    component = hass.data[DOMAIN] = EntityComponent(_LOGGER, DOMAIN, hass)
-    await component.async_setup(config)
-    component.async_register_entity_service(
-        SERVICE_SET_LED_COLOUR,
-        cv.make_entity_service_schema(SET_LED_COLOUR_SCHEMA),
-        set_led_colour,
+    hass.services.async_register(
+        DOMAIN, SERVICE_SET_LED_COLOUR, set_led_colour, SET_LED_COLOUR_SCHEMA
     )
     return True
-
-
-async def async_setup_entry(hass: HomeAssistantType, entry) -> bool:
-    """Set up a config entry."""
-    return await hass.data[DOMAIN].async_setup_entry(entry)

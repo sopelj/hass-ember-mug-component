@@ -2,10 +2,8 @@ set_led_colour:
   name: Set LED Colour
   description: >
     Set the colour of the LED on the mug
+  target:
   fields:
-    entity_id:
-      description: Entity ID of the target Ember Mug.
-      example: "sensor.my_ember_mug"
     rgb_color:
       name: rgb-color
       description: Color for the LED in RGB format.
