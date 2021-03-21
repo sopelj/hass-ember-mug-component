@@ -15,10 +15,6 @@ from homeassistant.const import (
 )
 from homeassistant.core import callback
 import homeassistant.helpers.config_validation as cv
-from homeassistant.helpers.config_validation import (  # noqa: F401
-    PLATFORM_SCHEMA,
-    PLATFORM_SCHEMA_BASE,
-)
 from homeassistant.helpers.device_registry import format_mac
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.entity_component import EntityComponent
@@ -28,16 +24,28 @@ import voluptuous as vol
 from .const import ATTR_RGB_COLOR, DOMAIN, ICON_DEFAULT, SERVICE_SET_LED_COLOUR
 from .mug import EmberMug
 
+ENTITY_ID_FORMAT = DOMAIN + ".{}"
+
 # Schema
-PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
+PLATFORM_SCHEMA = vol.Schema(
     {
-        vol.Required(CONF_MAC): cv.matches_regex(
-            r"^([0-9A-Fa-f]{2}:){5}([0-9A-Fa-f]{2})$"
+        DOMAIN: vol.All(
+            cv.ensure_list,
+            [
+                vol.Schema(
+                    {
+                        vol.Required(CONF_MAC): cv.matches_regex(
+                            r"^([0-9A-Fa-f]{2}:){5}([0-9A-Fa-f]{2})$"
+                        ),
+                        vol.Optional(CONF_NAME): cv.string,
+                        vol.Optional(CONF_TEMPERATURE_UNIT): cv.temperature_unit,
+                    }
+                )
+            ],
         ),
-        vol.Optional(CONF_NAME): cv.string,
-        vol.Optional(CONF_TEMPERATURE_UNIT): cv.temperature_unit,
     }
 )
+
 SET_LED_COLOUR_SCHEMA = {
     vol.Required(ATTR_RGB_COLOR): vol.All(
         vol.ExactSequence((cv.byte,) * 3), vol.Coerce(tuple)
