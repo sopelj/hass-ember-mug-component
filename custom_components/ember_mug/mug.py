@@ -1,8 +1,9 @@
 """Reusable class for Ember Mug connection and data."""
 
 import asyncio
-from base64 import b64encode
+import base64
 import contextlib
+import re
 from typing import Callable, Tuple, Union
 
 from bleak import BleakClient
@@ -28,7 +29,7 @@ from .const import (  # UUID_TEMPERATURE_UNIT,
 
 def decode_byte_string(data: Union[bytes, bytearray]) -> str:
     """Convert bytes to text as Ember expects."""
-    return b64encode(data).decode("utf8")
+    return re.sub("(\\r|\\n)", "", base64.encodebytes(data).decode("utf8"))
 
 
 class EmberMug:
