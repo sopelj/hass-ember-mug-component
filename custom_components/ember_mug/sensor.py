@@ -26,10 +26,12 @@ import voluptuous as vol
 
 from . import _LOGGER
 from .const import (
+    ATTR_MUG_NAME,
     ATTR_RGB_COLOR,
     ATTR_TARGET_TEMP,
     ICON_DEFAULT,
     SERVICE_SET_LED_COLOUR,
+    SERVICE_SET_MUG_NAME,
     SERVICE_SET_TARGET_TEMP,
 )
 from .mug import EmberMug
@@ -55,6 +57,10 @@ SET_TARGET_TEMP_SCHEMA = {
     vol.Required(ATTR_TARGET_TEMP): cv.positive_float,
 }
 
+SET_MUG_NAME_SCHEMA = {
+    vol.Required(ATTR_MUG_NAME): cv.matches_regex(r"^[a-zA-Z\s]+$"),
+}
+
 
 async def async_setup_platform(
     hass: HomeAssistantType,
@@ -63,7 +69,7 @@ async def async_setup_platform(
     discovery_info: Optional[DiscoveryInfoType] = None,
 ) -> None:
     """Add Mug Sensor Entity to HASS."""
-    from .services import set_led_colour, set_target_temp
+    from .services import set_led_colour, set_target_temp, set_mug_name
 
     _LOGGER.debug("Setup platform")
 
@@ -75,6 +81,9 @@ async def async_setup_platform(
     )
     platform.async_register_entity_service(
         SERVICE_SET_TARGET_TEMP, SET_TARGET_TEMP_SCHEMA, set_target_temp
+    )
+    platform.async_register_entity_service(
+        SERVICE_SET_MUG_NAME, SET_MUG_NAME_SCHEMA, set_mug_name
     )
 
 
