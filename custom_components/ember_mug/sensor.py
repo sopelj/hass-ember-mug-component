@@ -131,14 +131,15 @@ class EmberMugSensor(Entity):
             "led_colour": self.mug.colour,
             "current_temp": self.mug.current_temp,
             "target_temp": self.mug.target_temp,
-            "latest_push": self.mug.latest_push,
+            "latest_push": self.mug.latest_event_id,
             "serial_number": self.mug.serial_number,
             "on_charging_base": self.mug.on_charging_base,
             "liquid_level": self.mug.liquid_level,
             "liquid_state": self.mug.liquid_state_label,
             "udsk": self.mug.udsk,
             "dsk": self.mug.dsk,
-            "name": self.mug.name,
+            "mug_name": self.mug.mug_name,
+            "mug_id": self.mug.mug_id,
         }
 
     @property

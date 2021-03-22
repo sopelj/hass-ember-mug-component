@@ -1,8 +1,9 @@
 """Reusable class for Ember Mug connection and data."""
 
 import asyncio
+from base64 import b64encode
 import contextlib
-from typing import Callable, Tuple
+from typing import Callable, Tuple, Union
 
 from bleak import BleakClient
 from bleak.exc import BleakError
@@ -23,6 +24,11 @@ from .const import (  # UUID_TEMPERATURE_UNIT,
     UUID_TARGET_TEMPERATURE,
     UUID_UDSK,
 )
+
+
+def decode_byte_string(data: Union[bytes, bytearray]) -> str:
+    """Convert bytes to text as Ember expects."""
+    return b64encode(data).decode("utf8")
 
 
 class EmberMug:
@@ -46,7 +52,7 @@ class EmberMug:
         self.available = True
         self.updates_queued = set()
 
-        self.latest_push: int = None
+        self.latest_event_id: int = None
         self.liquid_level: int = None
         self.serial_number = None
         self.led_colour_rgba = [255, 255, 255, 255]
@@ -55,7 +61,8 @@ class EmberMug:
         self.battery: float = None
         self.on_charging_base: bool = None
         self.liquid_state = None
-        self.name = None
+        self.mug_name = None
+        self.mug_id: str = None
         self.udsk = None
         self.dsk = None
 
@@ -161,17 +168,23 @@ class EmberMug:
         liquid_state_bytes = await self.client.read_gatt_char(UUID_LIQUID_STATE)
         self.liquid_state = int(liquid_state_bytes[0])
 
-    async def update_name(self) -> None:
+    async def update_mug_name(self) -> None:
         """Get mug name from gatt."""
-        self.name = str(await self.client.read_gatt_char(UUID_MUG_NAME))
+        name_bytes: bytearray = await self.client.read_gatt_char(UUID_MUG_NAME)
+        self.mug_name = bytes(name_bytes).decode("utf8")
+
+    async def set_mug_name(self, name: str) -> None:
+        """Assign new name to mug."""
+        await self.client.is_connected()
+        await self.client.write_gatt_char(UUID_MUG_NAME, name.encode("utf8"), False)
 
     async def update_udsk(self) -> None:
         """Get mug udsk from gatt."""
-        self.udsk = str(await self.client.read_gatt_char(UUID_UDSK))
+        self.udsk = str(list(await self.client.read_gatt_char(UUID_UDSK)))
 
     async def update_dsk(self) -> None:
         """Get mug dsk from gatt."""
-        self.dsk = str(await self.client.read_gatt_char(UUID_DSK))
+        self.dsk = str(list(await self.client.read_gatt_char(UUID_DSK)))
 
     async def connect(self) -> None:
         """Try 10 times to connect and if we fail wait five minutes and try again. If connected also subscribe to state notifications."""
@@ -182,7 +195,7 @@ class EmberMug:
                 await self.client.pair()
                 connected = True
                 _LOGGER.info(f"Connected to {self.mac_address}")
-                continue
+                break
             except BleakError as e:
                 _LOGGER.error(f"Init: {e} on attempt {i}. waiting 30sec")
                 asyncio.sleep(30)
@@ -200,8 +213,9 @@ class EmberMug:
 
         if self.serial_number is None:
             try:
-                serial_number = await self.client.read_gatt_char(UUID_MUG_ID)
-                self.serial_number = serial_number[7:].decode("utf8")
+                full_mug_id = await self.client.read_gatt_char(UUID_MUG_ID)
+                self.mug_id = decode_byte_string(full_mug_id[:6])
+                self.serial_number = full_mug_id[7:].decode("utf8")
             except Exception as e:
                 _LOGGER.warning(f"Failed to get mug ID {e}")
 
@@ -225,7 +239,10 @@ class EmberMug:
     def push_notify(self, sender: int, data: bytearray):
         """Push events from the mug to indicate changes."""
         event_id = data[0]
-        _LOGGER.info(f"Push received from Mug ({event_id})")
+        if self.latest_event_id == event_id:
+            return  # Skip to avoid unnecessary calls
+        _LOGGER.info(f"Push event received from Mug ({event_id})")
+        self.latest_event_id = event_id
 
         # Check known IDs
         if event_id in [1, 2, 3]:
@@ -259,9 +276,9 @@ class EmberMug:
             "battery",
             "liquid_level",
             "liquid_state",
+            "mug_name",
             "udsk",
             "dsk",
-            "name",
         ]
         try:
             if not await self.client.is_connected():
