@@ -8,10 +8,11 @@ from typing import Callable, Tuple, Union
 
 from bleak import BleakClient
 from bleak.exc import BleakError
+from homeassistant.const import TEMP_CELSIUS, TEMP_FAHRENHEIT
 from homeassistant.helpers.typing import HomeAssistantType
 
 from . import _LOGGER
-from .const import (  # UUID_TEMPERATURE_UNIT,
+from .const import (
     LIQUID_STATES,
     UUID_BATTERY,
     UUID_DRINK_TEMPERATURE,
@@ -23,6 +24,7 @@ from .const import (  # UUID_TEMPERATURE_UNIT,
     UUID_MUG_NAME,
     UUID_PUSH_EVENT,
     UUID_TARGET_TEMPERATURE,
+    UUID_TEMPERATURE_UNIT,
     UUID_UDSK,
 )
 
@@ -49,19 +51,20 @@ class EmberMug:
         self.async_update_callback = async_update_callback
         self.mac_address = mac_address
         self.client = BleakClient(mac_address)
-        self.use_metric = use_metric
         self.available = True
         self.updates_queued = set()
+        self.use_metric = use_metric
 
-        self.latest_event_id: int = None
-        self.liquid_level: int = None
-        self.serial_number = None
         self.led_colour_rgba = [255, 255, 255, 255]
+        self.latest_event_id: int = None
+        self.liquid_level: float = None
+        self.serial_number: str = None
         self.current_temp: float = None
         self.target_temp: float = None
+        self.unit: str = TEMP_CELSIUS
         self.battery: float = None
         self.on_charging_base: bool = None
-        self.liquid_state = None
+        self.liquid_state: str = None
         self.mug_name = None
         self.mug_id: str = None
         self.udsk: str = None
@@ -159,7 +162,7 @@ class EmberMug:
     async def update_liquid_level(self) -> None:
         """Get liquid level from mug gatt."""
         liquid_level_bytes = await self.client.read_gatt_char(UUID_LIQUID_LEVEL)
-        liquid_level = int(liquid_level_bytes[0])
+        liquid_level = round((int(liquid_level_bytes[0]) / 30) * 100, 2)
         if self.liquid_level != liquid_level:
             _LOGGER.debug(f"Liquid level now: {self.liquid_level}")
             self.liquid_level = liquid_level
@@ -186,6 +189,13 @@ class EmberMug:
     async def update_dsk(self) -> None:
         """Get mug dsk from gatt."""
         self.dsk = decode_byte_string(await self.client.read_gatt_char(UUID_DSK))
+
+    async def update_temperature_unit(self) -> None:
+        """Get mug temp unit."""
+        unit_bytes = await self.client.read_gatt_char(UUID_TEMPERATURE_UNIT)
+        self.temperature_unit = (
+            TEMP_CELSIUS if int(unit_bytes) == 0 else TEMP_FAHRENHEIT
+        )
 
     async def connect(self) -> None:
         """Try 10 times to connect and if we fail wait five minutes and try again. If connected also subscribe to state notifications."""
@@ -274,6 +284,7 @@ class EmberMug:
             "led_colour",
             "current_temp",
             "target_temp",
+            "temperature_unit",
             "battery",
             "liquid_level",
             "liquid_state",

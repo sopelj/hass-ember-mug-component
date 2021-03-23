@@ -140,6 +140,7 @@ class EmberMugSensor(Entity):
             "led_colour": self.mug.colour,
             "current_temp": self.mug.current_temp,
             "target_temp": self.mug.target_temp,
+            CONF_TEMPERATURE_UNIT: self.mug.temperature_unit,
             "latest_push": self.mug.latest_event_id,
             "serial_number": self.mug.serial_number,
             "on_charging_base": self.mug.on_charging_base,
