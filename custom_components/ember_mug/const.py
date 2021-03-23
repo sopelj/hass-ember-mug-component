@@ -47,7 +47,7 @@ LIQUID_STATES = {
     2: "Filling",
     4: "Cooling",
     5: "Heating",
-    6: "Air temp",
+    6: "Perfect",
 }
 
 UUID_MUG_ID = UUID("FC54000D-236C-4C94-8FA9-944A3E5353FA")

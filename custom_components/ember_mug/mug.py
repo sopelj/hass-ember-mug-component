@@ -29,7 +29,7 @@ from .const import (  # UUID_TEMPERATURE_UNIT,
 
 def decode_byte_string(data: Union[bytes, bytearray]) -> str:
     """Convert bytes to text as Ember expects."""
-    return re.sub("(\\r|\\n)", "", base64.encodebytes(data).decode("utf8"))
+    return re.sub("(\\r|\\n)", "", base64.encodebytes(data + b"===").decode("utf8"))
 
 
 class EmberMug:
@@ -64,8 +64,8 @@ class EmberMug:
         self.liquid_state = None
         self.mug_name = None
         self.mug_id: str = None
-        self.udsk = None
-        self.dsk = None
+        self.udsk: str = None
+        self.dsk: str = None
 
     @property
     def colour(self) -> str:
@@ -181,11 +181,11 @@ class EmberMug:
 
     async def update_udsk(self) -> None:
         """Get mug udsk from gatt."""
-        self.udsk = str(list(await self.client.read_gatt_char(UUID_UDSK)))
+        self.udsk = decode_byte_string(await self.client.read_gatt_char(UUID_UDSK))
 
     async def update_dsk(self) -> None:
         """Get mug dsk from gatt."""
-        self.dsk = str(list(await self.client.read_gatt_char(UUID_DSK)))
+        self.dsk = decode_byte_string(await self.client.read_gatt_char(UUID_DSK))
 
     async def connect(self) -> None:
         """Try 10 times to connect and if we fail wait five minutes and try again. If connected also subscribe to state notifications."""
