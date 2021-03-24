@@ -27,7 +27,6 @@ from .const import (
     UUID_CONTROL_REGISTER_DATA,
     UUID_DRINK_TEMPERATURE,
     UUID_DSK,
-    UUID_LAST_LOCATION,
     UUID_LED,
     UUID_LIQUID_LEVEL,
     UUID_LIQUID_STATE,
@@ -92,7 +91,6 @@ class EmberMug:
         self.mug_id: str = None
         self.udsk: str = None
         self.dsk: str = None
-        self.location = None
         self.date_time_zone = None
         self.firmware_info = {}
         # Battery charge info (Read/Write)
@@ -208,7 +206,9 @@ class EmberMug:
     async def set_mug_name(self, name: str) -> None:
         """Assign new name to mug."""
         await self.client.pair()
-        await self.client.write_gatt_char(UUID_MUG_NAME, name.encode("utf8"), False)
+        await self.client.write_gatt_char(
+            UUID_MUG_NAME, bytearray(name.encode("utf8")), False
+        )
 
     async def update_udsk(self) -> None:
         """Get mug udsk from gatt."""
@@ -231,10 +231,6 @@ class EmberMug:
             UUID_CONTROL_REGISTER_DATA
         )
         self.battery_voltage = str(battery_voltage_bytes)
-
-    async def update_location(self) -> None:
-        """Get location data."""
-        self.location = str(await self.client.read_gatt_char(UUID_LAST_LOCATION))
 
     async def update_date_time_zone(self) -> None:
         """Get date and time zone."""
@@ -344,7 +340,6 @@ class EmberMug:
             "mug_name",
             "udsk",
             "dsk",
-            "location",
             "date_time_zone",
             "battery_voltage",
             "firmware_info",

@@ -147,7 +147,6 @@ class EmberMugSensor(Entity):
             "liquid_level": self.mug.liquid_level,
             "liquid_state": self.mug.liquid_state_label,
             "liquid_state_label": self.mug.liquid_state_label,
-            "location": self.mug.location,
             "date_time_zone": self.mug.date_time_zone,
             "battery_voltage": self.mug.battery_voltage,
             "firmware_info": self.mug.firmware_info,
