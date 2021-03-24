@@ -170,7 +170,7 @@ class EmberMugSensor(Entity):
     @property
     def icon(self) -> str:
         """Icon representation for this mug."""
-        return ICON_EMPTY if self.mug.liquid_level <= 5 else ICON_DEFAULT
+        return ICON_EMPTY if (self.mug.liquid_level or 0) <= 5 else ICON_DEFAULT
 
     @property
     def should_poll(self) -> bool:
