@@ -30,6 +30,8 @@ from .const import (
     ATTR_RGB_COLOR,
     ATTR_TARGET_TEMP,
     ICON_DEFAULT,
+    MAC_ADDRESS_REGEX,
+    MUG_NAME_REGEX,
     SERVICE_SET_LED_COLOUR,
     SERVICE_SET_MUG_NAME,
     SERVICE_SET_TARGET_TEMP,
@@ -39,9 +41,7 @@ from .mug import EmberMug
 # Schema
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {
-        vol.Required(CONF_MAC): cv.matches_regex(
-            r"^([0-9A-Fa-f]{2}:){5}([0-9A-Fa-f]{2})$"
-        ),
+        vol.Required(CONF_MAC): cv.matches_regex(MAC_ADDRESS_REGEX),
         vol.Optional(CONF_NAME): cv.string,
         vol.Optional(CONF_TEMPERATURE_UNIT): cv.temperature_unit,
     }
@@ -58,7 +58,7 @@ SET_TARGET_TEMP_SCHEMA = {
 }
 
 SET_MUG_NAME_SCHEMA = {
-    vol.Required(ATTR_MUG_NAME): cv.matches_regex(r"^[a-zA-Z\s]+$"),
+    vol.Required(ATTR_MUG_NAME): cv.matches_regex(MUG_NAME_REGEX),
 }
 
 
@@ -146,6 +146,11 @@ class EmberMugSensor(Entity):
             "on_charging_base": self.mug.on_charging_base,
             "liquid_level": self.mug.liquid_level,
             "liquid_state": self.mug.liquid_state_label,
+            "liquid_state_label": self.mug.liquid_state_label,
+            "location": self.mug.location,
+            "date_time_zone": self.mug.date_time_zone,
+            "battery_voltage": self.mug.battery_voltage,
+            "firmware_info": self.mug.firmware_info,
             "udsk": self.mug.udsk,
             "dsk": self.mug.dsk,
             "mug_name": self.mug.mug_name,
@@ -165,7 +170,7 @@ class EmberMugSensor(Entity):
     @property
     def icon(self) -> str:
         """Icon representation for this mug."""
-        return self._icon
+        return
 
     @property
     def should_poll(self) -> bool:

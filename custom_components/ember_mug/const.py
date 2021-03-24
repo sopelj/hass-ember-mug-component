@@ -2,8 +2,8 @@
 Constants used for mug.
 
 Most of these are UUIDs.
-The purpose of all the UUIDs is not yet known. Some is guessing and testings.
-Starting point was from this repo: https://github.com/orlopau/ember-mug/ Thank you!
+Since these are not public some were found on this repo https://github.com/orlopau/ember-mug/ (Thank you!)
+Some found from testing and from the App.
 """
 from uuid import UUID
 
@@ -22,74 +22,111 @@ ATTR_MUG_NAME = "mug_name"
 SERVICE_SET_MUG_NAME = "set_mug_name"
 
 # Name of mug in byte string (Read/Write)
-UUID_MUG_NAME = UUID("FC540001-236C-4C94-8FA9-944A3E5353FA")
+UUID_MUG_NAME = UUID("fc540001-236c-4c94-8fa9-944a3e5353fa")
 
 # intValue(18, 0) -> temp (Read)
-UUID_DRINK_TEMPERATURE = UUID("FC540002-236C-4C94-8FA9-944A3E5353FA")
+UUID_DRINK_TEMPERATURE = UUID("fc540002-236c-4c94-8fa9-944a3e5353fa")
 
 # intValue(18, 0) -> temp (Read/Write)
-UUID_TARGET_TEMPERATURE = UUID("FC540003-236C-4C94-8FA9-944A3E5353FA")
+UUID_TARGET_TEMPERATURE = UUID("fc540003-236c-4c94-8fa9-944a3e5353fa")
 
 # intValue(17, 0) == 0 -> Celsius (Read/Write)
-UUID_TEMPERATURE_UNIT = UUID("FC540004-236C-4C94-8FA9-944A3E5353FA")
+UUID_TEMPERATURE_UNIT = UUID("fc540004-236c-4c94-8fa9-944a3e5353fa")
 
 # intValue(17, 0) -> Level (Between 0 -> 30 ?) 30 100% ?
-UUID_LIQUID_LEVEL = UUID("FC540005-236C-4C94-8FA9-944A3E5353FA")
+UUID_LIQUID_LEVEL = UUID("fc540005-236c-4c94-8fa9-944a3e5353fa")
 
 # Battery Info (Read)
-# intValue(17, 0) -> float %
-# intValue(17, 1) -> int == 1 -> connected to charger
-UUID_BATTERY = UUID("FC540007-236C-4C94-8FA9-944A3E5353FA")
+# [0] -> float %
+# [1] -> int == 1 -> connected to charger
+UUID_BATTERY = UUID("fc540007-236c-4c94-8fa9-944a3e5353fa")
 
 # Integer representing what it is doing with the liquid (Read)
-UUID_LIQUID_STATE = UUID("FC540008-236C-4C94-8FA9-944A3E5353FA")
-LIQUID_STATES = {
-    1: "Empty",
-    2: "Filling",
-    4: "Cooling",
-    5: "Heating",
-    6: "Perfect",
+UUID_LIQUID_STATE = UUID("fc540008-236c-4c94-8fa9-944a3e5353fa")
+
+# Constants for liquid state codes
+LIQUID_STATE_UNKNOWN = 0
+LIQUID_STATE_EMPTY = 1
+LIQUID_STATE_FILLING = 2
+LIQUID_STATE_COLD_NO_TEMP_CONTROL = 3
+LIQUID_STATE_COOLING = 4
+LIQUID_STATE_HEATING = 5
+LIQUID_STATE_TARGET_TEMPERATURE = 6
+LIQUID_STATE_WARM_NO_TEMP_CONTROL = 7
+
+# Labels so liquid states
+LIQUID_STATE_LABELS = {
+    LIQUID_STATE_UNKNOWN: "Unknown",
+    LIQUID_STATE_EMPTY: "Empty",
+    LIQUID_STATE_FILLING: "Filling",
+    LIQUID_STATE_COLD_NO_TEMP_CONTROL: "Cold (No control)",
+    LIQUID_STATE_COOLING: "Cooling",
+    LIQUID_STATE_HEATING: "Heating",
+    LIQUID_STATE_TARGET_TEMPERATURE: "At Target",
+    LIQUID_STATE_WARM_NO_TEMP_CONTROL: "Warm (No control)",
 }
 
 # [Unique ID]-[serial number] (Read)
 # [:6] -> ID in base64-ish
 # [7:] -> Serial number in byte string
-UUID_MUG_ID = UUID("FC54000D-236C-4C94-8FA9-944A3E5353FA")
+UUID_MUG_ID = UUID("fc54000d-236c-4c94-8fa9-944a3e5353fa")
 
 # DSK - Unique ID used for auth in app (Read)
-UUID_DSK = UUID("FC54000E-236C-4C94-8FA9-944A3E5353FA")
+UUID_DSK = UUID("fc54000e-236c-4c94-8fa9-944a3e5353fa")
+
 # UDSK - Used for auth in app (Read/Write)
-UUID_UDSK = UUID("FC54000F-236C-4C94-8FA9-944A3E5353FA")
+UUID_UDSK = UUID("fc54000f-236c-4c94-8fa9-944a3e5353fa")
 
 # TO watch for changes from mug (Notify/Read)
-UUID_PUSH_EVENT = UUID("FC540012-236C-4C94-8FA9-944A3E5353FA")
+UUID_PUSH_EVENT = UUID("fc540012-236c-4c94-8fa9-944a3e5353fa")
+
+# Push event codes
+PUSH_EVENT_ID_BATTERY_CHANGED = 1
+PUSH_EVENT_ID_CHARGER_CONNECTED = 2
+PUSH_EVENT_ID_CHARGER_DISCONNECTED = 3
+PUSH_EVENT_ID_TARGET_TEMPERATURE_CHANGED = 4
+PUSH_EVENT_ID_DRINK_TEMPERATURE_CHANGED = 5
+PUSH_EVENT_ID_AUTH_INFO_NOT_FOUND = 6
+PUSH_EVENT_ID_LIQUID_LEVEL_CHANGED = 7
+PUSH_EVENT_ID_LIQUID_STATE_CHANGED = 8
+PUSH_EVENT_ID_BATTERY_VOLTAGE_STATE_CHANGED = 9
+
+PUSH_EVENT_BATTERY_IDS = [
+    PUSH_EVENT_ID_BATTERY_CHANGED,
+    PUSH_EVENT_ID_CHARGER_CONNECTED,
+    PUSH_EVENT_ID_CHARGER_DISCONNECTED,
+]
 
 # To gather bytes from mug for stats (Notify)
-UUID_STATISTICS = UUID("FC540013-236C-4C94-8FA9-944A3E5353FA")
+UUID_STATISTICS = UUID("fc540013-236c-4c94-8fa9-944a3e5353fa")
 
 # RGBA Coloud of LED (Read/Write)
-UUID_LED = UUID("FC540014-236C-4C94-8FA9-944A3E5353FA")
+UUID_LED = UUID("fc540014-236c-4c94-8fa9-944a3e5353fa")
 
 # Date/Time (Read/Write)
-UUID_TIME_DATE_AND_ZONE = UUID("FC540006-236C-4C94-8FA9-944A3E5353FA")
+UUID_TIME_DATE_AND_ZONE = UUID("fc540006-236c-4c94-8fa9-944a3e5353fa")
 
 # Last location - (Write)
-UUID_LAST_LOCATION = UUID("FC54000A-236C-4C94-8FA9-944A3E5353FA")
+UUID_LAST_LOCATION = UUID("fc54000a-236c-4c94-8fa9-944a3e5353fa")
 
 # Firmware info (Read)
-# string getIntValue(18, 0) -> Firmware version
-# string getIntValue(18, 2) -> Hardware
-# string getIntValue(18, 4) -> Bootloader
-UUID_OTA = UUID("FC54000C-236C-4C94-8FA9-944A3E5353FA")
+# string [:2] -> Firmware version
+# string [2:4] -> Hardware
+# string [4:] -> Bootloader
+UUID_OTA = UUID("fc54000c-236c-4c94-8fa9-944a3e5353fa")
 
 # int/temp lock - Address (Read/Write)
-UUID_CONTROL_REGISTER_ADDRESS = UUID("FC540010-236C-4C94-8FA9-944A3E5353FA")
+UUID_CONTROL_REGISTER_ADDRESS = UUID("fc540010-236c-4c94-8fa9-944a3e5353fa")
 
 # Battery charge info (Read/Write)
 # id len(1) -> Voltage (bytes as ulong -> voltage in mv)
 # if len(2) -> Charge Time
-UUID_CONTROL_REGISTER_DATA = UUID("FC540011-236C-4C94-8FA9-944A3E5353FA")
+UUID_CONTROL_REGISTER_DATA = UUID("fc540011-236c-4c94-8fa9-944a3e5353fa")
 
 # These UUIDs are currently unused. Not for this mug?
-UUID_VOLUME = UUID("FC540009-236C-4C94-8FA9-944A3E5353FA")
-UUID_ACCELERATION = UUID("FC54000B-236C-4C94-8FA9-944A3E5353FA")
+UUID_VOLUME = UUID("fc540009-236c-4c94-8fa9-944a3e5353fa")
+UUID_ACCELERATION = UUID("fc54000b-236c-4c94-8fa9-944a3e5353fa")
+
+# Validation
+MUG_NAME_REGEX = r"[A-Za-z0-9,.\[\]#()!\"\';:|\-_+<>%= ]{1,16}"
+MAC_ADDRESS_REGEX = r"^([0-9A-Fa-f]{2}:){5}([0-9A-Fa-f]{2})$"
