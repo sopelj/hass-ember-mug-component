@@ -10,7 +10,7 @@ from uuid import UUID
 DOMAIN = "ember_mug"
 
 ICON_DEFAULT = "mdi:coffee"
-ICON_UNAVAILABLE = "mdi:coffee-off"
+ICON_EMPTY = "mdi:coffee-off"
 
 ATTR_RGB_COLOR = "rgb_color"
 SERVICE_SET_LED_COLOUR = "set_led_colour"
