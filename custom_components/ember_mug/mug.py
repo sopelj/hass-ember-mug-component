@@ -87,7 +87,7 @@ class EmberMug:
         self.temperature_unit: str = TEMP_CELSIUS
         self.battery: float = None
         self.on_charging_base: bool = None
-        self.liquid_state: str = None
+        self.liquid_state: int = 0
         self.mug_name = None
         self.mug_id: str = None
         self.udsk: str = None
@@ -109,7 +109,7 @@ class EmberMug:
     @property
     def liquid_state_label(self) -> str:
         """Return human readable liquid state."""
-        return LIQUID_STATE_LABELS.get(self.liquid_state, int(self.liquid_state))
+        return LIQUID_STATE_LABELS[self.liquid_state or 0]
 
     async def async_run(self) -> None:
         """Start a the task loop."""
@@ -198,7 +198,7 @@ class EmberMug:
     async def update_liquid_state(self) -> None:
         """Get liquid state from mug gatt."""
         liquid_state_bytes = await self.client.read_gatt_char(UUID_LIQUID_STATE)
-        self.liquid_state = bytes_to_little_int(liquid_state_bytes[0])
+        self.liquid_state = bytes_to_little_int(liquid_state_bytes)
 
     async def update_mug_name(self) -> None:
         """Get mug name from gatt."""
