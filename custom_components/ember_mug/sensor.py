@@ -30,6 +30,7 @@ from .const import (
     ATTR_RGB_COLOR,
     ATTR_TARGET_TEMP,
     ICON_DEFAULT,
+    ICON_EMPTY,
     MAC_ADDRESS_REGEX,
     MUG_NAME_REGEX,
     SERVICE_SET_LED_COLOUR,
@@ -169,7 +170,7 @@ class EmberMugSensor(Entity):
     @property
     def icon(self) -> str:
         """Icon representation for this mug."""
-        return
+        return ICON_EMPTY if self.mug.liquid_level <= 5 else ICON_DEFAULT
 
     @property
     def should_poll(self) -> bool:
