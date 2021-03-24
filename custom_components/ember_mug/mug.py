@@ -84,7 +84,7 @@ class EmberMug:
         self.serial_number: str = None
         self.current_temp: float = None
         self.target_temp: float = None
-        self.unit: str = TEMP_CELSIUS
+        self.temperature_unit: str = TEMP_CELSIUS
         self.battery: float = None
         self.on_charging_base: bool = None
         self.liquid_state: str = None
@@ -198,7 +198,7 @@ class EmberMug:
     async def update_liquid_state(self) -> None:
         """Get liquid state from mug gatt."""
         liquid_state_bytes = await self.client.read_gatt_char(UUID_LIQUID_STATE)
-        self.liquid_state = int(liquid_state_bytes[0])
+        self.liquid_state = bytes_to_little_int(liquid_state_bytes[0])
 
     async def update_mug_name(self) -> None:
         """Get mug name from gatt."""
@@ -222,7 +222,7 @@ class EmberMug:
         """Get mug temp unit."""
         unit_bytes = await self.client.read_gatt_char(UUID_TEMPERATURE_UNIT)
         self.temperature_unit = (
-            TEMP_CELSIUS if int(unit_bytes) == 0 else TEMP_FAHRENHEIT
+            TEMP_CELSIUS if bytes_to_little_int(unit_bytes) == 0 else TEMP_FAHRENHEIT
         )
 
     async def update_battery_voltage(self) -> None:
