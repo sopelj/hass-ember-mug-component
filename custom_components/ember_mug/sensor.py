@@ -68,7 +68,7 @@ async def async_setup_platform(
     config: ConfigType,
     async_add_entities: Callable,
     discovery_info: Optional[DiscoveryInfoType] = None,
-) -> None:
+) -> bool:
     """Add Mug Sensor Entity to HASS."""
     from .services import set_led_colour, set_target_temp, set_mug_name
 
@@ -86,6 +86,7 @@ async def async_setup_platform(
     platform.async_register_entity_service(
         SERVICE_SET_MUG_NAME, SET_MUG_NAME_SCHEMA, set_mug_name
     )
+    return True
 
 
 async def async_setup_entry(hass: HomeAssistantType, config: ConfigType):

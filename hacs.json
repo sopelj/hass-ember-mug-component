@@ -1,6 +1,7 @@
 {
   "name": "Ember Mug",
   "render_readme": true,
+  "version": "0.1.0",
   "iot_class": "Local Polling",
   "requirements": [
     "bleak==0.11.0"
