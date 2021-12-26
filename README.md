@@ -25,7 +25,7 @@ And then add to your configuration.yaml and add sensors for your mug(s):
 ```yaml
 sensors:
   - platform: ember_mug
-    mac: C9:0F:59:D6:33:F9
+    mac: C9:0F:59:D6:33:F9  # Replace with your Mug's MAC address
     name: "Jesse's Ember Mug"  # Optional Name
     temperature_unit: "C"  # Optional: Default [C]
 ```
