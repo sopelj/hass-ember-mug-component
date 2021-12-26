@@ -106,11 +106,11 @@ class EmberMug:
 
     @property
     def liquid_state_label(self) -> str:
-        """Return human readable liquid state."""
+        """Return human-readable liquid state."""
         return LIQUID_STATE_LABELS[self.liquid_state or 0]
 
     async def async_run(self) -> None:
-        """Start a the task loop."""
+        """Start the task loop."""
         try:
             self._loop = True
             _LOGGER.info(f"Starting mug loop {self.mac_address}")
@@ -226,7 +226,7 @@ class EmberMug:
         )
 
     async def update_battery_voltage(self) -> None:
-        """Get voltage and charge time maybe."""
+        """Get voltage and charge time."""
         battery_voltage_bytes = await self.client.read_gatt_char(
             UUID_CONTROL_REGISTER_DATA
         )
