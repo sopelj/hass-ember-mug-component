@@ -3,7 +3,7 @@
 [![GitHub Release](https://img.shields.io/github/release/sopelj/hass-ember-mug-component.svg?style=for-the-badge)](https://github.com/sopelj/hass-ember-mug-component/releases)
 [![License](https://img.shields.io/github/license/sopelj/hass-ember-mug-component.svg?style=for-the-badge)](LICENSE.md)
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge)](https://github.com/custom-components/hacs)
-![Project Maintenance](https://img.shields.io/maintenance/yes/2021.svg?style=for-the-badge)
+![Project Maintenance](https://img.shields.io/maintenance/yes/2022.svg?style=for-the-badge)
 
 Custom integration for the Ember Mug in Home Assistant.
 I only have the Ember Mug 2, but in theory it should be the same with other Ember Mugs.
@@ -29,6 +29,20 @@ sensors:
     name: "Jesse's Ember Mug"  # Optional Name
     temperature_unit: "C"  # Optional: Default [C]
 ```
+
+## Connecting to the Mug
+
+The Ember Mug is very finicky. It will only maintain a connection with one device at a time. 
+If you have previously paired it with another device (like your phone) you will need to forget it from that device and reset the mug to factory settings.
+
+*Note*: This will mean you cannot use that device to connect to at the same time as Home Assistant, and it will default to initial temperature and colour settings.
+
+To do so:
+ 1. Forget the Mug on ay device you previously used
+ 2. Hold down button on the bottom of the mug until light goes blue, then yellow anf then red 
+ 3. It should blink red twice and goes back to white (The default colour) 
+ 4. Then enter pairing mode again - Hold down the button until the light starts blinking blue
+ 5. Once home assistant successfully connects it should leave pairing mode and go back to white
 
 ### Caveats / known issues:
 
