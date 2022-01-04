@@ -32,28 +32,3 @@ async def set_mug_name(entity: EmberMugSensor, service_call: ServiceCall) -> Non
     name: str = service_call.data[ATTR_MUG_NAME]
     _LOGGER.debug(f"Service called to set name to '{name}'")
     await entity.mug.set_mug_name(name)
-
-
-async def find_mugs():
-    """Find all mugs."""
-    try:
-        print("Searching..", end="")
-
-        while True:
-            print(".", end="")
-            devices = await discover()
-
-            for device in devices:
-                if device.name == "Ember Ceramic Mug":
-                    # We found the ember mug!
-                    print(device.address)
-                    print(device.name)
-                    print(device.details)
-
-                    async with BleakClient(device) as client:
-                        x = await client.is_connected()
-                        print(f"Connected: {x}")
-                        y = await client.pair()
-                        print(f"Paired: {y}")
-    except Exception as e:
-        print(f"Error: {e}")

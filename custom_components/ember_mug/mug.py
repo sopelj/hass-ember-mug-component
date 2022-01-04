@@ -6,7 +6,7 @@ import contextlib
 import re
 from typing import Callable, Tuple, Union
 
-from bleak import BleakClient
+from bleak import BleakClient, discover
 from bleak.exc import BleakError
 from homeassistant.const import TEMP_CELSIUS, TEMP_FAHRENHEIT
 from homeassistant.helpers.typing import HomeAssistantType
@@ -54,6 +54,27 @@ def bytes_to_little_int(data: bytearray) -> int:
 def bytes_to_big_int(data: bytearray) -> int:
     """Convert bytes to big int."""
     return int.from_bytes(data, "big")
+
+
+async def find_mugs() -> dict[str, str]:
+    """Find all mugs."""
+    mugs = {}
+    try:
+        _LOGGER.info("Searching..")
+        for i in range(5):
+            print(".", end="")
+            devices = await discover()
+            for device in devices:
+                _LOGGER.info(f'Found device: {device.name} ({device.address})')
+                if device.name == "Ember Ceramic Mug" and device.address not in mugs:
+                    _LOGGER.info('Mug found!')
+                    mugs[device.address] = device.name
+            if i > 1 and mugs:
+                break  # abort early if we've found at least one
+            await asyncio.sleep(1)
+    except Exception as e:
+        _LOGGER.error(f"Error: {e}")
+    return mugs
 
 
 class EmberMug:
