@@ -4,6 +4,7 @@ from __future__ import annotations
 from typing import Callable, Dict, Optional, Union
 
 from homeassistant.components.sensor import PLATFORM_SCHEMA
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
     ATTR_BATTERY_LEVEL,
     CONF_MAC,
@@ -13,10 +14,11 @@ from homeassistant.const import (
     TEMP_CELSIUS,
     TEMP_FAHRENHEIT,
 )
-from homeassistant.core import callback
+from homeassistant.core import callback, HomeAssistant
 from homeassistant.helpers import config_validation as cv, entity_platform
 from homeassistant.helpers.device_registry import format_mac
 from homeassistant.helpers.entity import Entity
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import (
     ConfigType,
     DiscoveryInfoType,
@@ -89,9 +91,14 @@ async def async_setup_platform(
     return True
 
 
-async def async_setup_entry(hass: HomeAssistantType, config: ConfigType):
-    """Set up services for Entry."""
-    _LOGGER.debug(f"Setup entry {config}")
+async def async_setup_entry(
+    hass: HomeAssistant,
+    config_entry: ConfigEntry,
+    async_add_entities: AddEntitiesCallback,
+) -> None:
+    device_id = config_entry.unique_id
+    assert device_id is not None
+    async_add_entities([EmberMugSensor(hass, config_entry.data)])
 
 
 class EmberMugSensor(Entity):

@@ -1,0 +1,23 @@
+{
+  "title": "Ember Mug",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Add an Ember Mug",
+        "data": {
+          "mac": "MAC Address",
+          "name": "Name for your Mug",
+          "temperature_unit": "Temperature Unit"
+        }
+      }
+    },
+    "error": {
+      "invalid_mac": "MAC Address is invalid",
+      "cannot_connect": "Unable to connect to the Mug"
+    },
+    "abort": {
+      "unknown": "Unknown error occurred",
+      "not_found": "No Mugs were found. Please ensure they are in pairing mode and retry."
+    }
+  }
+}
