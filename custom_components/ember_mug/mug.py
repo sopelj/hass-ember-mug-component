@@ -6,7 +6,7 @@ import contextlib
 import re
 from typing import Callable, Tuple, Union
 
-from bleak import BleakClient, discover
+from bleak import BleakClient, BleakScanner
 from bleak.exc import BleakError
 from homeassistant.const import TEMP_CELSIUS, TEMP_FAHRENHEIT
 from homeassistant.helpers.typing import HomeAssistantType
@@ -61,17 +61,12 @@ async def find_mugs() -> dict[str, str]:
     mugs = {}
     try:
         _LOGGER.info("Searching..")
-        for i in range(5):
-            print(".", end="")
-            devices = await discover()
-            for device in devices:
-                _LOGGER.info(f'Found device: {device.name} ({device.address})')
-                if device.name == "Ember Ceramic Mug" and device.address not in mugs:
-                    _LOGGER.info('Mug found!')
-                    mugs[device.address] = device.name
-            if i > 1 and mugs:
-                break  # abort early if we've found at least one
-            await asyncio.sleep(1)
+        devices = await BleakScanner.discover()
+        for device in devices:
+            _LOGGER.info(f"Found device: {device.name} ({device.address})")
+            if device.name == "Ember Ceramic Mug" and device.address not in mugs:
+                _LOGGER.info("Mug found!")
+                mugs[device.address] = device.name
     except Exception as e:
         _LOGGER.error(f"Error: {e}")
     return mugs

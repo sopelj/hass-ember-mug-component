@@ -1,9 +1,8 @@
 """Services for updating Mug information."""
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Tuple
+from typing import TYPE_CHECKING
 
-from bleak import BleakClient, discover
 from homeassistant.core import ServiceCall
 
 from . import _LOGGER
@@ -15,7 +14,7 @@ if TYPE_CHECKING:
 
 async def set_led_colour(entity: EmberMugSensor, service_call: ServiceCall) -> None:
     """Set LED colour of mug."""
-    led_colour: Tuple[int, int, int] = service_call.data[ATTR_RGB_COLOR]
+    led_colour: tuple[int, int, int] = service_call.data[ATTR_RGB_COLOR]
     _LOGGER.info(f"Called service set led colour of {entity} to {led_colour})")
     await entity.mug.set_led_colour([*led_colour, 255])
 

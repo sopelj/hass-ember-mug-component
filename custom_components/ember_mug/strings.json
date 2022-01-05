@@ -5,8 +5,8 @@
       "user": {
         "title": "Add an Ember Mug",
         "data": {
-          "mac": "MAC Address",
-          "name": "Name for your Mug",
+          "mug": "Mug",
+          "name": "Nickname (Optional)",
           "temperature_unit": "Temperature Unit"
         }
       }

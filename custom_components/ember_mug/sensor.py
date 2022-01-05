@@ -14,7 +14,7 @@ from homeassistant.const import (
     TEMP_CELSIUS,
     TEMP_FAHRENHEIT,
 )
-from homeassistant.core import callback, HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import config_validation as cv, entity_platform
 from homeassistant.helpers.device_registry import format_mac
 from homeassistant.helpers.entity import Entity
@@ -96,6 +96,7 @@ async def async_setup_entry(
     config_entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
+    """Setups device from config entry."""
     device_id = config_entry.unique_id
     assert device_id is not None
     async_add_entities([EmberMugSensor(hass, config_entry.data)])
