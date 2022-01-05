@@ -4,7 +4,7 @@ from __future__ import annotations
 import re
 from typing import Any, Optional
 
-from bleak import BleakClient
+from bleak import BleakClient, BleakError
 from homeassistant import config_entries
 from homeassistant.const import (
     CONF_MAC,
@@ -13,6 +13,7 @@ from homeassistant.const import (
     TEMP_CELSIUS,
     TEMP_FAHRENHEIT,
 )
+from homeassistant.helpers.device_registry import format_mac
 import voluptuous as vol
 
 from . import _LOGGER
@@ -34,17 +35,26 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             name, mac_address = DEFAULT_NAME, ""
             if match := re.match(MUG_NAME_MAC_REGEX, user_input[CONF_MUG]):
                 name, mac_address = match.groups()[:2]
-                async with BleakClient(mac_address) as client:
-                    connected = await client.is_connected()
-                    _LOGGER.info(f"Connected: {connected}")
-                    paired = await client.pair()
-                    _LOGGER.info(f"Paired: {paired}")
-                    if not connected or not paired:
-                        errors["base"] = "not_connected"
+                try:
+                    async with BleakClient(mac_address) as client:
+                        await client.connect()
+                        connected = await client.is_connected()
+                        _LOGGER.info(f"Connected: {connected}")
+                        paired = await client.pair()
+                        _LOGGER.info(f"Paired: {paired}")
+                        if not connected or not paired:
+                            errors["base"] = "not_connected"
+                except BleakError as e:
+                    _LOGGER.error(f"Bleak Error whilst connecting: {e}")
+                    errors["base"] = "connection_failed"
             else:
                 errors["base"] = "invalid_mac"
             if not errors:
                 name = user_input.get(CONF_NAME) or name
+                await self.async_set_unique_id(
+                    format_mac(mac_address), raise_on_progress=False
+                )
+                self._abort_if_unique_id_configured()
                 return self.async_create_entry(
                     title=name,
                     data={
@@ -57,7 +67,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         devices = await find_mugs()
         _LOGGER.info(devices)
         if not devices:
-            return self.async_abort("not_found")
+            return self.async_abort(reason="not_found")
 
         schema = vol.Schema(
             {

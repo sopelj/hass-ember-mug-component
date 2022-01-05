@@ -13,6 +13,7 @@
     },
     "error": {
       "invalid_mac": "MAC Address is invalid",
+      "connection_failed": "Failed to connect to the Mug",
       "cannot_connect": "Unable to connect to the Mug"
     },
     "abort": {
