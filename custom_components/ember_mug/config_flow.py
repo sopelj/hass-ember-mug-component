@@ -42,7 +42,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                             _LOGGER.info(f"Connected: {connected}")
                         paired = await client.pair()
                         _LOGGER.info(f"Paired: {paired}")
-                        if not connected or not paired:
+                        if not paired:
                             errors["base"] = "not_connected"
                 except BleakError as e:
                     _LOGGER.error(f"Bleak Error whilst connecting: {e}")
