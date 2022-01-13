@@ -37,9 +37,9 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 name, mac_address = match.groups()[:2]
                 try:
                     async with BleakClient(mac_address) as client:
-                        await client.connect()
-                        connected = await client.is_connected()
-                        _LOGGER.info(f"Connected: {connected}")
+                        if not client.is_connected:
+                            connected = await client.connect()
+                            _LOGGER.info(f"Connected: {connected}")
                         paired = await client.pair()
                         _LOGGER.info(f"Paired: {paired}")
                         if not connected or not paired:
