@@ -1,4 +1,5 @@
 """Reusable class for Ember Mug connection and data."""
+from __future__ import annotations
 
 import asyncio
 import base64
@@ -13,6 +14,7 @@ from homeassistant.helpers.typing import HomeAssistantType
 
 from . import _LOGGER
 from .const import (
+    EMBER_BLUETOOTH_NAMES,
     LIQUID_STATE_LABELS,
     PUSH_EVENT_BATTERY_IDS,
     PUSH_EVENT_ID_AUTH_INFO_NOT_FOUND,
@@ -56,20 +58,19 @@ def bytes_to_big_int(data: bytearray) -> int:
     return int.from_bytes(data, "big")
 
 
-async def find_mugs() -> dict[str, str]:
-    """Find all mugs."""
-    mugs = {}
+async def find_mug() -> dict[str, str]:
+    """Find a mug."""
+    known_names = [n.lower() for n in EMBER_BLUETOOTH_NAMES]
     try:
-        _LOGGER.info("Searching..")
-        devices = await BleakScanner.discover()
-        for device in devices:
+        device = await BleakScanner.find_device_by_filter(
+            lambda d, ad: d.name and d.name.lower() in known_names
+        )
+        if device:
             _LOGGER.info(f"Found device: {device.name} ({device.address})")
-            if device.name == "Ember Ceramic Mug" and device.address not in mugs:
-                _LOGGER.info("Mug found!")
-                mugs[device.address] = device.name
+            return {device.address: device.name}
     except Exception as e:
         _LOGGER.error(f"Error: {e}")
-    return mugs
+    return {}
 
 
 class EmberMug:

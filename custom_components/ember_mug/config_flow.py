@@ -18,7 +18,7 @@ import voluptuous as vol
 
 from . import _LOGGER
 from .const import DOMAIN
-from .mug import find_mugs
+from .mug import find_mug
 
 CONF_MUG = "mug"
 DEFAULT_NAME = "Ember Mug"
@@ -64,17 +64,17 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     },
                 )
 
-        devices = await find_mugs()
+        devices = await find_mug()
         _LOGGER.info(devices)
         if not devices:
             return self.async_abort(reason="not_found")
-
+        device_mac = next(iter(devices))
         schema = vol.Schema(
             {
-                vol.Required(CONF_MUG, default=""): vol.In(
+                vol.Required(CONF_MUG, default=device_mac): vol.In(
                     [f"{n}: {a}" for a, n in devices.items()]
                 ),
-                vol.Optional(CONF_NAME, default=""): str,
+                vol.Optional(CONF_NAME, default=devices[device_mac]): str,
                 vol.Required(CONF_TEMPERATURE_UNIT, default=TEMP_CELSIUS): vol.In(
                     [TEMP_CELSIUS, TEMP_FAHRENHEIT]
                 ),
@@ -82,6 +82,6 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         )
         return self.async_show_form(step_id="user", data_schema=schema, errors=errors)
 
-    async def async_step_import(self, user_input):
+    async def async_step_import(self, user_input: dict[str, str]):
         """Forward from import flow."""
         return await self.async_step_user(user_input)

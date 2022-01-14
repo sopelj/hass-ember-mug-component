@@ -1,4 +1,4 @@
-bleak==0.13.0
+bleak==0.14.1
 pytest
 pytest-cov
 pytest-homeassistant-custom-component

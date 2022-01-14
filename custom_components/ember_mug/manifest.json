@@ -6,5 +6,5 @@
   "domain": "ember_mug",
   "name": "Ember Mug",
   "version": "0.1.2",
-  "requirements": ["bleak==0.13.0"]
+  "requirements": ["bleak==0.14.1"]
 }

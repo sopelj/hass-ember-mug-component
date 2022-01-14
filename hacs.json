@@ -4,6 +4,6 @@
   "version": "0.1.2",
   "iot_class": "Local Polling",
   "requirements": [
-    "bleak==0.13.0"
+    "bleak==0.14.1"
   ]
 }
