@@ -5,12 +5,11 @@ import asyncio
 import base64
 import contextlib
 import re
-from typing import Callable, Tuple, Union
+from typing import Tuple, Union
 
 from bleak import BleakClient, BleakScanner
 from bleak.exc import BleakError
 from homeassistant.const import TEMP_CELSIUS, TEMP_FAHRENHEIT
-from homeassistant.helpers.typing import HomeAssistantType
 
 from . import _LOGGER
 from .const import (
@@ -76,24 +75,15 @@ async def find_mug() -> dict[str, str]:
 class EmberMug:
     """Class to connect and communicate with the mug via Bluetooth."""
 
-    def __init__(
-        self,
-        mac_address: str,
-        use_metric: bool,
-        async_update_callback: Callable,
-        hass: HomeAssistantType,
-    ) -> None:
+    def __init__(self, mac_address: str, use_metric: bool) -> None:
         """Set default values in for mug attributes."""
-        self._loop = False
-        self._first_run = True
-        self.hass = hass
-        self.async_update_callback = async_update_callback
         self.mac_address = mac_address
-        self.client = BleakClient(mac_address)
+        self.client = BleakClient(mac_address, address_type="random")
         self.available = True
         self.updates_queued = set()
         self.use_metric = use_metric
 
+        self.model = "Ember Ceramic Mug"
         self.led_colour_rgba = [255, 255, 255, 255]
         self.latest_event_id: int = None
         self.liquid_level: float = None
@@ -116,6 +106,11 @@ class EmberMug:
         self.battery_voltage = None
 
     @property
+    def is_connected(self) -> bool:
+        """Pass is connected to mug class."""
+        return self.client.is_connected
+
+    @property
     def colour(self) -> str:
         """Return colour as hex value."""
         r, g, b, a = self.led_colour_rgba
@@ -125,32 +120,6 @@ class EmberMug:
     def liquid_state_label(self) -> str:
         """Return human-readable liquid state."""
         return LIQUID_STATE_LABELS[self.liquid_state or 0]
-
-    async def async_run(self) -> None:
-        """Start the task loop."""
-        try:
-            self._loop = True
-            _LOGGER.info(f"Starting mug loop {self.mac_address}")
-            await self.connect()
-
-            while self._loop:
-                if not self.client.is_connected:
-                    await self.connect()
-
-                await self.update_all()
-                self.updates_queued.clear()
-                self.async_update_callback()
-
-                # Maintain connection for 5min seconds until next update
-                # We will be notified of most changes during this time
-                for _ in range(150):
-                    self.client.is_connected
-                    await self.update_queued_attributes()
-                    await asyncio.sleep(2)
-
-        except Exception as e:
-            _LOGGER.error(f"An unexpected error occurred during loop {e}. Restarting.")
-            self.hass.async_create_task(self.async_run())
 
     async def _temp_from_bytes(self, temp_bytes: bytearray) -> float:
         """Get temperature from bytearray and convert to fahrenheit if needed."""
@@ -262,7 +231,7 @@ class EmberMug:
         # string getIntValue(18, 4) -> Bootloader
         self.firmware_info = str(await self.client.read_gatt_char(UUID_OTA))
 
-    async def connect(self) -> None:
+    async def connect(self) -> bool:
         """Try 10 times to connect and if we fail wait five minutes and try again. If connected also subscribe to state notifications."""
         connected = False
         for i in range(1, 10 + 1):
@@ -274,11 +243,10 @@ class EmberMug:
                 break
             except BleakError as e:
                 _LOGGER.error(f"Init: {e} on attempt {i}. waiting 30sec")
-                asyncio.sleep(30)
+                await asyncio.sleep(30)
 
         if connected is False:
             self.available = False
-            self.async_update_callback()
             _LOGGER.warning(
                 f"Failed to connect to {self.mac_address} after 10 tries. Will try again in 2min"
             )
@@ -300,17 +268,18 @@ class EmberMug:
             await self.client.start_notify(UUID_PUSH_EVENT, self.push_notify)
         except Exception as e:
             _LOGGER.warning(f"Failed to subscribe to state attr {e}")
+        return connected
 
-    async def update_queued_attributes(self) -> None:
+    async def update_queued_attributes(self) -> bool:
         """Update all attributes in queue."""
         if not self.updates_queued:
-            return
+            return False
         _LOGGER.debug(f"Queued updates {self.updates_queued}")
         queued_attributes = set(self.updates_queued)
         self.updates_queued.clear()
         for attr in queued_attributes:
             await getattr(self, f"update_{attr}")()
-        self.async_update_callback()
+        return True
 
     def push_notify(self, sender: int, data: bytearray):
         """Push events from the mug to indicate changes."""
@@ -372,12 +341,16 @@ class EmberMug:
             success = False
         return success
 
+    async def ensure_connected(self):
+        """Ensure connected."""
+        if not self.is_connected:
+            await self.connect()
+
     async def disconnect(self) -> None:
         """Stop Loop and disconnect."""
         with contextlib.suppress(BleakError):
             await self.client.stop_notify(UUID_PUSH_EVENT)
 
-        self._loop = False
         with contextlib.suppress(BleakError):
             if self.client and self.client.is_connected:
                 await self.client.disconnect()

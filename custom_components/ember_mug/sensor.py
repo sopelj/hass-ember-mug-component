@@ -1,45 +1,44 @@
 """Sensor Entity for Ember Mug."""
 from __future__ import annotations
 
-from typing import Callable, Dict, Optional, Union
-
-from homeassistant.components.sensor import PLATFORM_SCHEMA
+from homeassistant.components.motion_blinds.sensor import ATTR_BATTERY_VOLTAGE
+from homeassistant.components.sensor import (
+    PLATFORM_SCHEMA,
+    SensorDeviceClass,
+    SensorEntity,
+    SensorStateClass,
+)
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
-    ATTR_BATTERY_LEVEL,
     CONF_MAC,
     CONF_NAME,
     CONF_TEMPERATURE_UNIT,
-    DEVICE_CLASS_TEMPERATURE,
+    PERCENTAGE,
     TEMP_CELSIUS,
     TEMP_FAHRENHEIT,
 )
-from homeassistant.core import HomeAssistant, callback
+from homeassistant.core import HomeAssistant
 from homeassistant.helpers import config_validation as cv, entity_platform
-from homeassistant.helpers.device_registry import format_mac
-from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.typing import (
-    ConfigType,
-    DiscoveryInfoType,
-    HomeAssistantType,
-)
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
 import voluptuous as vol
 
-from . import _LOGGER
+from . import MugDataUpdateCoordinator
 from .const import (
-    ATTR_MUG_NAME,
-    ATTR_RGB_COLOR,
-    ATTR_TARGET_TEMP,
-    ICON_DEFAULT,
-    ICON_EMPTY,
+    DOMAIN,
     MAC_ADDRESS_REGEX,
-    MUG_NAME_REGEX,
     SERVICE_SET_LED_COLOUR,
     SERVICE_SET_MUG_NAME,
     SERVICE_SET_TARGET_TEMP,
 )
-from .mug import EmberMug
+from .services import (
+    SET_LED_COLOUR_SCHEMA,
+    SET_MUG_NAME_SCHEMA,
+    SET_TARGET_TEMP_SCHEMA,
+    set_led_colour,
+    set_mug_name,
+    set_target_temp,
+)
 
 # Schema
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
@@ -50,35 +49,141 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     }
 )
 
-SET_LED_COLOUR_SCHEMA = {
-    vol.Required(ATTR_RGB_COLOR): vol.All(
-        vol.ExactSequence((cv.byte,) * 3), vol.Coerce(tuple)
-    ),
-}
 
-SET_TARGET_TEMP_SCHEMA = {
-    vol.Required(ATTR_TARGET_TEMP): cv.positive_float,
-}
+class EmberMugSensorBase(CoordinatorEntity):
+    """Base Mug Sensor."""
 
-SET_MUG_NAME_SCHEMA = {
-    vol.Required(ATTR_MUG_NAME): cv.matches_regex(MUG_NAME_REGEX),
-}
+    coordinator: MugDataUpdateCoordinator
+    _sensor_type: str | None
+
+    def __init__(self, coordinator: MugDataUpdateCoordinator, device_id: str) -> None:
+        """Init set names for attributes."""
+        super().__init__(coordinator)
+        self._device_id = device_id
+        self._attr_name = f"Mug {self._sensor_type or ''}".strip()
+        self._attr_unique_id = f"{self._sensor_type or 'ember_mug'}-{device_id}"
+
+    @property
+    def device_info(self):
+        """Pass device information."""
+        return self.coordinator.device_info
+
+    @property
+    def available(self) -> bool:
+        """Return if entity is available."""
+        return (
+            self.coordinator.last_update_success and self.coordinator.mug.is_connected
+        )
 
 
-async def async_setup_platform(
-    hass: HomeAssistantType,
-    config: ConfigType,
-    async_add_entities: Callable,
-    discovery_info: Optional[DiscoveryInfoType] = None,
-) -> bool:
-    """Add Mug Sensor Entity to HASS."""
-    from .services import set_led_colour, set_target_temp, set_mug_name
+class EmberMugSensor(EmberMugSensorBase, SensorEntity):
+    """Base Mug State Sensor."""
 
-    _LOGGER.debug("Setup platform")
+    _attr_icon = "mdi:coffee"
 
-    async_add_entities([EmberMugSensor(hass, config)])
+    @property
+    def native_value(self) -> str:
+        """Return information about the contents."""
+        return self.coordinator.mug.liquid_state_label
 
-    platform = entity_platform.current_platform.get()
+    @property
+    def extra_state_attributes(self):
+        """Return device specific state attributes."""
+        mug = self.coordinator.mug
+        return {
+            "led_colour": mug.colour,
+            CONF_TEMPERATURE_UNIT: mug.temperature_unit,
+            "latest_push": mug.latest_event_id,
+            "on_charging_base": mug.on_charging_base,
+            "liquid_level": mug.liquid_level,
+            "liquid_state": mug.liquid_state_label,
+            "liquid_state_label": mug.liquid_state_label,
+            "date_time_zone": mug.date_time_zone,
+            "firmware_info": mug.firmware_info,
+            "udsk": mug.udsk,
+            "dsk": mug.dsk,
+            "mug_name": mug.mug_name,
+            "mug_id": mug.mug_id,
+        }
+
+
+class EmberMugTemperatureSensor(EmberMugSensorBase, SensorEntity):
+    """Mug Temperature sensor."""
+
+    _attr_device_class = SensorDeviceClass.TEMPERATURE
+    _attr_state_class = SensorStateClass.MEASUREMENT
+
+    def __init__(
+        self,
+        coordinator: MugDataUpdateCoordinator,
+        temp_type: str,
+        temp_unit: str,
+        device_id: str,
+    ) -> None:
+        """Initialize a new temperature sensor."""
+        super().__init__(coordinator, device_id)
+        self._temp_type = temp_type
+        self._sensor_type = f"{temp_type} temp"
+        self._attr_native_unit_of_measurement = temp_unit
+
+    @property
+    def native_value(self):
+        """Return sensor state."""
+        temp = getattr(self.coordinator.mug, f"{self._temp_type}_temp")
+        if temp is not None:
+            return round(temp, 2)
+        return None
+
+    @property
+    def extra_state_attributes(self):
+        """Return device specific state attributes."""
+        return {ATTR_BATTERY_VOLTAGE: self.coordinator.mug.battery_voltage}
+
+
+class EmberMugBatterySensor(EmberMugSensorBase, SensorEntity):
+    """Mug Battery Sensor."""
+
+    _attr_device_class = SensorDeviceClass.BATTERY
+    _attr_native_unit_of_measurement = PERCENTAGE
+
+    @property
+    def native_value(self) -> float | None:
+        """Return sensor state."""
+        battery_percentage = self.coordinator.mug.battery
+        if battery_percentage is not None:
+            return round(battery_percentage, 2)
+        return None
+
+    @property
+    def extra_state_attributes(self):
+        """Return device specific state attributes."""
+        return {ATTR_BATTERY_VOLTAGE: self.coordinator.mug.battery_voltage}
+
+
+async def async_setup_entry(
+    hass: HomeAssistant,
+    config_entry: ConfigEntry,
+    async_add_entities: AddEntitiesCallback,
+) -> None:
+    """Set up Entities."""
+    coordinator: MugDataUpdateCoordinator = hass.data[DOMAIN][config_entry.entry_id][
+        "coordinator"
+    ]
+    device_id = config_entry.unique_id
+    assert device_id is not None
+    temp_unit = (
+        TEMP_FAHRENHEIT if coordinator.unit_of_measurement == "F" else TEMP_CELSIUS
+    )
+    entities: list[SensorEntity] = [
+        EmberMugSensor(coordinator, device_id),
+        EmberMugTemperatureSensor(coordinator, "target", temp_unit, device_id),
+        EmberMugTemperatureSensor(coordinator, "current", temp_unit, device_id),
+        EmberMugBatterySensor(coordinator, device_id),
+    ]
+    async_add_entities(entities)
+
+    # Setup Services
+    platform = entity_platform.async_get_current_platform()
     platform.async_register_entity_service(
         SERVICE_SET_LED_COLOUR, SET_LED_COLOUR_SCHEMA, set_led_colour
     )
@@ -88,117 +193,3 @@ async def async_setup_platform(
     platform.async_register_entity_service(
         SERVICE_SET_MUG_NAME, SET_MUG_NAME_SCHEMA, set_mug_name
     )
-    return True
-
-
-async def async_setup_entry(
-    hass: HomeAssistant,
-    config_entry: ConfigEntry,
-    async_add_entities: AddEntitiesCallback,
-) -> None:
-    """Setups device from config entry."""
-    device_id = config_entry.unique_id
-    assert device_id is not None
-    async_add_entities([EmberMugSensor(hass, config_entry.data)])
-
-
-class EmberMugSensor(Entity):
-    """Config for an Ember Mug."""
-
-    def __init__(self, hass: HomeAssistantType, config: ConfigType):
-        """Set config and initial values. Also add EmberMug class which tracks changes."""
-        super().__init__()
-        self.mac_address = config[CONF_MAC]
-        self._icon = ICON_DEFAULT
-        self._unique_id = f"ember_mug_{format_mac(self.mac_address)}"
-        self._name = config.get(CONF_NAME, f"Ember Mug {self.mac_address}")
-        self._unit_of_measurement = config.get(CONF_TEMPERATURE_UNIT, TEMP_CELSIUS)
-
-        self.mug = EmberMug(
-            self.mac_address,
-            self._unit_of_measurement != TEMP_FAHRENHEIT,
-            self.async_update_callback,
-            hass,
-        )
-        _LOGGER.info(f"Ember Mug {self._name} Setup")
-
-    @property
-    def name(self) -> str:
-        """Human readable name."""
-        return self._name
-
-    @property
-    def unique_id(self) -> str:
-        """Return unique ID for HASS."""
-        return self._unique_id
-
-    @property
-    def available(self) -> bool:
-        """Return if this entity is available. This is only sort of reliable since we don't want to set it too often because Bluetooth is unreliable..."""
-        return self.mug.available
-
-    @property
-    def state(self) -> Optional[float]:
-        """Use the current temperature for the state of the mug."""
-        return self.mug.current_temp
-
-    @property
-    def state_attributes(self) -> Dict[str, Union[str, float]]:
-        """Return a list of attributes."""
-        return {
-            ATTR_BATTERY_LEVEL: self.mug.battery,
-            "led_colour": self.mug.colour,
-            "current_temp": self.mug.current_temp,
-            "target_temp": self.mug.target_temp,
-            CONF_TEMPERATURE_UNIT: self.mug.temperature_unit,
-            "latest_push": self.mug.latest_event_id,
-            "serial_number": self.mug.serial_number,
-            "on_charging_base": self.mug.on_charging_base,
-            "liquid_level": self.mug.liquid_level,
-            "liquid_state": self.mug.liquid_state_label,
-            "liquid_state_label": self.mug.liquid_state_label,
-            "date_time_zone": self.mug.date_time_zone,
-            "battery_voltage": self.mug.battery_voltage,
-            "firmware_info": self.mug.firmware_info,
-            "udsk": self.mug.udsk,
-            "dsk": self.mug.dsk,
-            "mug_name": self.mug.mug_name,
-            "mug_id": self.mug.mug_id,
-        }
-
-    @property
-    def unit_of_measurement(self) -> str:
-        """Return unit of measurement. By default this is Celsius, but can be customized in config."""
-        return self._unit_of_measurement
-
-    @property
-    def device_class(self) -> str:
-        """Use temperature device class, since warming is its primary function."""
-        return DEVICE_CLASS_TEMPERATURE
-
-    @property
-    def icon(self) -> str:
-        """Icon representation for this mug."""
-        return ICON_EMPTY if (self.mug.liquid_level or 0) <= 5 else ICON_DEFAULT
-
-    @property
-    def should_poll(self) -> bool:
-        """Don't use polling. We'll request updates."""
-        return False
-
-    @callback
-    def async_update_callback(self) -> None:
-        """Is called in Mug `async_run` to signal change to hass."""
-        _LOGGER.debug("Update in HASS requested")
-        self.async_schedule_update_ha_state()
-
-    async def async_added_to_hass(self) -> None:
-        """Stop polling on remove."""
-        _LOGGER.info(f"Start running {self._name}")
-        # Start loop
-        self.hass.async_create_task(self.mug.async_run())
-
-    async def async_will_remove_from_hass(self) -> None:
-        """Stop polling on remove."""
-        _LOGGER.info(f"Stop running {self._name}")
-        await self.mug.disconnect()
