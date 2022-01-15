@@ -223,6 +223,9 @@ class EmberMug:
         """Set mug unit if it's not what we want."""
         desired = TEMP_CELSIUS if self.use_metric else TEMP_FAHRENHEIT
         if self.temperature_unit != desired:
+            _LOGGER.info(
+                f"Current unit is {self.temperature_unit} and not {desired} so updating."
+            )
             await self.set_temp_unit(desired)
 
     async def update_battery_voltage(self) -> None:
