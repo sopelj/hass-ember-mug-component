@@ -4,14 +4,13 @@ from __future__ import annotations
 import asyncio
 import base64
 import contextlib
+import logging
 import re
-from typing import Tuple, Union
 
 from bleak import BleakClient, BleakScanner
 from bleak.exc import BleakError
 from homeassistant.const import TEMP_CELSIUS, TEMP_FAHRENHEIT
 
-from . import _LOGGER
 from .const import (
     EMBER_BLUETOOTH_NAMES,
     LIQUID_STATE_LABELS,
@@ -41,8 +40,10 @@ from .const import (
     UUID_UDSK,
 )
 
+_LOGGER = logging.getLogger(__name__)
 
-def decode_byte_string(data: Union[bytes, bytearray]) -> str:
+
+def decode_byte_string(data: bytes | bytearray) -> str:
     """Convert bytes to text as Ember expects."""
     return re.sub("(\\r|\\n)", "", base64.encodebytes(data + b"===").decode("utf8"))
 
@@ -141,7 +142,7 @@ class EmberMug:
         """Get RGBA colours from mug gatt."""
         self.led_colour_rgba = list(await self.client.read_gatt_char(UUID_LED))
 
-    async def set_led_colour(self, colour: Tuple[int, int, int, int]) -> None:
+    async def set_led_colour(self, colour: tuple[int, int, int, int]) -> None:
         """Set new target temp for mug."""
         _LOGGER.debug(f"Set led colour to {colour}")
         colour = bytearray(colour)  # To RGBA bytearray

@@ -1,18 +1,20 @@
 """Services for updating Mug information."""
 from __future__ import annotations
 
+import logging
 from typing import TYPE_CHECKING
 
 from homeassistant.core import ServiceCall
 from homeassistant.helpers import config_validation as cv
 import voluptuous as vol
 
-from . import _LOGGER
 from .const import ATTR_MUG_NAME, ATTR_RGB_COLOR, ATTR_TARGET_TEMP, MUG_NAME_REGEX
 
 if TYPE_CHECKING:
     from .sensor import EmberMugSensor
 
+
+_LOGGER = logging.getLogger(__name__)
 
 SET_LED_COLOUR_SCHEMA = {
     vol.Required(ATTR_RGB_COLOR): vol.All(
