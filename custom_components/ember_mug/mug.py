@@ -214,6 +214,17 @@ class EmberMug:
             TEMP_CELSIUS if bytes_to_little_int(unit_bytes) == 0 else TEMP_FAHRENHEIT
         )
 
+    async def set_temp_unit(self, unit: str) -> None:
+        """Set mug unit."""
+        unit_bytes = bytearray([1 if unit == TEMP_FAHRENHEIT else 0])
+        await self.client.write_gatt_char(UUID_TEMPERATURE_UNIT, unit_bytes, False)
+
+    async def ensure_correct_unit(self) -> None:
+        """Set mug unit if it's not what we want."""
+        desired = TEMP_CELSIUS if self.use_metric else TEMP_FAHRENHEIT
+        if self.temperature_unit != desired:
+            await self.set_temp_unit(desired)
+
     async def update_battery_voltage(self) -> None:
         """Get voltage and charge time."""
         battery_voltage_bytes = await self.client.read_gatt_char(
@@ -337,8 +348,8 @@ class EmberMug:
             "firmware_info",
         ]
         try:
-            if not self.client.is_connected:
-                await self.connect()
+            await self.ensure_connected()
+            await self.ensure_correct_unit()
             for attr in update_attrs:
                 await getattr(self, f"update_{attr}")()
             success = True
