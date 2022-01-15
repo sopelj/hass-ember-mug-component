@@ -3,7 +3,7 @@ import asyncio
 import logging
 from typing import cast
 
-from homeassistant.config_entries import ConfigEntry
+from homeassistant.config_entries import SOURCE_IMPORT, ConfigEntry
 from homeassistant.const import (
     CONF_MAC,
     CONF_NAME,
@@ -14,7 +14,6 @@ from homeassistant.const import (
 )
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
-from homeassistant.helpers.typing import ConfigType, HomeAssistantType
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 import homeassistant.util.dt as dt_util
 
@@ -122,6 +121,15 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     return unload_ok
 
 
-async def async_setup(hass: HomeAssistantType, config: ConfigType) -> bool:
-    """Register service calls."""
+async def async_setup(hass: HomeAssistant, config: dict) -> bool:
+    """Set up the Anycubic component."""
+    if DOMAIN not in config:
+        return True
+
+    for conf in config[DOMAIN]:
+        hass.async_create_task(
+            hass.config_entries.flow.async_init(
+                DOMAIN, context={"source": SOURCE_IMPORT}, data=conf
+            )
+        )
     return True

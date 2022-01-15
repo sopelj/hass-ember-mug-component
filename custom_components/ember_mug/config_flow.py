@@ -63,7 +63,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     data={
                         CONF_NAME: name,
                         CONF_MAC: mac_address,
-                        CONF_TEMPERATURE_UNIT: user_input[CONF_TEMPERATURE_UNIT][1],
+                        CONF_TEMPERATURE_UNIT: user_input[CONF_TEMPERATURE_UNIT],
                     },
                 )
 
@@ -71,13 +71,11 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         _LOGGER.info(devices)
         if not devices:
             return self.async_abort(reason="not_found")
-        device_mac = next(iter(devices))
+        device_mac, name = next(iter(devices.items()))
         schema = vol.Schema(
             {
-                vol.Required(CONF_MUG, default=device_mac): vol.In(
-                    [f"{n}: {a}" for a, n in devices.items()]
-                ),
-                vol.Optional(CONF_NAME, default=devices[device_mac]): str,
+                vol.Required(CONF_MUG, default=device_mac): vol.In([device_mac]),
+                vol.Optional(CONF_NAME, default=name): str,
                 vol.Required(CONF_TEMPERATURE_UNIT, default=TEMP_CELSIUS): vol.In(
                     [TEMP_CELSIUS, TEMP_FAHRENHEIT]
                 ),
