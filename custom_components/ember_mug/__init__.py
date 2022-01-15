@@ -34,7 +34,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
             hass, _LOGGER, name=f"ember-mug-{config.entry_id}", update_interval=None
         )
         self.mac_address = config.data[CONF_MAC]
-        self.name = config.data.get.get(CONF_NAME, f"Ember Mug {self.mac_address}")
+        self.name = config.data.get(CONF_NAME, f"Ember Mug {self.mac_address}")
         self.unit_of_measurement = config.data.get(CONF_TEMPERATURE_UNIT, TEMP_CELSIUS)
 
         self.mug = EmberMug(
