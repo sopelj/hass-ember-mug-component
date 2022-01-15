@@ -52,9 +52,9 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
             "serial_number": None,
             "mug_id": None,
             "last_read_time": None,
-            "firmware_info": {},
+            "firmware_version": None,
             "model": "Ember Mug",
-            "mug_name": self.name,
+            "mug_name": self.mug.mug_name,
         }
 
     async def _run(self):
@@ -62,12 +62,14 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
         try:
             self._loop = True
             _LOGGER.info(f"Starting mug loop {self.mac_address}")
+            # Make sure we're disconnected first
+            await self.mug.disconnect()
+            # Start loop
             while self._loop:
                 await self.mug.ensure_connected()
                 await self.mug.update_all()
                 self.mug.updates_queued.clear()
                 await self.async_refresh()
-
                 # Maintain connection for 5min seconds until next update
                 # We will be notified of most changes during this time
                 for _ in range(150):
@@ -77,6 +79,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
 
         except Exception as e:
             _LOGGER.error(f"An unexpected error occurred during loop {e}. Restarting.")
+            self._loop = False
             await self.mug.disconnect()
             self.hass.async_create_task(self._run())
         finally:
@@ -88,8 +91,8 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
             "mug_id": self.mug.mug_id,
             "serial_number": self.mug.serial_number,
             "last_read_time": dt_util.utcnow(),
-            "firmware_info": self.mug.firmware_info,
-            "mug_name": self.name,
+            "firmware_version": str(self.mug.firmware_info.get("version", "")),
+            "mug_name": self.mug.mug_name,
             "model": self.mug.model,
         }
         _LOGGER.debug(f"{data}")
@@ -103,7 +106,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
             identifiers={(DOMAIN, unique_id)},
             name=self.data["mug_name"],
             model=self.data["model"],
-            sw_version=str(self.data["firmware_info"].get("version", "")),
+            sw_version=self.data["firmware_version"],
             manufacturer="Ember",
         )
 
