@@ -95,7 +95,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
         unique_id = cast(str, self.config_entry.unique_id)
         return DeviceInfo(
             identifiers={(DOMAIN, unique_id)},
-            name=self.data["name"],
+            name=self.data["mug_name"],
             model=self.data["model"],
             sw_version=self.data["firmware_info"],
             manufacturer="Ember",
