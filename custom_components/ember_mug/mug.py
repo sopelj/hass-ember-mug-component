@@ -4,6 +4,7 @@ from __future__ import annotations
 import asyncio
 import base64
 import contextlib
+from datetime import datetime
 import logging
 import re
 
@@ -146,8 +147,6 @@ class EmberMug:
         """Set new target temp for mug."""
         _LOGGER.debug(f"Set led colour to {colour}")
         colour = bytearray(colour)  # To RGBA bytearray
-        with contextlib.suppress(BleakError):
-            await self.client.pair()
         await self.client.write_gatt_char(UUID_LED, colour, True)
 
     async def update_target_temp(self) -> None:
@@ -162,7 +161,6 @@ class EmberMug:
         """Set new target temp for mug."""
         _LOGGER.debug(f"Set target temp to {target_temp}")
         target = bytearray(int(target_temp / 0.01).to_bytes(2, "little"))
-        await self.client.pair()
         await self.client.write_gatt_char(UUID_TARGET_TEMPERATURE, target, True)
 
     async def update_current_temp(self) -> None:
@@ -237,9 +235,10 @@ class EmberMug:
 
     async def update_date_time_zone(self) -> None:
         """Get date and time zone."""
-        self.date_time_zone = str(
-            await self.client.read_gatt_char(UUID_TIME_DATE_AND_ZONE)
-        )
+        date_time_zone_bytes = await self.client.read_gatt_char(UUID_TIME_DATE_AND_ZONE)
+        time = bytes_to_big_int(date_time_zone_bytes[:4])
+        # offset = bytes_to_big_int(date_time_zone_bytes[4:])
+        self.date_time_zone = datetime.fromtimestamp(time) if time > 0 else None
 
     async def update_firmware_info(self) -> None:
         """Get firmware info."""

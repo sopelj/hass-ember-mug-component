@@ -26,6 +26,8 @@ from . import MugDataUpdateCoordinator
 from .const import (
     ATTR_BATTERY_VOLTAGE,
     DOMAIN,
+    ICON_DEFAULT,
+    ICON_EMPTY,
     SERVICE_SET_LED_COLOUR,
     SERVICE_SET_MUG_NAME,
     SERVICE_SET_TARGET_TEMP,
@@ -69,7 +71,9 @@ class EmberMugSensorBase(CoordinatorEntity):
 class EmberMugSensor(EmberMugSensorBase, SensorEntity):
     """Base Mug State Sensor."""
 
-    _attr_icon = "mdi:coffee"
+    def icon(self) -> str | None:
+        """Change icon based on state."""
+        return ICON_EMPTY if self.state == "Empty" else ICON_DEFAULT
 
     @property
     def native_value(self) -> str:
@@ -85,10 +89,8 @@ class EmberMugSensor(EmberMugSensorBase, SensorEntity):
             CONF_ID: mug.mug_id,
             CONF_RGB: mug.colour,
             CONF_TEMPERATURE_UNIT: mug.temperature_unit,
-            "latest_push": mug.latest_event_id,
             "liquid_level": mug.liquid_level,
             "liquid_state": mug.liquid_state_label,
-            "liquid_state_label": mug.liquid_state_label,
             "date_time_zone": mug.date_time_zone,
             "firmware_info": mug.firmware_info,
             "udsk": mug.udsk,
