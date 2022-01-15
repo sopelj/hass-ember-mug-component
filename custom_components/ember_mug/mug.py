@@ -351,7 +351,7 @@ class EmberMug:
         ]
         try:
             await self.ensure_connected()
-            await self.ensure_correct_unit()
+            # await self.ensure_correct_unit()
             for attr in update_attrs:
                 await getattr(self, f"update_{attr}")()
             success = True
