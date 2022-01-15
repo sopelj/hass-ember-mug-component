@@ -77,9 +77,10 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
 
         except Exception as e:
             _LOGGER.error(f"An unexpected error occurred during loop {e}. Restarting.")
-            if self.mug.is_connected:
-                await self.mug.disconnect()
+            await self.mug.disconnect()
             self.hass.async_create_task(self._run())
+        finally:
+            await self.mug.disconnect()
 
     async def _async_update_data(self):
         """Update the data of the coordinator."""
@@ -102,7 +103,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
             identifiers={(DOMAIN, unique_id)},
             name=self.data["mug_name"],
             model=self.data["model"],
-            sw_version=self.data["firmware_info"].get("version"),
+            sw_version=str(self.data["firmware_info"].get("version", "")),
             manufacturer="Ember",
         )
 
@@ -122,7 +123,8 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
     unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
     if unload_ok:
-        hass.data[DOMAIN].pop(entry.entry_id)
+        entry = hass.data[DOMAIN].pop(entry.entry_id)
+        await entry["coordinator"].mug.disconnect()
     return unload_ok
 
 

@@ -18,12 +18,11 @@ from homeassistant.helpers.device_registry import format_mac
 import voluptuous as vol
 
 from . import _LOGGER
-from .const import DOMAIN
+from .const import DOMAIN, MAC_ADDRESS_REGEX
 from .mug import find_mug
 
 CONF_MUG = "mug"
 DEFAULT_NAME = "Ember Mug"
-MUG_NAME_MAC_REGEX = r"^(.+): (([0-9A-Fa-f]{2}:){5}([0-9A-Fa-f]{2}))$"
 
 
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -33,9 +32,8 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         """Implement flow for config started by User in the UI."""
         errors: dict[str, str] = {}
         if user_input is not None:
-            name, mac_address = DEFAULT_NAME, ""
-            if match := re.match(MUG_NAME_MAC_REGEX, user_input[CONF_MUG]):
-                name, mac_address = match.groups()[:2]
+            mac_address = user_input.get(CONF_MUG, "")
+            if re.match(MAC_ADDRESS_REGEX, mac_address or ""):
                 try:
                     async with BleakClient(mac_address) as client:
                         connected = True
@@ -53,7 +51,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             else:
                 errors["base"] = "invalid_mac"
             if not errors:
-                name = user_input.get(CONF_NAME) or name
+                name = user_input.get(CONF_NAME) or DEFAULT_NAME
                 await self.async_set_unique_id(
                     format_mac(mac_address), raise_on_progress=False
                 )
@@ -63,7 +61,9 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     data={
                         CONF_NAME: name,
                         CONF_MAC: mac_address,
-                        CONF_TEMPERATURE_UNIT: user_input[CONF_TEMPERATURE_UNIT],
+                        CONF_TEMPERATURE_UNIT: user_input.get(
+                            CONF_TEMPERATURE_UNIT, TEMP_CELSIUS
+                        ),
                     },
                 )
 

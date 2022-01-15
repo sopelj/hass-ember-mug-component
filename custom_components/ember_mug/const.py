@@ -23,6 +23,8 @@ SERVICE_SET_TARGET_TEMP = "set_target_temp"
 ATTR_MUG_NAME = "mug_name"
 SERVICE_SET_MUG_NAME = "set_mug_name"
 
+ATTR_BATTERY_VOLTAGE = "battery_voltage"
+
 # Name of mug in byte string (Read/Write)
 UUID_MUG_NAME = UUID("fc540001-236c-4c94-8fa9-944a3e5353fa")
 
@@ -121,8 +123,6 @@ UUID_OTA = UUID("fc54000c-236c-4c94-8fa9-944a3e5353fa")
 UUID_CONTROL_REGISTER_ADDRESS = UUID("fc540010-236c-4c94-8fa9-944a3e5353fa")
 
 # Battery charge info (Read/Write)
-# id len(1) -> Voltage (bytes as ulong -> voltage in mv)
-# if len(2) -> Charge Time
 UUID_CONTROL_REGISTER_DATA = UUID("fc540011-236c-4c94-8fa9-944a3e5353fa")
 
 # These UUIDs are currently unused. Not for this mug?

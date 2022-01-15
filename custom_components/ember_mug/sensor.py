@@ -1,7 +1,6 @@
 """Sensor Entity for Ember Mug."""
 from __future__ import annotations
 
-from homeassistant.components.motion_blinds.sensor import ATTR_BATTERY_VOLTAGE
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntity,
@@ -9,6 +8,10 @@ from homeassistant.components.sensor import (
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
+    ATTR_BATTERY_CHARGING,
+    CONF_ID,
+    CONF_NAME,
+    CONF_RGB,
     CONF_TEMPERATURE_UNIT,
     PERCENTAGE,
     TEMP_CELSIUS,
@@ -21,6 +24,7 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from . import MugDataUpdateCoordinator
 from .const import (
+    ATTR_BATTERY_VOLTAGE,
     DOMAIN,
     SERVICE_SET_LED_COLOUR,
     SERVICE_SET_MUG_NAME,
@@ -77,10 +81,11 @@ class EmberMugSensor(EmberMugSensorBase, SensorEntity):
         """Return device specific state attributes."""
         mug = self.coordinator.mug
         return {
-            "led_colour": mug.colour,
+            CONF_NAME: mug.mug_name,
+            CONF_ID: mug.mug_id,
+            CONF_RGB: mug.colour,
             CONF_TEMPERATURE_UNIT: mug.temperature_unit,
             "latest_push": mug.latest_event_id,
-            "on_charging_base": mug.on_charging_base,
             "liquid_level": mug.liquid_level,
             "liquid_state": mug.liquid_state_label,
             "liquid_state_label": mug.liquid_state_label,
@@ -88,8 +93,6 @@ class EmberMugSensor(EmberMugSensorBase, SensorEntity):
             "firmware_info": mug.firmware_info,
             "udsk": mug.udsk,
             "dsk": mug.dsk,
-            "mug_name": mug.mug_name,
-            "mug_id": mug.mug_id,
         }
 
 
@@ -120,11 +123,6 @@ class EmberMugTemperatureSensor(EmberMugSensorBase, SensorEntity):
             return round(temp, 2)
         return None
 
-    @property
-    def extra_state_attributes(self):
-        """Return device specific state attributes."""
-        return {ATTR_BATTERY_VOLTAGE: self.coordinator.mug.battery_voltage}
-
 
 class EmberMugBatterySensor(EmberMugSensorBase, SensorEntity):
     """Mug Battery Sensor."""
@@ -144,7 +142,10 @@ class EmberMugBatterySensor(EmberMugSensorBase, SensorEntity):
     @property
     def extra_state_attributes(self):
         """Return device specific state attributes."""
-        return {ATTR_BATTERY_VOLTAGE: self.coordinator.mug.battery_voltage}
+        return {
+            ATTR_BATTERY_VOLTAGE: self.coordinator.mug.battery_voltage,
+            ATTR_BATTERY_CHARGING: self.coordinator.mug.on_charging_base,
+        }
 
 
 async def async_setup_entry(
