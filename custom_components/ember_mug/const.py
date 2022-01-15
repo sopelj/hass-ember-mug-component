@@ -70,6 +70,14 @@ LIQUID_STATE_LABELS = {
     LIQUID_STATE_WARM_NO_TEMP_CONTROL: "Warm (No control)",
 }
 
+LIQUID_STATE_TEMP_ICONS = {
+    LIQUID_STATE_UNKNOWN: "thermometer-off",
+    LIQUID_STATE_COLD_NO_TEMP_CONTROL: "thermometer-low",
+    LIQUID_STATE_COOLING: "thermometer-chevron-down",
+    LIQUID_STATE_HEATING: "thermometer-chevron-up",
+    LIQUID_STATE_WARM_NO_TEMP_CONTROL: "thermometer-high",
+}
+
 # [Unique ID]-[serial number] (Read)
 # [:6] -> ID in base64-ish
 # [7:] -> Serial number in byte string

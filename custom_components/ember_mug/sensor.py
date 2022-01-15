@@ -1,6 +1,8 @@
 """Sensor Entity for Ember Mug."""
 from __future__ import annotations
 
+from typing import Any
+
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntity,
@@ -19,6 +21,7 @@ from homeassistant.const import (
 )
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_platform
+from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
@@ -28,6 +31,7 @@ from .const import (
     DOMAIN,
     ICON_DEFAULT,
     ICON_EMPTY,
+    LIQUID_STATE_TEMP_ICONS,
     SERVICE_SET_LED_COLOUR,
     SERVICE_SET_MUG_NAME,
     SERVICE_SET_TARGET_TEMP,
@@ -42,7 +46,7 @@ from .services import (
 )
 
 
-class EmberMugSensorBase(CoordinatorEntity):
+class EmberMugSensorBase(CoordinatorEntity, SensorEntity):
     """Base Mug Sensor."""
 
     coordinator: MugDataUpdateCoordinator
@@ -50,13 +54,13 @@ class EmberMugSensorBase(CoordinatorEntity):
 
     def __init__(self, coordinator: MugDataUpdateCoordinator, device_id: str) -> None:
         """Init set names for attributes."""
-        super().__init__(coordinator)
         self._device_id = device_id
         self._attr_name = f"Mug {self._sensor_type or ''}".strip()
         self._attr_unique_id = f"{self._sensor_type or 'ember_mug'}-{device_id}"
+        super().__init__(coordinator)
 
     @property
-    def device_info(self):
+    def device_info(self) -> DeviceInfo:
         """Pass device information."""
         return self.coordinator.device_info
 
@@ -68,7 +72,7 @@ class EmberMugSensorBase(CoordinatorEntity):
         )
 
 
-class EmberMugSensor(EmberMugSensorBase, SensorEntity):
+class EmberMugSensor(EmberMugSensorBase):
     """Base Mug State Sensor."""
 
     @property
@@ -82,7 +86,7 @@ class EmberMugSensor(EmberMugSensorBase, SensorEntity):
         return self.coordinator.mug.liquid_state_label
 
     @property
-    def extra_state_attributes(self):
+    def extra_state_attributes(self) -> dict[str, Any]:
         """Return device specific state attributes."""
         mug = self.coordinator.mug
         return {
@@ -90,8 +94,6 @@ class EmberMugSensor(EmberMugSensorBase, SensorEntity):
             CONF_ID: mug.mug_id,
             CONF_RGB: mug.colour,
             CONF_TEMPERATURE_UNIT: mug.temperature_unit,
-            "liquid_level": mug.liquid_level,
-            "liquid_state": mug.liquid_state_label,
             "date_time_zone": mug.date_time_zone,
             "firmware_info": mug.firmware_info,
             "udsk": mug.udsk,
@@ -99,7 +101,22 @@ class EmberMugSensor(EmberMugSensorBase, SensorEntity):
         }
 
 
-class EmberMugTemperatureSensor(EmberMugSensorBase, SensorEntity):
+class EmberMugLiquidLevelSensor(EmberMugSensorBase):
+    """Liquid Level Sensor."""
+
+    _attr_icon = "mdi:cup-water"
+    _sensor_type = "liquid level"
+    _attr_native_unit_of_measurement = PERCENTAGE
+
+    @property
+    def native_value(self) -> float | int:
+        """Return information about the liquid level."""
+        if liquid_level := self.coordinator.mug.liquid_level:
+            return round(liquid_level / 30 * 100, 2)
+        return 0
+
+
+class EmberMugTemperatureSensor(EmberMugSensorBase):
     """Mug Temperature sensor."""
 
     _attr_device_class = SensorDeviceClass.TEMPERATURE
@@ -114,12 +131,22 @@ class EmberMugTemperatureSensor(EmberMugSensorBase, SensorEntity):
     ) -> None:
         """Initialize a new temperature sensor."""
         self._sensor_type = f"{temp_type} temp"
-        super().__init__(coordinator, device_id)
         self._temp_type = temp_type
         self._attr_native_unit_of_measurement = temp_unit
+        super().__init__(coordinator, device_id)
 
     @property
-    def native_value(self):
+    def icon(self) -> str | None:
+        """Set icon based on temperature."""
+        if self._sensor_type != "current_temp":
+            return "mdi:thermometer"
+        icon = LIQUID_STATE_TEMP_ICONS.get(
+            self.coordinator.mug.liquid_state, "thermometer"
+        )
+        return f"mdi:{icon}"
+
+    @property
+    def native_value(self) -> float | None:
         """Return sensor state."""
         temp = getattr(self.coordinator.mug, f"{self._temp_type}_temp")
         if temp is not None:
@@ -127,7 +154,7 @@ class EmberMugTemperatureSensor(EmberMugSensorBase, SensorEntity):
         return None
 
 
-class EmberMugBatterySensor(EmberMugSensorBase, SensorEntity):
+class EmberMugBatterySensor(EmberMugSensorBase):
     """Mug Battery Sensor."""
 
     _sensor_type = "battery"
@@ -143,7 +170,7 @@ class EmberMugBatterySensor(EmberMugSensorBase, SensorEntity):
         return None
 
     @property
-    def extra_state_attributes(self):
+    def extra_state_attributes(self) -> dict[str, Any]:
         """Return device specific state attributes."""
         return {
             ATTR_BATTERY_VOLTAGE: self.coordinator.mug.battery_voltage,
@@ -167,6 +194,7 @@ async def async_setup_entry(
     )
     entities: list[SensorEntity] = [
         EmberMugSensor(coordinator, device_id),
+        EmberMugLiquidLevelSensor(coordinator, device_id),
         EmberMugTemperatureSensor(coordinator, "target", temp_unit, device_id),
         EmberMugTemperatureSensor(coordinator, "current", temp_unit, device_id),
         EmberMugBatterySensor(coordinator, device_id),
