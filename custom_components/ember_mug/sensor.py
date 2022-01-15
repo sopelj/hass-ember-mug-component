@@ -121,9 +121,9 @@ class EmberMugTemperatureSensor(EmberMugSensorBase, SensorEntity):
         device_id: str,
     ) -> None:
         """Initialize a new temperature sensor."""
+        self._sensor_type = f"{temp_type} temp"
         super().__init__(coordinator, device_id)
         self._temp_type = temp_type
-        self._sensor_type = f"{temp_type} temp"
         self._attr_native_unit_of_measurement = temp_unit
 
     @property
@@ -143,6 +143,7 @@ class EmberMugTemperatureSensor(EmberMugSensorBase, SensorEntity):
 class EmberMugBatterySensor(EmberMugSensorBase, SensorEntity):
     """Mug Battery Sensor."""
 
+    _sensor_type = "battery"
     _attr_device_class = SensorDeviceClass.BATTERY
     _attr_native_unit_of_measurement = PERCENTAGE
 
