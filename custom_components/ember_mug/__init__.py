@@ -34,7 +34,11 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
         )
         self.mac_address = config.data[CONF_MAC]
         self.name = config.data.get(CONF_NAME, f"Ember Mug {self.mac_address}")
-        self.unit_of_measurement = config.data.get(CONF_TEMPERATURE_UNIT, TEMP_CELSIUS)
+        self.unit_of_measurement = (
+            TEMP_FAHRENHEIT
+            if "F" in config.data.get(CONF_TEMPERATURE_UNIT)
+            else TEMP_CELSIUS
+        )
 
         self.mug = EmberMug(
             self.mac_address, self.unit_of_measurement != TEMP_FAHRENHEIT
@@ -48,7 +52,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
             "serial_number": None,
             "mug_id": None,
             "last_read_time": None,
-            "firmware_info": None,
+            "firmware_info": {},
             "model": "Ember Mug",
             "mug_name": self.name,
         }
@@ -98,7 +102,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
             identifiers={(DOMAIN, unique_id)},
             name=self.data["mug_name"],
             model=self.data["model"],
-            sw_version=self.data["firmware_info"],
+            sw_version=self.data["firmware_info"].get("version"),
             manufacturer="Ember",
         )
 

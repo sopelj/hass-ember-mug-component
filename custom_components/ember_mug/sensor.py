@@ -3,30 +3,25 @@ from __future__ import annotations
 
 from homeassistant.components.motion_blinds.sensor import ATTR_BATTERY_VOLTAGE
 from homeassistant.components.sensor import (
-    PLATFORM_SCHEMA,
     SensorDeviceClass,
     SensorEntity,
     SensorStateClass,
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
-    CONF_MAC,
-    CONF_NAME,
     CONF_TEMPERATURE_UNIT,
     PERCENTAGE,
     TEMP_CELSIUS,
     TEMP_FAHRENHEIT,
 )
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers import config_validation as cv, entity_platform
+from homeassistant.helpers import entity_platform
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
-import voluptuous as vol
 
 from . import MugDataUpdateCoordinator
 from .const import (
     DOMAIN,
-    MAC_ADDRESS_REGEX,
     SERVICE_SET_LED_COLOUR,
     SERVICE_SET_MUG_NAME,
     SERVICE_SET_TARGET_TEMP,
@@ -38,15 +33,6 @@ from .services import (
     set_led_colour,
     set_mug_name,
     set_target_temp,
-)
-
-# Schema
-PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
-    {
-        vol.Required(CONF_MAC): cv.matches_regex(MAC_ADDRESS_REGEX),
-        vol.Optional(CONF_NAME): cv.string,
-        vol.Optional(CONF_TEMPERATURE_UNIT): cv.temperature_unit,
-    }
 )
 
 

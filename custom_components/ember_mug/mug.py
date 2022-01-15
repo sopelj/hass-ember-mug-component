@@ -48,12 +48,12 @@ def decode_byte_string(data: bytes | bytearray) -> str:
     return re.sub("(\\r|\\n)", "", base64.encodebytes(data + b"===").decode("utf8"))
 
 
-def bytes_to_little_int(data: bytearray) -> int:
+def bytes_to_little_int(data: bytearray | bytes) -> int:
     """Convert bytes to little int."""
     return int.from_bytes(data, byteorder="little", signed=False)
 
 
-def bytes_to_big_int(data: bytearray) -> int:
+def bytes_to_big_int(data: bytearray | bytes) -> int:
     """Convert bytes to big int."""
     return int.from_bytes(data, "big")
 
@@ -146,8 +146,9 @@ class EmberMug:
         """Set new target temp for mug."""
         _LOGGER.debug(f"Set led colour to {colour}")
         colour = bytearray(colour)  # To RGBA bytearray
-        await self.client.pair()
-        await self.client.write_gatt_char(UUID_LED, colour, False)
+        with contextlib.suppress(BleakError):
+            await self.client.pair()
+        await self.client.write_gatt_char(UUID_LED, colour, True)
 
     async def update_target_temp(self) -> None:
         """Get target temp form mug gatt."""
@@ -162,7 +163,7 @@ class EmberMug:
         _LOGGER.debug(f"Set target temp to {target_temp}")
         target = bytearray(int(target_temp / 0.01).to_bytes(2, "little"))
         await self.client.pair()
-        await self.client.write_gatt_char(UUID_TARGET_TEMPERATURE, target, False)
+        await self.client.write_gatt_char(UUID_TARGET_TEMPERATURE, target, True)
 
     async def update_current_temp(self) -> None:
         """Get current temp from mug gatt."""
@@ -208,6 +209,7 @@ class EmberMug:
     async def update_temperature_unit(self) -> None:
         """Get mug temp unit."""
         unit_bytes = await self.client.read_gatt_char(UUID_TEMPERATURE_UNIT)
+        _LOGGER.debug(f"Temperature unit from mug: {unit_bytes}")
         self.temperature_unit = (
             TEMP_CELSIUS if bytes_to_little_int(unit_bytes) == 0 else TEMP_FAHRENHEIT
         )
@@ -217,7 +219,7 @@ class EmberMug:
         battery_voltage_bytes = await self.client.read_gatt_char(
             UUID_CONTROL_REGISTER_DATA
         )
-        self.battery_voltage = str(battery_voltage_bytes)
+        self.battery_voltage = bytes_to_big_int(battery_voltage_bytes[:1])
 
     async def update_date_time_zone(self) -> None:
         """Get date and time zone."""
@@ -227,10 +229,12 @@ class EmberMug:
 
     async def update_firmware_info(self) -> None:
         """Get firmware info."""
-        # string getIntValue(18, 0) -> Firmware version
-        # string getIntValue(18, 2) -> Hardware
-        # string getIntValue(18, 4) -> Bootloader
-        self.firmware_info = str(await self.client.read_gatt_char(UUID_OTA))
+        info = await self.client.read_gatt_char(UUID_OTA)
+        self.firmware_info = {
+            "version": bytes_to_little_int(info[:2]),
+            "hardware": bytes_to_little_int(info[2:4]),
+            "bootloader": bytes_to_little_int(info[4:]),
+        }
 
     async def connect(self) -> bool:
         """Try 10 times to connect and if we fail wait five minutes and try again. If connected also subscribe to state notifications."""
@@ -238,7 +242,8 @@ class EmberMug:
         for i in range(1, 10 + 1):
             try:
                 await self.client.connect()
-                await self.client.pair()
+                with contextlib.suppress(BleakError):
+                    await self.client.pair()
                 connected = True
                 _LOGGER.info(f"Connected to {self.mac_address}")
                 break

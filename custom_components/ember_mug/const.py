@@ -102,7 +102,7 @@ PUSH_EVENT_BATTERY_IDS = [
 # To gather bytes from mug for stats (Notify)
 UUID_STATISTICS = UUID("fc540013-236c-4c94-8fa9-944a3e5353fa")
 
-# RGBA Coloud of LED (Read/Write)
+# RGBA Colour of LED (Read/Write)
 UUID_LED = UUID("fc540014-236c-4c94-8fa9-944a3e5353fa")
 
 # Date/Time (Read/Write)

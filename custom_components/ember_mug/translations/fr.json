@@ -1,0 +1,24 @@
+{
+  "title": "Tasse Ember",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Ajouter une tasse Ember",
+        "data": {
+          "mug": "Tasse (adresse MAC)",
+          "name": "Nom",
+          "temperature_unit": "Unité de température"
+        }
+      }
+    },
+    "error": {
+      "invalid_mac": "Adresse MAC invalide",
+      "connection_failed": "Un erreur est survenue lors du tentative de connexion à la tasse.",
+      "cannot_connect": "Impossible de se connecter à la tasse"
+    },
+    "abort": {
+      "unknown": "Un erreur inconue est survenue",
+      "not_found": "Aucune tasse a été trouvé. Veuillez assurer qu'il à été réinitialisé et est en mode jumelage."
+    }
+  }
+}
