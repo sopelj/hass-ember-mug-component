@@ -54,7 +54,7 @@ class EmberMugSensorBase(CoordinatorEntity):
     """Base Mug Sensor."""
 
     coordinator: MugDataUpdateCoordinator
-    _sensor_type: str | None
+    _sensor_type: str | None = None
 
     def __init__(self, coordinator: MugDataUpdateCoordinator, device_id: str) -> None:
         """Init set names for attributes."""
