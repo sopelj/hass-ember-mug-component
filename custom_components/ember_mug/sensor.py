@@ -71,6 +71,7 @@ class EmberMugSensorBase(CoordinatorEntity):
 class EmberMugSensor(EmberMugSensorBase, SensorEntity):
     """Base Mug State Sensor."""
 
+    @property
     def icon(self) -> str | None:
         """Change icon based on state."""
         return ICON_EMPTY if self.state == "Empty" else ICON_DEFAULT
