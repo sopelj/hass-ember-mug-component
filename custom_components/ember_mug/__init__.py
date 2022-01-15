@@ -79,7 +79,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
 
     async def _async_update_data(self):
         """Update the data of the coordinator."""
-        self.data = {
+        data = {
             "mug_id": self.mug.mug_id,
             "serial_number": self.mug.serial_number,
             "last_read_time": dt_util.utcnow(),
@@ -87,7 +87,8 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
             "mug_name": self.name,
             "model": self.mug.model,
         }
-        _LOGGER.debug(f"{self.data}")
+        _LOGGER.debug(f"{data}")
+        return data
 
     @property
     def device_info(self) -> DeviceInfo:
