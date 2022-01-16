@@ -316,7 +316,7 @@ class EmberMug:
             ]:
                 # 2 -> Placed on charger, 3 -> Removed from charger
                 self.on_charging_base = event_id == PUSH_EVENT_ID_CHARGER_CONNECTED
-                asyncio.get_running_loop().run_until_complete(self.update_callback())
+                self.update_callback()
             # All indicate changes in battery
             self.updates_queued.add("battery")
         elif event_id == PUSH_EVENT_ID_TARGET_TEMPERATURE_CHANGED:
@@ -354,7 +354,7 @@ class EmberMug:
             # await self.ensure_correct_unit()
             for attr in update_attrs:
                 await getattr(self, f"update_{attr}")()
-            await self.update_callback()
+            self.update_callback()
         except BleakError as e:
             _LOGGER.error(str(e))
         return

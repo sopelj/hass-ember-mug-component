@@ -43,7 +43,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
         self.mug = EmberMug(
             self.mac_address,
             self.unit_of_measurement != TEMP_FAHRENHEIT,
-            self.async_refresh,
+            self._sync_callback,
         )
         _LOGGER.info(f"Ember Mug {self.name} Setup")
         # Start loop
@@ -58,6 +58,10 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
             "mug_name": "Ember Mug",
             "model": "Ember Mug",
         }
+
+    def _sync_callback(self) -> None:
+        """Add a sync callback to execute async update in hass."""
+        self.hass.async_create_task(self.async_refresh())
 
     async def _async_update_data(self):
         """Update the data of the coordinator."""
