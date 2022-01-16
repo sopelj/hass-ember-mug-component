@@ -7,6 +7,7 @@ import contextlib
 from datetime import datetime
 import logging
 import re
+from typing import Callable
 
 from bleak import BleakClient, BleakScanner
 from bleak.exc import BleakError
@@ -77,35 +78,33 @@ async def find_mug() -> dict[str, str]:
 class EmberMug:
     """Class to connect and communicate with the mug via Bluetooth."""
 
-    def __init__(self, mac_address: str, use_metric: bool) -> None:
+    def __init__(self, mac_address: str, use_metric: bool, callback: Callable) -> None:
         """Set default values in for mug attributes."""
         self.mac_address = mac_address
         self.client = BleakClient(mac_address, address_type="random")
         self.available = True
         self.updates_queued = set()
+        self.update_callback = callback
         self.use_metric = use_metric
 
         self.model = "Ember Ceramic Mug"
         self.led_colour_rgba = [255, 255, 255, 255]
-        self.latest_event_id: int = None
-        self.liquid_level: float = None
-        self.serial_number: str = None
-        self.current_temp: float = None
-        self.target_temp: float = None
+        self.latest_event_id: int | None = None
+        self.liquid_level: float = 0
+        self.serial_number: str | None = None
+        self.current_temp: float | None = None
+        self.target_temp: float | None = None
         self.temperature_unit: str = TEMP_CELSIUS
-        self.battery: float = None
-        self.on_charging_base: bool = None
+        self.battery: float = 0
+        self.on_charging_base: bool = False
         self.liquid_state: int = 0
-        self.mug_name = None
-        self.mug_id: str = None
-        self.udsk: str = None
-        self.dsk: str = None
+        self.mug_name: str | None = None
+        self.mug_id: str | None = None
+        self.udsk: str | None = None
+        self.dsk: str | None = None
         self.date_time_zone = None
         self.firmware_info = {}
-        # Battery charge info (Read/Write)
-        # id len(1) -> Voltage (bytes as ulong -> voltage in mv)
-        # if len(2) -> Charge Time
-        self.battery_voltage = None
+        self.battery_voltage: float | None = None
 
     @property
     def is_connected(self) -> bool:
@@ -261,7 +260,7 @@ class EmberMug:
                 _LOGGER.info(f"Connected to {self.mac_address}")
                 break
             except BleakError as e:
-                _LOGGER.error(f"Init: {e} on attempt {i}. waiting 30sec")
+                _LOGGER.warning(f"Init: {e} on attempt {i}. waiting 30sec")
                 await asyncio.sleep(30)
 
         if connected is False:
@@ -317,6 +316,7 @@ class EmberMug:
             ]:
                 # 2 -> Placed on charger, 3 -> Removed from charger
                 self.on_charging_base = event_id == PUSH_EVENT_ID_CHARGER_CONNECTED
+                asyncio.get_running_loop().run_until_complete(self.update_callback())
             # All indicate changes in battery
             self.updates_queued.add("battery")
         elif event_id == PUSH_EVENT_ID_TARGET_TEMPERATURE_CHANGED:
@@ -332,7 +332,7 @@ class EmberMug:
         elif event_id == PUSH_EVENT_ID_BATTERY_VOLTAGE_STATE_CHANGED:
             self.updates_queued.add("battery_voltage")
 
-    async def update_all(self) -> bool:
+    async def update_all(self) -> None:
         """Update all attributes."""
         update_attrs = [
             "led_colour",
@@ -354,11 +354,10 @@ class EmberMug:
             # await self.ensure_correct_unit()
             for attr in update_attrs:
                 await getattr(self, f"update_{attr}")()
-            success = True
+            await self.update_callback()
         except BleakError as e:
             _LOGGER.error(str(e))
-            success = False
-        return success
+        return
 
     async def ensure_connected(self):
         """Ensure connected."""

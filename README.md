@@ -5,16 +5,19 @@
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg?style=for-the-badge)](https://github.com/custom-components/hacs)
 ![Project Maintenance](https://img.shields.io/maintenance/yes/2022.svg?style=for-the-badge)
 
+![Device View](./examples/device_example.png)
+
 Custom integration for the Ember Mug in Home Assistant.
 I only have the Ember Mug 2, but in theory it should be the same with other Ember Mugs.
 
-The protocol is not public, so there is quite a bit of guesswork involved.
-[@orlopau](https://github.com/orlopau) has documented the most important [UUIDs here](https://github.com/orlopau/ember-mug)
-Some of it I had to get from the Android App.
+The protocol is not public, so there is quite a bit of guesswork involved. 
+[@orlopau](https://github.com/orlopau) did a great job documenting some [UUIDs here](https://github.com/orlopau/ember-mug) And had to attempt to extract the rest of them. 
 
-This is still a work in progress, but seems to be working for reading information at least.
+I can't seem to get writing to attributes working yet, but reading the data works great.
 
-## Installation
+## Installation / Setup
+
+### Add Repository
 
 Add to HACS as custom repository:
 
@@ -22,7 +25,7 @@ Add to HACS as custom repository:
 
 And then install "Ember Mug" integration.
 
-## Preparing your Mug
+### Preparing your Mug
 
 The Ember Mug is very finicky. It will only maintain a connection with one device at a time. 
 If you have previously paired it with another device (like your phone) you will need to forget it from that device and reset the mug to factory settings.
@@ -36,7 +39,7 @@ To do so:
  4. Then enter pairing mode again - Hold down the button until the light starts blinking blue
  5. Once home assistant successfully connects it should leave pairing mode and go back to white
 
-## Setup in home assistant
+### Setup in home assistant
 
 1. Click here: [![Add Integration](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=ember_mug)
 2. Select MAC that was found and choose next.
@@ -50,7 +53,7 @@ To do so:
 
 *Note* If it fails to find your mug please try resetting and entering pairing mode again before trying again.
 
-### Caveats / known issues:
+## Caveats / known issues:
 
 - The services to change mug values fail with a bluetooth permission error, that I can't figure out yet. 
 - If you have another device paired with it like your phone it will cause it to disconnect, so you need to remove it from that device.
@@ -59,7 +62,10 @@ To do so:
     - may interfere with other local bluetooth integrations as it can only maintain one connection at a time.
 - Currently, it won't work with more than one mug
 
-## Automations:
+
+## Examples
+
+### Automations:
 
 If you want to have notifications similar to the app you can do something like:
 
@@ -110,4 +116,44 @@ automation:
       data_template:
         message: "Your mug battery is low ({{ states('sensor.mug_battery') }}%)."
 
+```
+
+### Lovelace
+
+An example for what I use in my lovelace config. 
+This uses a couple custom lovelace cards, you could do something similar with base widgets, but I've used these here 
+([battery-state-card](https://github.com/maxwroc/battery-state-card), [lovelace-multiple-entity-row](https://github.com/benct/lovelace-multiple-entity-row) and [stack-in-card](https://github.com/custom-cards/stack-in-card))
+
+![Lovelace Example](./examples/lovelace_example.png)
+
+```yaml
+type: custom:stack-in-card
+cards:
+  - type: entities
+    icon: mdi:coffee
+    title: Ember Mug
+    show_header_toggle: false
+    entities:
+      - entity: sensor.mug_current_temp
+        type: custom:multiple-entity-row
+        name: Temperature
+        show_state: false
+        entities:
+          - entity: sensor.mug
+            name: State
+          - entity: sensor.mug_current_temp
+            name: Current
+          - entity: sensor.mug_target_temp
+            name: Target
+      - type: custom:template-entity-row
+        entity: sensor.mug_liquid_level
+        name: Liquid Level
+        unit: '%'
+      - type: custom:battery-state-entity
+        name: Battery
+        entity: sensor.mug_battery
+        charging_state:
+          attribute:
+            name: battery_charging
+            value: true
 ```

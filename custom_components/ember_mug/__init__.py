@@ -41,7 +41,9 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
         )
 
         self.mug = EmberMug(
-            self.mac_address, self.unit_of_measurement != TEMP_FAHRENHEIT
+            self.mac_address,
+            self.unit_of_measurement != TEMP_FAHRENHEIT,
+            self.async_refresh,
         )
         _LOGGER.info(f"Ember Mug {self.name} Setup")
         # Start loop
@@ -49,41 +51,13 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
         self.hass.async_create_task(self._run())
         # Default Data
         self.data = {
-            "serial_number": None,
             "mug_id": None,
+            "serial_number": None,
             "last_read_time": None,
-            "firmware_version": None,
+            "sw_version": None,
+            "mug_name": "Ember Mug",
             "model": "Ember Mug",
-            "mug_name": self.mug.mug_name,
         }
-
-    async def _run(self):
-        """Start the task loop."""
-        try:
-            self._loop = True
-            _LOGGER.info(f"Starting mug loop {self.mac_address}")
-            # Make sure we're disconnected first
-            await self.mug.disconnect()
-            # Start loop
-            while self._loop:
-                await self.mug.ensure_connected()
-                await self.mug.update_all()
-                self.mug.updates_queued.clear()
-                await self.async_refresh()
-                # Maintain connection for 5min seconds until next update
-                # We will be notified of most changes during this time
-                for _ in range(150):
-                    await self.mug.ensure_connected()
-                    await self.mug.update_queued_attributes()
-                    await asyncio.sleep(2)
-
-        except Exception as e:
-            _LOGGER.error(f"An unexpected error occurred during loop {e}. Restarting.")
-            self._loop = False
-            await self.mug.disconnect()
-            self.hass.async_create_task(self._run())
-        finally:
-            await self.mug.disconnect()
 
     async def _async_update_data(self):
         """Update the data of the coordinator."""
@@ -91,7 +65,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
             "mug_id": self.mug.mug_id,
             "serial_number": self.mug.serial_number,
             "last_read_time": dt_util.utcnow(),
-            "firmware_version": str(self.mug.firmware_info.get("version", "")),
+            "sw_version": str(self.mug.firmware_info.get("version", "")),
             "mug_name": self.mug.mug_name,
             "model": self.mug.model,
         }
@@ -106,9 +80,36 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
             identifiers={(DOMAIN, unique_id)},
             name=self.data["mug_name"],
             model=self.data["model"],
-            sw_version=self.data["firmware_version"],
+            sw_version=self.data["sw_version"],
             manufacturer="Ember",
         )
+
+    async def _run(self):
+        """Start the task loop."""
+        try:
+            self._loop = True
+            _LOGGER.info(f"Starting mug loop {self.mac_address}")
+            # Make sure we're disconnected first
+            await self.mug.disconnect()
+            # Start loop
+            while self._loop:
+                await self.mug.ensure_connected()
+                await self.mug.update_all()
+                self.mug.updates_queued.clear()
+                # Maintain connection for 5min seconds until next update
+                # We will be notified of most changes during this time
+                for _ in range(150):
+                    await self.mug.ensure_connected()
+                    await self.mug.update_queued_attributes()
+                    await asyncio.sleep(2)
+
+        except Exception as e:
+            _LOGGER.error(f"An unexpected error occurred during loop {e}. Restarting.")
+            self._loop = False
+            await self.mug.disconnect()
+            self.hass.async_create_task(self._run())
+        finally:
+            await self.mug.disconnect()
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
