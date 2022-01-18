@@ -47,7 +47,12 @@ _LOGGER = logging.getLogger(__name__)
 
 def decode_byte_string(data: bytes | bytearray) -> str:
     """Convert bytes to text as Ember expects."""
-    return re.sub("(\\r|\\n)", "", base64.encodebytes(data + b"===").decode("utf8"))
+    return base64.decodebytes(data).decode("utf-8")
+
+
+def encode_byte_string(data: str) -> bytes:
+    """Encode string from Ember Mug."""
+    return re.sub(b"[\r\n]", b"", base64.encodebytes(f"{data}===".encode("utf8")))
 
 
 def bytes_to_little_int(data: bytearray | bytes) -> int:
@@ -190,7 +195,6 @@ class EmberMug:
 
     async def set_mug_name(self, name: str) -> None:
         """Assign new name to mug."""
-        await self.client.pair()
         await self.client.write_gatt_char(
             UUID_MUG_NAME, bytearray(name.encode("utf8")), False
         )
@@ -198,6 +202,12 @@ class EmberMug:
     async def update_udsk(self) -> None:
         """Get mug udsk from gatt."""
         self.udsk = decode_byte_string(await self.client.read_gatt_char(UUID_UDSK))
+
+    async def set_mug_udsk(self, udsk: str) -> None:
+        """Attempt to write udsk."""
+        await self.client.write_gatt_char(
+            UUID_MUG_NAME, bytearray(encode_byte_string(udsk)), False
+        )
 
     async def update_dsk(self) -> None:
         """Get mug dsk from gatt."""

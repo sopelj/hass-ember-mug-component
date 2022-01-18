@@ -36,6 +36,7 @@ from .const import (
     SERVICE_SET_MUG_NAME,
     SERVICE_SET_TARGET_TEMP,
 )
+from .mug import encode_byte_string
 from .services import (
     SET_LED_COLOUR_SCHEMA,
     SET_MUG_NAME_SCHEMA,
@@ -98,6 +99,7 @@ class EmberMugSensor(EmberMugSensorBase):
             "firmware_info": mug.firmware_info,
             "udsk": mug.udsk,
             "dsk": mug.dsk,
+            "encoded_dsk": str(encode_byte_string(mug.dsk)),
         }
 
 
