@@ -47,12 +47,12 @@ _LOGGER = logging.getLogger(__name__)
 
 def decode_byte_string(data: bytes | bytearray) -> str:
     """Convert bytes to text as Ember expects."""
-    return base64.decodebytes(data).decode("utf-8")
+    return base64.decodebytes(data + b"===").decode("utf-8")
 
 
 def encode_byte_string(data: str) -> bytes:
     """Encode string from Ember Mug."""
-    return re.sub(b"[\r\n]", b"", base64.encodebytes(f"{data}===".encode("utf8")))
+    return re.sub(b"[\r\n]", b"", base64.encodebytes(data.encode("utf8")))
 
 
 def bytes_to_little_int(data: bytearray | bytes) -> int:

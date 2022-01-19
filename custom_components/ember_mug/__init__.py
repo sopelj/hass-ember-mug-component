@@ -95,6 +95,9 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
             _LOGGER.info(f"Starting mug loop {self.mac_address}")
             # Make sure we're disconnected first
             await self.mug.disconnect()
+            await self.mug.ensure_connected()
+            services = await self.mug.client.get_services()
+            _LOGGER.debug(f"{services}")
             # Start loop
             while self._loop:
                 await self.mug.ensure_connected()
