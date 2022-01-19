@@ -97,7 +97,21 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
             await self.mug.disconnect()
             await self.mug.ensure_connected()
             services = await self.mug.client.get_services()
-            _LOGGER.debug(f"{services}")
+            debug_services = {
+                service.uuid: {
+                    "handle": service.handle,
+                    "description": service.description,
+                    "characteristic": {
+                        characteristic.uuid: {
+                            "handle": characteristic.handle,
+                            "props": characteristic.properties,
+                        }
+                        for characteristic in service.characteristics
+                    },
+                }
+                for service in services
+            }
+            _LOGGER.debug(f"{debug_services}")
             # Start loop
             while self._loop:
                 await self.mug.ensure_connected()
