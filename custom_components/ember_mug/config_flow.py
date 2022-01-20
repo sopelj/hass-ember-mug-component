@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import contextlib
 import re
-from typing import Any, Optional
+from typing import Any
 
 from bleak import BleakClient, BleakError
 from homeassistant import config_entries
@@ -28,7 +28,7 @@ DEFAULT_NAME = "Ember Mug"
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Config Flow for Ember Mug."""
 
-    async def async_step_user(self, user_input: Optional[dict[str, Any]] = None):
+    async def async_step_user(self, user_input: dict[str, Any] | None = None):
         """Implement flow for config started by User in the UI."""
         errors: dict[str, str] = {}
         if user_input is not None:
@@ -53,7 +53,8 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             if not errors:
                 name = user_input.get(CONF_NAME) or DEFAULT_NAME
                 await self.async_set_unique_id(
-                    format_mac(mac_address), raise_on_progress=False
+                    format_mac(mac_address),
+                    raise_on_progress=False,
                 )
                 self._abort_if_unique_id_configured()
                 return self.async_create_entry(
@@ -62,7 +63,8 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                         CONF_NAME: name,
                         CONF_MAC: mac_address,
                         CONF_TEMPERATURE_UNIT: user_input.get(
-                            CONF_TEMPERATURE_UNIT, TEMP_CELSIUS
+                            CONF_TEMPERATURE_UNIT,
+                            TEMP_CELSIUS,
                         ),
                     },
                 )
@@ -77,9 +79,9 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 vol.Required(CONF_MUG, default=device_mac): vol.In([device_mac]),
                 vol.Optional(CONF_NAME, default=name): str,
                 vol.Required(CONF_TEMPERATURE_UNIT, default=TEMP_CELSIUS): vol.In(
-                    [TEMP_CELSIUS, TEMP_FAHRENHEIT]
+                    [TEMP_CELSIUS, TEMP_FAHRENHEIT],
                 ),
-            }
+            },
         )
         return self.async_show_form(step_id="user", data_schema=schema, errors=errors)
 

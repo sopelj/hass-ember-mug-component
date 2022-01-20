@@ -30,7 +30,10 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
     def __init__(self, hass: HomeAssistant, config: ConfigEntry) -> None:
         """Init data coordinator and start mug running."""
         super().__init__(
-            hass, _LOGGER, name=f"ember-mug-{config.entry_id}", update_interval=None
+            hass,
+            _LOGGER,
+            name=f"ember-mug-{config.entry_id}",
+            update_interval=None,
         )
         self.mac_address = config.data[CONF_MAC]
         self.name = config.data.get(CONF_NAME, f"Ember Mug {self.mac_address}")
@@ -161,7 +164,9 @@ async def async_setup(hass: HomeAssistant, config: dict) -> bool:
     for conf in config[DOMAIN]:
         hass.async_create_task(
             hass.config_entries.flow.async_init(
-                DOMAIN, context={"source": SOURCE_IMPORT}, data=conf
-            )
+                DOMAIN,
+                context={"source": SOURCE_IMPORT},
+                data=conf,
+            ),
         )
     return True

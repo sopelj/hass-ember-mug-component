@@ -78,6 +78,8 @@ LIQUID_STATE_TEMP_ICONS = {
     LIQUID_STATE_WARM_NO_TEMP_CONTROL: "thermometer-high",
 }
 
+EMBER_SERVICE_UUID = UUID("fc543622-236c-4c94-8fa9-944a3e5353fa")
+
 # [Unique ID]-[serial number] (Read)
 # [:6] -> ID in base64-ish
 # [7:] -> Serial number in byte string

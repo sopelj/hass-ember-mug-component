@@ -18,7 +18,8 @@ _LOGGER = logging.getLogger(__name__)
 
 SET_LED_COLOUR_SCHEMA = {
     vol.Required(ATTR_RGB_COLOR): vol.All(
-        vol.ExactSequence((cv.byte,) * 3), vol.Coerce(tuple)
+        vol.ExactSequence((cv.byte,) * 3),
+        vol.Coerce(tuple),
     ),
 }
 

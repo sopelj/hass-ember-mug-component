@@ -143,7 +143,8 @@ class EmberMugTemperatureSensor(EmberMugSensorBase):
         if self._sensor_type != "current_temp":
             return "mdi:thermometer"
         icon = LIQUID_STATE_TEMP_ICONS.get(
-            self.coordinator.mug.liquid_state, "thermometer"
+            self.coordinator.mug.liquid_state,
+            "thermometer",
         )
         return f"mdi:{icon}"
 
@@ -206,11 +207,17 @@ async def async_setup_entry(
     # Setup Services
     platform = entity_platform.async_get_current_platform()
     platform.async_register_entity_service(
-        SERVICE_SET_LED_COLOUR, SET_LED_COLOUR_SCHEMA, set_led_colour
+        SERVICE_SET_LED_COLOUR,
+        SET_LED_COLOUR_SCHEMA,
+        set_led_colour,
     )
     platform.async_register_entity_service(
-        SERVICE_SET_TARGET_TEMP, SET_TARGET_TEMP_SCHEMA, set_target_temp
+        SERVICE_SET_TARGET_TEMP,
+        SET_TARGET_TEMP_SCHEMA,
+        set_target_temp,
     )
     platform.async_register_entity_service(
-        SERVICE_SET_MUG_NAME, SET_MUG_NAME_SCHEMA, set_mug_name
+        SERVICE_SET_MUG_NAME,
+        SET_MUG_NAME_SCHEMA,
+        set_mug_name,
     )
