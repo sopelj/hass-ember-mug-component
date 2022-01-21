@@ -101,7 +101,7 @@ automation:
     action:
       service: notify.mobile_app_jesse_s_pixel_4a  # Mobile device notify or other action
       data_template:
-        message: "Your mug is at the desired {{ states('sensor.mug_target_temp') }}."
+        message: "Your mug is at the desired {{ states('sensor.mug_current_temp') }}{{ state_attr('sensor.mug_current_temp', 'unit_of_measurement') }}."
 
   - id: mug_battery_warning
     alias: Mug Battery Low
