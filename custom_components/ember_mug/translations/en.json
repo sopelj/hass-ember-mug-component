@@ -14,6 +14,7 @@
     "error": {
       "invalid_mac": "MAC Address is invalid",
       "connection_failed": "Failed to connect to the Mug",
+      "connection_timeout": "Connection attempt timed out",
       "cannot_connect": "Unable to connect to the Mug"
     },
     "abort": {

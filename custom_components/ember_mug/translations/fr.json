@@ -14,6 +14,7 @@
     "error": {
       "invalid_mac": "Adresse MAC invalide",
       "connection_failed": "Un erreur est survenue lors du tentative de connexion à la tasse.",
+      "connection_timeout": "Le temps de connection à dépassé le délais maximal.",
       "cannot_connect": "Impossible de se connecter à la tasse"
     },
     "abort": {

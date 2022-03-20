@@ -1,8 +1,10 @@
 """Add Config Flow for Ember Mug."""
 from __future__ import annotations
 
+import asyncio
 import contextlib
 import re
+from sys import platform
 from typing import Any
 
 from bleak import BleakClient, BleakError
@@ -41,10 +43,15 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                             connected = await client.connect()
                             _LOGGER.info(f"Connected: {connected}")
                         with contextlib.suppress(BleakError):
-                            paired = await client.pair()
-                            _LOGGER.info(f"Paired: {paired}")
+                            if platform != "darwin":
+                                # Unsupported on Mac
+                                paired = await client.pair()
+                                _LOGGER.info(f"Paired: {paired}")
                         if not connected:
                             errors["base"] = "not_connected"
+                except asyncio.TimeoutError as e:
+                    _LOGGER.error(f"Connection Timed out: {e}")
+                    errors["base"] = "connection_timeout"
                 except BleakError as e:
                     _LOGGER.error(f"Bleak Error whilst connecting: {e}")
                     errors["base"] = "connection_failed"

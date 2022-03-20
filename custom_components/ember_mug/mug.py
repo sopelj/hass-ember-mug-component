@@ -164,7 +164,7 @@ class EmberMug:
         _LOGGER.debug(f"Set led colour to {colour}")
         colour = bytearray(colour)  # To RGBA bytearray
         characteristic = await self._get_ember_characteristic(UUID_LED)
-        await self.client.write_gatt_char(characteristic, colour, response=True)
+        await self.client.write_gatt_char(characteristic, colour)
 
     async def update_target_temp(self) -> None:
         """Get target temp form mug gatt."""
@@ -179,7 +179,7 @@ class EmberMug:
         _LOGGER.debug(f"Set target temp to {target_temp}")
         target = bytearray(int(target_temp / 0.01).to_bytes(2, "little"))
         characteristic = await self._get_ember_characteristic(UUID_TARGET_TEMPERATURE)
-        await self.client.write_gatt_char(characteristic, target, response=True)
+        await self.client.write_gatt_char(characteristic, target)
 
     async def update_current_temp(self) -> None:
         """Get current temp from mug gatt."""
@@ -213,7 +213,6 @@ class EmberMug:
         await self.client.write_gatt_char(
             characteristic,
             bytearray(name.encode("utf8")),
-            response=True,
         )
 
     async def update_udsk(self) -> None:
@@ -226,7 +225,6 @@ class EmberMug:
         await self.client.write_gatt_char(
             characteristic,
             bytearray(encode_byte_string(udsk)),
-            response=True,
         )
 
     async def update_dsk(self) -> None:
@@ -245,7 +243,7 @@ class EmberMug:
         """Set mug unit."""
         unit_bytes = bytearray([1 if unit == TEMP_FAHRENHEIT else 0])
         characteristic = await self._get_ember_characteristic(UUID_TEMPERATURE_UNIT)
-        await self.client.write_gatt_char(characteristic, unit_bytes, response=True)
+        await self.client.write_gatt_char(characteristic, unit_bytes)
 
     async def ensure_correct_unit(self) -> None:
         """Set mug unit if it's not what we want."""
