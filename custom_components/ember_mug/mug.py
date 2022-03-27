@@ -164,7 +164,8 @@ class EmberMug:
         _LOGGER.debug(f"Set led colour to {colour}")
         colour = bytearray(colour)  # To RGBA bytearray
         characteristic = await self._get_ember_characteristic(UUID_LED)
-        await self.client.write_gatt_char(characteristic, colour)
+        await self.ensure_connected()
+        await self.client.write_gatt_char(characteristic, colour, False)
 
     async def update_target_temp(self) -> None:
         """Get target temp form mug gatt."""
@@ -179,7 +180,8 @@ class EmberMug:
         _LOGGER.debug(f"Set target temp to {target_temp}")
         target = bytearray(int(target_temp / 0.01).to_bytes(2, "little"))
         characteristic = await self._get_ember_characteristic(UUID_TARGET_TEMPERATURE)
-        await self.client.write_gatt_char(characteristic, target)
+        await self.ensure_connected()
+        await self.client.write_gatt_char(characteristic, target, False)
 
     async def update_current_temp(self) -> None:
         """Get current temp from mug gatt."""
@@ -210,9 +212,11 @@ class EmberMug:
     async def set_mug_name(self, name: str) -> None:
         """Assign new name to mug."""
         characteristic = await self._get_ember_characteristic(UUID_MUG_NAME)
+        await self.ensure_connected()
         await self.client.write_gatt_char(
             characteristic,
             bytearray(name.encode("utf8")),
+            False,
         )
 
     async def update_udsk(self) -> None:
@@ -222,9 +226,11 @@ class EmberMug:
     async def set_mug_udsk(self, udsk: str) -> None:
         """Attempt to write udsk."""
         characteristic = await self._get_ember_characteristic(UUID_UDSK)
+        await self.ensure_connected()
         await self.client.write_gatt_char(
             characteristic,
             bytearray(encode_byte_string(udsk)),
+            False,
         )
 
     async def update_dsk(self) -> None:
@@ -243,7 +249,8 @@ class EmberMug:
         """Set mug unit."""
         unit_bytes = bytearray([1 if unit == TEMP_FAHRENHEIT else 0])
         characteristic = await self._get_ember_characteristic(UUID_TEMPERATURE_UNIT)
-        await self.client.write_gatt_char(characteristic, unit_bytes)
+        await self.ensure_connected()
+        await self.client.write_gatt_char(characteristic, unit_bytes, False)
 
     async def ensure_correct_unit(self) -> None:
         """Set mug unit if it's not what we want."""
