@@ -7,6 +7,7 @@ import contextlib
 from datetime import datetime
 import logging
 import re
+from sys import platform
 from typing import Callable
 from uuid import UUID
 
@@ -291,12 +292,13 @@ class EmberMug:
             try:
                 await self.client.connect()
                 with contextlib.suppress(BleakError):
-                    await self.client.pair()
+                    if platform != "darwin":
+                        await self.client.pair()
                 connected = True
                 _LOGGER.info(f"Connected to {self.mac_address}")
                 break
             except BleakError as e:
-                _LOGGER.warning(f"Init: {e} on attempt {i}. waiting 30sec")
+                _LOGGER.debug(f"Init: {e} on attempt {i}. waiting 30sec")
                 await asyncio.sleep(30)
 
         if connected is False:

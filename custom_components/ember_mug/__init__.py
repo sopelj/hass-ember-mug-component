@@ -50,7 +50,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
         )
         _LOGGER.info(f"Ember Mug {self.name} Setup")
         # Start loop
-        _LOGGER.info(f"Start running {self.name}")
+        _LOGGER.debug(f"Start running {self.name}")
         self.hass.async_create_task(self._run())
         # Default Data
         self.data = {
@@ -128,7 +128,9 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
                     await asyncio.sleep(2)
 
         except Exception as e:
-            _LOGGER.error(f"An unexpected error occurred during loop {e}. Restarting.")
+            _LOGGER.error(
+                f"An unexpected error occurred during loop <{type(e).__name__}>: {e}. Restarting.",
+            )
             self._loop = False
             await self.mug.disconnect()
             self.hass.async_create_task(self._run())
