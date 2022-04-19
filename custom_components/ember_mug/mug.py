@@ -9,16 +9,13 @@ import logging
 import re
 from sys import platform
 from typing import Callable
-from uuid import UUID
 
 from bleak import BleakClient, BleakScanner
-from bleak.backends.characteristic import BleakGATTCharacteristic
 from bleak.exc import BleakError
 from homeassistant.const import TEMP_CELSIUS, TEMP_FAHRENHEIT
 
 from .const import (
     EMBER_BLUETOOTH_NAMES,
-    EMBER_SERVICE_UUID,
     LIQUID_STATE_LABELS,
     PUSH_EVENT_BATTERY_IDS,
     PUSH_EVENT_ID_AUTH_INFO_NOT_FOUND,
@@ -139,15 +136,6 @@ class EmberMug:
             temp = (temp * 9 / 5) + 32
         return round(temp, 2)
 
-    async def _get_ember_characteristic(
-        self,
-        uuid: UUID,
-    ) -> BleakGATTCharacteristic | None:
-        """Lookup characteristic by UUID."""
-        services = await self.client.get_services()
-        service = services.get_service(EMBER_SERVICE_UUID)
-        return service.get_characteristic(uuid)
-
     async def update_battery(self) -> None:
         """Get Battery percent from mug gatt."""
         battery = await self.client.read_gatt_char(UUID_BATTERY)
@@ -164,9 +152,8 @@ class EmberMug:
         """Set new target temp for mug."""
         _LOGGER.debug(f"Set led colour to {colour}")
         colour = bytearray(colour)  # To RGBA bytearray
-        characteristic = await self._get_ember_characteristic(UUID_LED)
         await self.ensure_connected()
-        await self.client.write_gatt_char(characteristic, colour, False)
+        await self.client.write_gatt_char(UUID_LED, colour, True)
 
     async def update_target_temp(self) -> None:
         """Get target temp form mug gatt."""
@@ -180,9 +167,8 @@ class EmberMug:
         """Set new target temp for mug."""
         _LOGGER.debug(f"Set target temp to {target_temp}")
         target = bytearray(int(target_temp / 0.01).to_bytes(2, "little"))
-        characteristic = await self._get_ember_characteristic(UUID_TARGET_TEMPERATURE)
         await self.ensure_connected()
-        await self.client.write_gatt_char(characteristic, target, False)
+        await self.client.write_gatt_char(UUID_TARGET_TEMPERATURE, target, True)
 
     async def update_current_temp(self) -> None:
         """Get current temp from mug gatt."""
@@ -212,10 +198,9 @@ class EmberMug:
 
     async def set_mug_name(self, name: str) -> None:
         """Assign new name to mug."""
-        characteristic = await self._get_ember_characteristic(UUID_MUG_NAME)
         await self.ensure_connected()
         await self.client.write_gatt_char(
-            characteristic,
+            UUID_MUG_NAME,
             bytearray(name.encode("utf8")),
             False,
         )
@@ -226,13 +211,8 @@ class EmberMug:
 
     async def set_mug_udsk(self, udsk: str) -> None:
         """Attempt to write udsk."""
-        characteristic = await self._get_ember_characteristic(UUID_UDSK)
         await self.ensure_connected()
-        await self.client.write_gatt_char(
-            characteristic,
-            bytearray(encode_byte_string(udsk)),
-            False,
-        )
+        await self.client.write_gatt_char(UUID_UDSK, bytearray(encode_byte_string(udsk)), True)
 
     async def update_dsk(self) -> None:
         """Get mug dsk from gatt."""
@@ -249,9 +229,8 @@ class EmberMug:
     async def set_temp_unit(self, unit: str) -> None:
         """Set mug unit."""
         unit_bytes = bytearray([1 if unit == TEMP_FAHRENHEIT else 0])
-        characteristic = await self._get_ember_characteristic(UUID_TEMPERATURE_UNIT)
         await self.ensure_connected()
-        await self.client.write_gatt_char(characteristic, unit_bytes, False)
+        await self.client.write_gatt_char(UUID_TEMPERATURE_UNIT, unit_bytes, True)
 
     async def ensure_correct_unit(self) -> None:
         """Set mug unit if it's not what we want."""

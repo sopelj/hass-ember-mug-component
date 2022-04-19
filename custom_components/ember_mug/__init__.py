@@ -1,6 +1,7 @@
 """Ember Mug Custom Integration."""
 import asyncio
 import logging
+import traceback
 from typing import cast
 
 from homeassistant.config_entries import SOURCE_IMPORT, ConfigEntry
@@ -118,10 +119,12 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
             # Start loop
             while self._loop:
                 await self.mug.ensure_connected()
+                await asyncio.sleep(0.5)
                 await self.mug.update_all()
                 self.mug.updates_queued.clear()
                 # Maintain connection for 5min seconds until next update
                 # We will be notified of most changes during this time
+                await asyncio.sleep(0.5)
                 for _ in range(150):
                     await self.mug.ensure_connected()
                     await self.mug.update_queued_attributes()
@@ -131,6 +134,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
             _LOGGER.error(
                 f"An unexpected error occurred during loop <{type(e).__name__}>: {e}. Restarting.",
             )
+            _LOGGER.debug(traceback.format_exc())
             self._loop = False
             await self.mug.disconnect()
             self.hass.async_create_task(self._run())
