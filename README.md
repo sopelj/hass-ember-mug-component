@@ -5,6 +5,12 @@
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg?style=for-the-badge)](https://github.com/hacs/integration)
 ![Project Maintenance](https://img.shields.io/maintenance/yes/2022.svg?style=for-the-badge)
 
+**Important!**: 
+The new Home Assistant 2022.8 introduces a new [Bluetooth Integration](https://www.home-assistant.io/integrations/bluetooth) which conflicts with this integration.
+If version 0.3.X of this integration will work on 2022.8 as long as you to not configure the new Bluetooth integration and the new devices that use it. 
+If you have configured it, you can delete it from Settings -> Services.
+I am going to explore the new integration and see if I can rewrite this one to use it. However, in the meantime they are mutually exclusive.  
+
 ![Device View](./examples/device_example.png)
 
 Custom integration for the Ember Mug in Home Assistant.
