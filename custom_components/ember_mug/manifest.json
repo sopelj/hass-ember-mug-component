@@ -1,12 +1,11 @@
 {
   "codeowners": ["@sopelj"],
   "config_flow": true,
-  "dependencies": [],
   "documentation": "https://github.com/sopelj/hass_ember_mug",
   "issue_tracker": "https://github.com/sopelj/hass_ember_mug/issues",
   "domain": "ember_mug",
   "name": "Ember Mug",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "iot_class": "local_polling",
-  "requirements": ["bleak==0.14.3"]
+  "dependencies": ["bluetooth"]
 }
