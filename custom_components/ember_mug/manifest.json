@@ -5,7 +5,11 @@
   "issue_tracker": "https://github.com/sopelj/hass_ember_mug/issues",
   "domain": "ember_mug",
   "name": "Ember Mug",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "iot_class": "local_polling",
-  "dependencies": ["bluetooth"]
+  "dependencies": ["bluetooth"],
+  "bluetooth": [
+    { "local_name": "Ember Ceramic Mug" },
+    { "service_uuid": "fc543622-236c-4c94-8fa9-944a3e5353fa" }
+  ]
 }

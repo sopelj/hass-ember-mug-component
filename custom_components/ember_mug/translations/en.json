@@ -5,21 +5,16 @@
       "user": {
         "title": "Add an Ember Mug",
         "data": {
-          "mug": "Mug (MAC Address)",
+          "address": "Mug (MAC Address)",
           "name": "Name",
           "temperature_unit": "Temperature Unit"
         }
       }
     },
-    "error": {
-      "invalid_mac": "MAC Address is invalid",
-      "connection_failed": "Failed to connect to the Mug",
-      "connection_timeout": "Connection attempt timed out",
-      "cannot_connect": "Unable to connect to the Mug"
-    },
     "abort": {
       "unknown": "Unknown error occurred",
-      "not_found": "No Mugs were found. Please ensure it has been reset and is in pairing mode."
+      "cannot_connect": "Unable to connect to the mug.",
+      "no_unconfigured_devices": "No unconfigured Mugs were found. Please ensure it has been reset and is in pairing mode."
     }
   }
 }

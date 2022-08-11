@@ -36,7 +36,7 @@ async def set_led_colour(entity: EmberMugSensor, service_call: ServiceCall) -> N
     """Set LED colour of mug."""
     led_colour: tuple[int, int, int] = service_call.data[ATTR_RGB_COLOR]
     _LOGGER.info(f"Called service set led colour of {entity} to {led_colour})")
-    await entity.coordinator.mug.set_led_colour([*led_colour, 255])
+    await entity.coordinator.mug.set_led_colour((*led_colour, 255))
 
 
 async def set_target_temp(entity: EmberMugSensor, service_call: ServiceCall) -> None:

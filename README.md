@@ -9,6 +9,7 @@
 
 Custom integration for the Ember Mug in Home Assistant.
 I only have the Ember Mug 2, but in theory it should be the same with other Ember Mugs.
+Please let me know if you have another one and are willing to help test it.
 
 The protocol is not public, so there is quite a bit of guesswork involved. 
 [@orlopau](https://github.com/orlopau) did a great job documenting some [UUIDs here](https://github.com/orlopau/ember-mug) And had to attempt to extract the rest of them. 
@@ -16,6 +17,7 @@ The protocol is not public, so there is quite a bit of guesswork involved.
 I can't seem to get writing to attributes working yet, but reading the data works great.
 
 ### **Important!**
+
 The new Home Assistant 2022.8 introduces a new [Bluetooth Integration](https://www.home-assistant.io/integrations/bluetooth) which conflicts with this integration.
 If version 0.3.X of this integration will work on 2022.8 as long as you to not configure the new Bluetooth integration and the new devices that use it. 
 If you have configured it, you can delete it from Settings -> Services.

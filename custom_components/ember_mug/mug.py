@@ -8,14 +8,13 @@ from datetime import datetime
 import logging
 import re
 from sys import platform
-from typing import Callable
+from typing import Callable, TYPE_CHECKING
 
-from bleak import BleakClient, BleakScanner
+from bleak import BleakClient
 from bleak.exc import BleakError
 from homeassistant.const import TEMP_CELSIUS, TEMP_FAHRENHEIT
 
 from .const import (
-    EMBER_BLUETOOTH_NAMES,
     LIQUID_STATE_LABELS,
     PUSH_EVENT_BATTERY_IDS,
     PUSH_EVENT_ID_AUTH_INFO_NOT_FOUND,
@@ -43,6 +42,9 @@ from .const import (
     UUID_UDSK,
 )
 
+if TYPE_CHECKING:
+    from bleak.backends.device import BLEDevice
+
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -66,28 +68,13 @@ def bytes_to_big_int(data: bytearray | bytes) -> int:
     return int.from_bytes(data, "big")
 
 
-async def find_mug() -> dict[str, str]:
-    """Find a mug."""
-    known_names = [n.lower() for n in EMBER_BLUETOOTH_NAMES]
-    try:
-        device = await BleakScanner.find_device_by_filter(
-            lambda d, ad: d.name and d.name.lower() in known_names,
-        )
-        if device:
-            _LOGGER.info(f"Found device: {device.name} ({device.address})")
-            return {device.address: device.name}
-    except Exception as e:
-        _LOGGER.error(f"Error: {e}")
-    return {}
-
-
 class EmberMug:
     """Class to connect and communicate with the mug via Bluetooth."""
 
-    def __init__(self, mac_address: str, use_metric: bool, callback: Callable) -> None:
+    def __init__(self, ble_device: BLEDevice, use_metric: bool, callback: Callable) -> None:
         """Set default values in for mug attributes."""
-        self.mac_address = mac_address
-        self.client = BleakClient(mac_address, address_type="random")
+        self.client = BleakClient(ble_device, address_type="random")
+        self.device = ble_device
         self.available = True
         self.updates_queued = set()
         self.update_callback = callback
@@ -281,7 +268,7 @@ class EmberMug:
                     if platform != "darwin":
                         await self.client.pair()
                 connected = True
-                _LOGGER.info(f"Connected to {self.mac_address}")
+                _LOGGER.info(f"Connected to {self.device.address}")
                 break
             except BleakError as e:
                 _LOGGER.debug(f"Init: {e} on attempt {i}. waiting 30sec")
@@ -290,7 +277,7 @@ class EmberMug:
         if connected is False:
             self.available = False
             _LOGGER.warning(
-                f"Failed to connect to {self.mac_address} after 10 tries. Will try again in 2min",
+                f"Failed to connect to {self.device.address} after 10 tries. Will try again in 2min",
             )
             await asyncio.sleep(2 * 60)
             return await self.connect()

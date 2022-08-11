@@ -7,8 +7,6 @@ Some found from testing and from the App.
 """
 from uuid import UUID
 
-EMBER_BLUETOOTH_NAMES = ["Ember Ceramic Mug"]
-
 DOMAIN = "ember_mug"
 
 ICON_DEFAULT = "mdi:coffee"

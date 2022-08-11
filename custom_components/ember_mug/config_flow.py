@@ -1,97 +1,95 @@
 """Add Config Flow for Ember Mug."""
 from __future__ import annotations
 
-import asyncio
 import contextlib
-import re
-from sys import platform
 from typing import Any
 
-from bleak import BleakClient, BleakError
 from homeassistant import config_entries
+from homeassistant.components.bluetooth import (
+    BluetoothServiceInfoBleak, async_discovered_service_info,
+)
+from homeassistant.data_entry_flow import FlowResult
 from homeassistant.const import (
-    CONF_MAC,
+    CONF_ADDRESS,
     CONF_NAME,
     CONF_TEMPERATURE_UNIT,
     TEMP_CELSIUS,
     TEMP_FAHRENHEIT,
 )
-from homeassistant.helpers.device_registry import format_mac
+from bleak import BleakClient, BleakError
 import voluptuous as vol
-
 from . import _LOGGER
-from .const import DOMAIN, MAC_ADDRESS_REGEX
-from .mug import find_mug
-
-CONF_MUG = "mug"
-DEFAULT_NAME = "Ember Mug"
+from .const import DOMAIN
 
 
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Config Flow for Ember Mug."""
+    VERSION = 2
 
-    async def async_step_user(self, user_input: dict[str, Any] | None = None):
-        """Implement flow for config started by User in the UI."""
+    def __init__(self) -> None:
+        """Initialize the config flow."""
+        self._discovery_info: BluetoothServiceInfoBleak | None = None
+
+    async def async_step_bluetooth(
+        self, discovery_info: BluetoothServiceInfoBleak
+    ) -> FlowResult:
+        """Handle the bluetooth discovery step."""
+        _LOGGER.debug("Discovered bluetooth device: %s", discovery_info)
+        await self.async_set_unique_id(discovery_info.address.replace(":", "").lower())
+        self._abort_if_unique_id_configured()
+
+        self._discovery_info = discovery_info
+        self.context["title_placeholders"] = {
+            CONF_NAME: discovery_info.name,
+            CONF_ADDRESS: discovery_info.address,
+        }
+        return await self.async_step_user()
+
+    async def async_step_user(
+        self, user_input: dict[str, Any] | None = None
+    ) -> FlowResult:
         errors: dict[str, str] = {}
-        if user_input is not None:
-            mac_address = user_input.get(CONF_MUG, "")
-            if re.match(MAC_ADDRESS_REGEX, mac_address or ""):
-                try:
-                    async with BleakClient(mac_address) as client:
-                        connected = True
-                        if not client.is_connected:
-                            connected = await client.connect()
-                            _LOGGER.info(f"Connected: {connected}")
-                        with contextlib.suppress(BleakError):
-                            if platform != "darwin":
-                                # Unsupported on Mac
-                                paired = await client.pair()
-                                _LOGGER.info(f"Paired: {paired}")
-                        if not connected:
-                            errors["base"] = "not_connected"
-                except asyncio.TimeoutError as e:
-                    _LOGGER.error(f"Connection Timed out: {e}")
-                    errors["base"] = "connection_timeout"
-                except BleakError as e:
-                    _LOGGER.error(f"Bleak Error whilst connecting: {e}")
-                    errors["base"] = "connection_failed"
-            else:
-                errors["base"] = "invalid_mac"
-            if not errors:
-                name = user_input.get(CONF_NAME) or DEFAULT_NAME
-                await self.async_set_unique_id(
-                    format_mac(mac_address),
-                    raise_on_progress=False,
-                )
-                self._abort_if_unique_id_configured()
-                return self.async_create_entry(
-                    title=name,
-                    data={
-                        CONF_NAME: name,
-                        CONF_MAC: mac_address,
-                        CONF_TEMPERATURE_UNIT: user_input.get(
-                            CONF_TEMPERATURE_UNIT,
-                            TEMP_CELSIUS,
-                        ),
-                    },
-                )
+        if user_input:
+            address = user_input[CONF_ADDRESS]
+            await self.async_set_unique_id(
+                address.replace(":", "").lower(), raise_on_progress=False
+            )
+            self._abort_if_unique_id_configured()
+            return self.async_create_entry(title=user_input[CONF_NAME], data=user_input)
 
-        devices = await find_mug()
-        _LOGGER.info(devices)
-        if not devices:
-            return self.async_abort(reason="not_found")
-        device_mac, name = next(iter(devices.items()))
-        schema = vol.Schema(
+        if not self._discovery_info:
+            current_addresses = self._async_current_ids()
+            for discovery_info in async_discovered_service_info(self.hass):
+                address = discovery_info.address
+                unique_id = address.replace(":", "").lower()
+                if unique_id in current_addresses:
+                    continue
+                try:
+                    with BleakClient(discovery_info.device) as client:
+                        await client.connect()
+                        with contextlib.suppress(BleakError):
+                            client.pair()
+                except BleakError:
+                    self.async_abort(reason='cannot_connect')
+                self._discovery_info = discovery_info
+                break
+            else:
+                return self.async_abort(reason="no_unconfigured_devices")
+
+        data_schema = vol.Schema(
             {
-                vol.Required(CONF_MUG, default=device_mac): vol.In([device_mac]),
-                vol.Optional(CONF_NAME, default=name): str,
+                vol.Required(CONF_ADDRESS): vol.In(
+                    {
+                        self._discovery_info.address: f"{self._discovery_info.name} ({self._discovery_info.address})"
+                    }
+                ),
+                vol.Required(CONF_NAME, default=self._discovery_info.name): str,
                 vol.Required(CONF_TEMPERATURE_UNIT, default=TEMP_CELSIUS): vol.In(
                     [TEMP_CELSIUS, TEMP_FAHRENHEIT],
                 ),
-            },
+            }
         )
-        return self.async_show_form(step_id="user", data_schema=schema, errors=errors)
+        return self.async_show_form(
+            step_id="user", data_schema=data_schema, errors=errors
+        )
 
-    async def async_step_import(self, user_input: dict[str, str]):
-        """Forward from import flow."""
-        return await self.async_step_user(user_input)
