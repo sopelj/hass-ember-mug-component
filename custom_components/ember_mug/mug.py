@@ -216,7 +216,14 @@ class EmberMug:
 
     async def update_dsk(self) -> None:
         """Get mug dsk from gatt."""
-        self.dsk = decode_byte_string(await self.client.read_gatt_char(UUID_DSK))
+        value = await self.client.read_gatt_char(UUID_DSK)
+        try:
+            # TODO: Perhaps it isn't encoded in base64...
+            value = decode_byte_string(value)
+        except ValueError:
+            _LOGGER.debug('Unable to decode DSK. Falling back to encoded value.')
+            value = str(value)
+        self.dsk = value
 
     async def update_temperature_unit(self) -> None:
         """Get mug temp unit."""
