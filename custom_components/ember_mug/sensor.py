@@ -1,11 +1,8 @@
 """Sensor Entity for Ember Mug."""
 from __future__ import annotations
 
-from typing import Any, Mapping
+from typing import Any, Mapping, cast
 
-from homeassistant.components.bluetooth.passive_update_coordinator import (
-    PassiveBluetoothCoordinatorEntity,
-)
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntity,
@@ -14,7 +11,6 @@ from homeassistant.components.sensor import (
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
     ATTR_BATTERY_CHARGING,
-    ATTR_CONNECTIONS,
     CONF_ID,
     CONF_NAME,
     CONF_RGB,
@@ -23,10 +19,11 @@ from homeassistant.const import (
     TEMP_CELSIUS,
     TEMP_FAHRENHEIT,
 )
-from homeassistant.core import HomeAssistant
-from homeassistant.helpers import device_registry as dr, entity_platform
+from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers import entity_platform
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from . import MugDataUpdateCoordinator
 from .const import (
@@ -49,7 +46,7 @@ from .services import (
 )
 
 
-class EmberMugSensorBase(PassiveBluetoothCoordinatorEntity, SensorEntity):
+class EmberMugSensorBase(CoordinatorEntity, SensorEntity):
     """Base Mug Sensor."""
 
     coordinator: MugDataUpdateCoordinator
@@ -58,28 +55,28 @@ class EmberMugSensorBase(PassiveBluetoothCoordinatorEntity, SensorEntity):
     def __init__(self, coordinator: MugDataUpdateCoordinator) -> None:
         """Init set names for attributes."""
         super().__init__(coordinator)
-
         self._device = coordinator.ble_device
         self._last_run_success: bool | None = None
         self._address = coordinator.ble_device.address
         self._attr_unique_id = f"{coordinator.base_unique_id}_{self._sensor_type}"
         self._attr_name = f"Mug {self._sensor_type or ''}".strip()
-        self._attr_device_info = DeviceInfo(
-            connections={(dr.CONNECTION_BLUETOOTH, self._address)},
-            manufacturer="Ember",
-            model="Ember Ceramic Mug",
-            name=coordinator.device_name,
-        )
-        if ":" not in self._address:
-            return
-        self._attr_device_info[ATTR_CONNECTIONS].add(
-            (dr.CONNECTION_NETWORK_MAC, self._address),
-        )
+        self.data = coordinator.data or {}
+
+    @callback
+    def _handle_coordinator_update(self):
+        self.data = self.coordinator.data
 
     @property
-    def data(self) -> dict[str, Any]:
-        """Return coordinator data for this entity."""
-        return self.coordinator.data
+    def device_info(self) -> DeviceInfo:
+        """Return information about the mug."""
+        unique_id = cast(str, self._attr_unique_id)
+        return DeviceInfo(
+            identifiers={(DOMAIN, unique_id)},
+            name=self.data["mug_name"],
+            model=self.data["model"],
+            sw_version=self.data["sw_version"],
+            manufacturer="Ember",
+        )
 
     @property
     def extra_state_attributes(self) -> Mapping[Any, Any]:
@@ -211,6 +208,7 @@ async def async_setup_entry(
         EmberMugTemperatureSensor(coordinator, "current", temp_unit),
         EmberMugBatterySensor(coordinator),
     ]
+    await coordinator.async_config_entry_first_refresh()
     async_add_entities(entities)
 
     # Setup Services

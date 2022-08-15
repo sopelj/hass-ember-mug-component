@@ -1,14 +1,12 @@
 """Reusable class for Ember Mug connection and data."""
 from __future__ import annotations
 
-import asyncio
 import base64
 import contextlib
 from datetime import datetime
 import logging
 import re
-from sys import platform
-from typing import Callable, TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable
 
 from bleak import BleakClient
 from bleak.exc import BleakError
@@ -47,6 +45,22 @@ if TYPE_CHECKING:
 
 _LOGGER = logging.getLogger(__name__)
 
+UPDATE_ATTRS = (
+    "led_colour",
+    "current_temp",
+    "target_temp",
+    "temperature_unit",
+    "battery",
+    "liquid_level",
+    "liquid_state",
+    "mug_name",
+    "udsk",
+    "dsk",
+    "date_time_zone",
+    "battery_voltage",
+    "firmware_info",
+)
+
 
 def decode_byte_string(data: bytes | bytearray) -> str:
     """Convert bytes to text as Ember expects."""
@@ -71,13 +85,19 @@ def bytes_to_big_int(data: bytearray | bytes) -> int:
 class EmberMug:
     """Class to connect and communicate with the mug via Bluetooth."""
 
-    def __init__(self, ble_device: BLEDevice, use_metric: bool, callback: Callable) -> None:
+    def __init__(
+        self,
+        ble_device: BLEDevice,
+        use_metric: bool,
+        callback: Callable,
+    ) -> None:
         """Set default values in for mug attributes."""
-        self.client = BleakClient(ble_device, address_type="random")
+        self.client = None
         self.device = ble_device
         self.available = True
         self.updates_queued = set()
         self.update_callback = callback
+        self._first_run = True
         self.use_metric = use_metric
 
         self.model = "Ember Ceramic Mug"
@@ -199,7 +219,11 @@ class EmberMug:
     async def set_mug_udsk(self, udsk: str) -> None:
         """Attempt to write udsk."""
         await self.ensure_connected()
-        await self.client.write_gatt_char(UUID_UDSK, bytearray(encode_byte_string(udsk)), True)
+        await self.client.write_gatt_char(
+            UUID_UDSK,
+            bytearray(encode_byte_string(udsk)),
+            True,
+        )
 
     async def update_dsk(self) -> None:
         """Get mug dsk from gatt."""
@@ -208,7 +232,7 @@ class EmberMug:
             # TODO: Perhaps it isn't encoded in base64...
             value = decode_byte_string(value)
         except ValueError:
-            _LOGGER.debug('Unable to decode DSK. Falling back to encoded value.')
+            _LOGGER.debug("Unable to decode DSK. Falling back to encoded value.")
             value = str(value)
         self.dsk = value
 
@@ -258,47 +282,6 @@ class EmberMug:
             "bootloader": bytes_to_little_int(info[4:]),
         }
 
-    async def connect(self) -> bool:
-        """Try 10 times to connect and if we fail wait five minutes and try again. If connected also subscribe to state notifications."""
-        connected = False
-        for i in range(1, 10 + 1):
-            try:
-                await self.client.connect()
-                with contextlib.suppress(BleakError):
-                    if platform != "darwin":
-                        await self.client.pair()
-                connected = True
-                _LOGGER.info(f"Connected to {self.device.address}")
-                break
-            except BleakError as e:
-                _LOGGER.debug(f"Init: {e} on attempt {i}. waiting 30sec")
-                await asyncio.sleep(30)
-
-        if connected is False:
-            self.available = False
-            _LOGGER.warning(
-                f"Failed to connect to {self.device.address} after 10 tries. Will try again in 2min",
-            )
-            await asyncio.sleep(2 * 60)
-            return await self.connect()
-
-        self.available = True
-
-        if self.serial_number is None:
-            try:
-                full_mug_id = await self.client.read_gatt_char(UUID_MUG_ID)
-                self.mug_id = decode_byte_string(full_mug_id[:6])
-                self.serial_number = full_mug_id[7:].decode("utf8")
-            except Exception as e:
-                _LOGGER.warning(f"Failed to get mug ID {e}")
-
-        try:
-            _LOGGER.info("Try to subscribe to Push Events")
-            await self.client.start_notify(UUID_PUSH_EVENT, self.push_notify)
-        except Exception as e:
-            _LOGGER.warning(f"Failed to subscribe to state attr {e}")
-        return connected
-
     async def update_queued_attributes(self) -> bool:
         """Update all attributes in queue."""
         if not self.updates_queued:
@@ -321,10 +304,10 @@ class EmberMug:
         # Check known IDs
         if event_id in PUSH_EVENT_BATTERY_IDS:
             # 1, 2 and 3 : Battery Change
-            if event_id in [
+            if event_id in (
                 PUSH_EVENT_ID_CHARGER_CONNECTED,
                 PUSH_EVENT_ID_CHARGER_DISCONNECTED,
-            ]:
+            ):
                 # 2 -> Placed on charger, 3 -> Removed from charger
                 self.on_charging_base = event_id == PUSH_EVENT_ID_CHARGER_CONNECTED
                 self.update_callback()
@@ -345,38 +328,45 @@ class EmberMug:
 
     async def update_all(self) -> None:
         """Update all attributes."""
-        update_attrs = [
-            "led_colour",
-            "current_temp",
-            "target_temp",
-            "temperature_unit",
-            "battery",
-            "liquid_level",
-            "liquid_state",
-            "mug_name",
-            "udsk",
-            "dsk",
-            "date_time_zone",
-            "battery_voltage",
-            "firmware_info",
-        ]
-        try:
-            await self.ensure_connected()
-            # await self.ensure_correct_unit()
-            for attr in update_attrs:
-                await getattr(self, f"update_{attr}")()
-            self.update_callback()
-        except BleakError as e:
-            _LOGGER.error(str(e))
-        return
+        async with BleakClient(self.device) as client:
+            with contextlib.suppress(BleakError):
+                client.pair()
+            self.client = client
+
+            if self._first_run is True:
+
+                self.available = True
+                try:
+                    full_mug_id = await self.client.read_gatt_char(UUID_MUG_ID)
+                    self.mug_id = decode_byte_string(full_mug_id[:6])
+                    self.serial_number = full_mug_id[7:].decode("utf8")
+                except Exception as e:
+                    _LOGGER.warning(f"Failed to get mug ID {e}")
+
+                try:
+                    _LOGGER.info("Try to subscribe to Push Events")
+                    await self.client.start_notify(UUID_PUSH_EVENT, self.push_notify)
+                except Exception as e:
+                    _LOGGER.warning(f"Failed to subscribe to state attr {e}")
+            try:
+                # await self.ensure_correct_unit()
+                for attr in UPDATE_ATTRS:
+                    await getattr(self, f"update_{attr}")()
+            except BleakError as e:
+                _LOGGER.error(str(e))
+                raise e
+            return
 
     async def ensure_connected(self):
         """Ensure connected."""
-        if not self.is_connected:
-            await self.connect()
+        if not self.is_connected and self.client:
+            await self.client.connect()
 
     async def disconnect(self) -> None:
         """Stop Loop and disconnect."""
+        if not self.client:
+            return
+
         with contextlib.suppress(BleakError):
             await self.client.stop_notify(UUID_PUSH_EVENT)
 

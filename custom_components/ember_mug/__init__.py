@@ -36,7 +36,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         entry.data[CONF_TEMPERATURE_UNIT] == TEMP_CELSIUS,
         lambda: None,
     )
-    mug_coordinator = hass.data[DOMAIN][entry.entry_id] = MugDataUpdateCoordinator(
+    hass.data[DOMAIN][entry.entry_id] = MugDataUpdateCoordinator(
         hass,
         _LOGGER,
         ble_device,
@@ -44,8 +44,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         entry.unique_id,
         entry.data.get(CONF_NAME, entry.title),
     )
-    entry.async_on_unload(mug_coordinator.async_start())
-    entry.async_on_unload(entry.add_update_listener(async_update_listener))
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     return True
 
