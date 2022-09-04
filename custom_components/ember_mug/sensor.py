@@ -11,7 +11,6 @@ from homeassistant.components.sensor import (
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
     ATTR_BATTERY_CHARGING,
-    CONF_ID,
     CONF_NAME,
     CONF_RGB,
     CONF_TEMPERATURE_UNIT,
@@ -95,22 +94,20 @@ class EmberMugSensor(EmberMugSensorBase):
     @property
     def native_value(self) -> str:
         """Return information about the contents."""
-        return self.coordinator.mug.liquid_state_label
+        return self.coordinator.mug.liquid_state_display
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
         """Return device specific state attributes."""
         mug = self.coordinator.mug
         return {
-            CONF_NAME: mug.mug_name,
-            CONF_ID: mug.mug_id,
-            CONF_RGB: mug.colour,
+            CONF_NAME: mug.name,
+            CONF_RGB: mug.led_colour_display,
             CONF_TEMPERATURE_UNIT: mug.temperature_unit,
             "date_time_zone": mug.date_time_zone,
-            "firmware_info": mug.firmware_info,
+            "firmware_info": mug.firmware,
             "udsk": mug.udsk,
             "dsk": mug.dsk,
-            "encoded_dsk": str(mug.dsk),
         }
 
 
@@ -177,9 +174,9 @@ class EmberMugBatterySensor(EmberMugSensorBase):
     @property
     def native_value(self) -> float | None:
         """Return sensor state."""
-        battery_percentage = self.coordinator.mug.battery
-        if battery_percentage is not None:
-            return round(battery_percentage, 2)
+        battery = self.coordinator.mug.battery
+        if battery is not None:
+            return round(battery.percent, 2)
         return None
 
     @property
@@ -187,7 +184,7 @@ class EmberMugBatterySensor(EmberMugSensorBase):
         """Return device specific state attributes."""
         return {
             ATTR_BATTERY_VOLTAGE: self.coordinator.mug.battery_voltage,
-            ATTR_BATTERY_CHARGING: self.coordinator.mug.on_charging_base,
+            ATTR_BATTERY_CHARGING: self.coordinator.mug.battery.on_charging_base,
         }
 
 
@@ -200,7 +197,7 @@ async def async_setup_entry(
     coordinator: MugDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
     device_id = entry.unique_id
     assert device_id is not None
-    temp_unit = TEMP_FAHRENHEIT if coordinator.mug.use_metric == "F" else TEMP_CELSIUS
+    temp_unit = TEMP_FAHRENHEIT if coordinator.mug.use_metric is False else TEMP_CELSIUS
     entities: list[SensorEntity] = [
         EmberMugSensor(coordinator),
         EmberMugLiquidLevelSensor(coordinator),

@@ -1,6 +1,7 @@
 """Ember Mug Custom Integration."""
 import logging
 
+from ember_mug import EmberMug
 from homeassistant.components.bluetooth import async_ble_device_from_address
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
@@ -15,7 +16,6 @@ from homeassistant.exceptions import ConfigEntryNotReady
 
 from .const import DOMAIN
 from .coordinator import MugDataUpdateCoordinator
-from .mug import EmberMug
 
 PLATFORMS = [Platform.SENSOR]
 _LOGGER = logging.getLogger(__name__)
@@ -34,7 +34,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     ember_mug = EmberMug(
         ble_device,
         entry.data[CONF_TEMPERATURE_UNIT] == TEMP_CELSIUS,
-        lambda: None,
     )
     hass.data[DOMAIN][entry.entry_id] = MugDataUpdateCoordinator(
         hass,
@@ -58,5 +57,5 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
     if unload_ok:
         mug_coordinator = hass.data[DOMAIN].pop(entry.entry_id)
-        await mug_coordinator.mug.disconnect()
+        await mug_coordinator.connection.disconnect()
     return unload_ok

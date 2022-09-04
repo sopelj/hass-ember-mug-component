@@ -11,10 +11,10 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 import homeassistant.util.dt as dt_util
 
 from .const import DOMAIN
-from .mug import EmberMug
 
 if TYPE_CHECKING:
     from bleak.backends.device import BLEDevice
+    from ember_mug import EmberMug
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -41,7 +41,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
         )
         self.ble_device = ble_device
         self.mug = mug
-        self.mug.update_callback = self._sync_callback
+        self.connection = self.mug.connection()
         self.data: dict[str, Any] = {}
         self.device_name = device_name
         self.base_unique_id = base_unique_id
@@ -66,17 +66,20 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
         """Update the data of the coordinator."""
         _LOGGER.debug("Updating")
         try:
-            await self.mug.update_all()
+            if not self.connection.client or not self.connection.client.is_connecteds:
+                await self.connection.connect()
+                await self.connection.subscribe(callback=self._sync_callback)
+            await self.connection.update_all()
         except Exception as e:
             _LOGGER.error(e)
             raise UpdateFailed(f"An error occurred updating mug: {e=}")
+
         _LOGGER.debug("Update done")
         return {
-            "mug_id": self.mug.mug_id,
-            "serial_number": self.mug.serial_number,
+            "serial_number": self.mug.meta.serial_number,
             "last_read_time": dt_util.utcnow(),
-            "sw_version": str(self.mug.firmware_info.get("version", "")),
-            "mug_name": self.mug.mug_name,
+            "sw_version": str(self.mug.firmware.version) if self.mug.firmware else None,
+            "mug_name": self.mug.name,
             "model": self.mug.model,
         }
 
