@@ -55,6 +55,7 @@ class EmberMugSensorBase(CoordinatorEntity, SensorEntity):
         """Init set names for attributes."""
         super().__init__(coordinator)
         self._device = coordinator.ble_device
+        self._device_id = coordinator.base_unique_id
         self._last_run_success: bool | None = None
         self._address = coordinator.ble_device.address
         self._attr_unique_id = f"{coordinator.base_unique_id}_{self._sensor_type}"
