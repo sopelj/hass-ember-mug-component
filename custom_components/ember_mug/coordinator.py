@@ -66,7 +66,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
         """Update the data of the coordinator."""
         _LOGGER.debug("Updating")
         try:
-            if not self.connection.client or not self.connection.client.is_connecteds:
+            if not self.connection.client or not self.connection.client.is_connected:
                 await self.connection.connect()
                 await self.connection.subscribe(callback=self._sync_callback)
             await self.connection.update_all()
