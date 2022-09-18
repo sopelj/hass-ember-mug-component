@@ -115,7 +115,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
             name=self.data["mug_name"],
             model=self.data["model"],
             suggested_area="Kitchen",
-            hw_version=self.data["hw_version"],
-            sw_version=self.data["sw_version"],
+            hw_version=self.data.get("hw_version"),
+            sw_version=self.data.get("sw_version"),
             manufacturer="Ember",
         )

@@ -4,11 +4,12 @@ from __future__ import annotations
 import contextlib
 from typing import Any
 
+from bleak import BleakClient, BleakError
 from homeassistant import config_entries
 from homeassistant.components.bluetooth import (
-    BluetoothServiceInfoBleak, async_discovered_service_info,
+    BluetoothServiceInfoBleak,
+    async_discovered_service_info,
 )
-from homeassistant.data_entry_flow import FlowResult
 from homeassistant.const import (
     CONF_ADDRESS,
     CONF_NAME,
@@ -16,14 +17,16 @@ from homeassistant.const import (
     TEMP_CELSIUS,
     TEMP_FAHRENHEIT,
 )
-from bleak import BleakClient, BleakError
+from homeassistant.data_entry_flow import FlowResult
 import voluptuous as vol
+
 from . import _LOGGER
 from .const import DOMAIN
 
 
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Config Flow for Ember Mug."""
+
     VERSION = 2
 
     def __init__(self) -> None:
@@ -31,7 +34,8 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self._discovery_info: BluetoothServiceInfoBleak | None = None
 
     async def async_step_bluetooth(
-        self, discovery_info: BluetoothServiceInfoBleak
+        self,
+        discovery_info: BluetoothServiceInfoBleak,
     ) -> FlowResult:
         """Handle the bluetooth discovery step."""
         _LOGGER.debug("Discovered bluetooth device: %s", discovery_info)
@@ -46,13 +50,16 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         return await self.async_step_user()
 
     async def async_step_user(
-        self, user_input: dict[str, Any] | None = None
+        self,
+        user_input: dict[str, Any] | None = None,
     ) -> FlowResult:
+        """First step for users."""
         errors: dict[str, str] = {}
         if user_input:
             address = user_input[CONF_ADDRESS]
             await self.async_set_unique_id(
-                address.replace(":", "").lower(), raise_on_progress=False
+                address.replace(":", "").lower(),
+                raise_on_progress=False,
             )
             self._abort_if_unique_id_configured()
             return self.async_create_entry(title=user_input[CONF_NAME], data=user_input)
@@ -67,10 +74,10 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 try:
                     with BleakClient(discovery_info.device) as client:
                         await client.connect()
-                        with contextlib.suppress(BleakError):
+                        with contextlib.suppress(BleakError, EOFError):
                             client.pair()
                 except BleakError:
-                    self.async_abort(reason='cannot_connect')
+                    self.async_abort(reason="cannot_connect")
                 self._discovery_info = discovery_info
                 break
             else:
@@ -80,16 +87,17 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             {
                 vol.Required(CONF_ADDRESS): vol.In(
                     {
-                        self._discovery_info.address: f"{self._discovery_info.name} ({self._discovery_info.address})"
-                    }
+                        self._discovery_info.address: f"{self._discovery_info.name} ({self._discovery_info.address})",
+                    },
                 ),
                 vol.Required(CONF_NAME, default=self._discovery_info.name): str,
                 vol.Required(CONF_TEMPERATURE_UNIT, default=TEMP_CELSIUS): vol.In(
                     [TEMP_CELSIUS, TEMP_FAHRENHEIT],
                 ),
-            }
+            },
         )
         return self.async_show_form(
-            step_id="user", data_schema=data_schema, errors=errors
+            step_id="user",
+            data_schema=data_schema,
+            errors=errors,
         )
-
