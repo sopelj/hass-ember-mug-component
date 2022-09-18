@@ -29,22 +29,19 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
         logger: logging.Logger,
         ble_device: BLEDevice,
         mug: EmberMug,
-        base_unique_id: str,
-        device_name: str,
+        entry_id: str,
     ) -> None:
         """Initialize Mug updater coordinator."""
         super().__init__(
             hass,
             logger,
-            name=f"ember-mug-{base_unique_id}",
+            name=f"ember-mug-{entry_id}",
             update_interval=timedelta(seconds=60),
         )
         self.ble_device = ble_device
         self.mug = mug
         self.connection = self.mug.connection()
         self.data: dict[str, Any] = {}
-        self.device_name = device_name
-        self.base_unique_id = base_unique_id
 
         _LOGGER.info(f"Ember Mug {self.name} Setup")
         # Default Data
@@ -82,6 +79,14 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
             "mug_name": self.mug.name,
             "model": self.mug.model,
         }
+
+    @property
+    def is_connected(self) -> bool:
+        """Check if mug is connected via Bluetooth."""
+        return (
+            self.connection.client is not None
+            and self.connection.client.is_connected is True
+        )
 
     @property
     def device_info(self) -> DeviceInfo:

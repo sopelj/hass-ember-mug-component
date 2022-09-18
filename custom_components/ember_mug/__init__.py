@@ -6,7 +6,6 @@ from homeassistant.components.bluetooth import async_ble_device_from_address
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
     CONF_ADDRESS,
-    CONF_NAME,
     CONF_TEMPERATURE_UNIT,
     TEMP_CELSIUS,
     Platform,
@@ -40,8 +39,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         _LOGGER,
         ble_device,
         ember_mug,
-        entry.unique_id,
-        entry.data.get(CONF_NAME, entry.title),
+        entry.entry_id,
     )
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     return True
