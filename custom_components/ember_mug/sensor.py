@@ -70,7 +70,7 @@ class EmberMugSensorBase(CoordinatorEntity, SensorEntity):
     @property
     def available(self) -> bool:
         """Return if entity is available."""
-        return self.coordinator.last_update_success and self.coordinator.is_connected
+        return self.coordinator.available
 
     @property
     def extra_state_attributes(self) -> Mapping[Any, Any]:

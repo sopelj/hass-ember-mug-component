@@ -42,6 +42,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
         self.mug = mug
         self.connection = self.mug.connection()
         self.data: dict[str, Any] = {}
+        self.available = True
 
         _LOGGER.info(f"Ember Mug {self.name} Setup")
         # Default Data
@@ -63,14 +64,15 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
         """Update the data of the coordinator."""
         _LOGGER.debug("Updating")
         try:
-            if not self.connection.client or not self.connection.client.is_connected:
+            if not self.is_connected:
                 await self.connection.connect()
                 await self.connection.subscribe(callback=self._sync_callback)
-            await self.connection.update_all()
+            changed = await self.connection.update_all()
+            self.available = True
         except Exception as e:
             _LOGGER.error(e)
             raise UpdateFailed(f"An error occurred updating mug: {e=}")
-
+        _LOGGER.debug(f"Changed: {changed}")
         _LOGGER.debug("Update done")
         return {
             "serial_number": self.mug.meta.serial_number,

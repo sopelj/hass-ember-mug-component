@@ -16,12 +16,13 @@ The protocol is not public, so there is quite a bit of guesswork involved.
 
 I can't seem to get writing to attributes working yet, but reading the data works great.
 
-### **Important!**
+The actual Mug logic has been moved to [an external library](https://github.com/sopelj/python-ember-mug) as per the guidelines in Home Assistant. 
+So if you have issues with the mug's internals and not the integration with home assistant please [raise issues there](https://github.com/sopelj/python-ember-mug/issues) :)
 
-The new Home Assistant 2022.8 introduces a new [Bluetooth Integration](https://www.home-assistant.io/integrations/bluetooth) which conflicts with this integration.
-If version 0.3.X of this integration will work on 2022.8 as long as you to not configure the new Bluetooth integration and the new devices that use it. 
-If you have configured it, you can delete it from Settings -> Services.
-I am going to explore the new integration and see if I can rewrite this one to use it. However, in the meantime they are mutually exclusive.
+### **Important!** Older versions only work on certain versions of Home Assistant. If you have 2022.8 or newer just install the latest.
+- Version < 0.3 Only works before 2022.8
+- Version 0.3.X Works on 2022.8.X as long as the Bluetooth Integration is disabled
+- Version 0.4+ Works on 2022.8+ and uses the new Bluetooth integration for discovery and setup
 
 ## Installation / Setup
 
@@ -30,8 +31,6 @@ I am going to explore the new integration and see if I can rewrite this one to u
 Add to HACS as custom repository:
 
 <https://github.com/sopelj/hass-ember-mug-component>
-
-And then install "Ember Mug" integration.
 
 ### Preparing your Mug
 
@@ -45,19 +44,7 @@ To do so:
  2. Hold down button on the bottom of the mug until light goes blue, then yellow anf then red 
  3. It should blink red twice and goes back to white (The default colour) 
  4. Then enter pairing mode again - Hold down the button until the light starts blinking blue
- 5. Once home assistant successfully connects it should leave pairing mode and go back to white
-
-### Setup in home assistant
-
-1. Click here: [![Add Integration](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=ember_mug)
-2. Select MAC that was found and choose next.
-
-*Or*
-
-1. Go into Settings -> Devices 
-2. Choose "Add Integration" 
-3. Search for "Ember Mug"
-4. Select MAC that was found and choose next.
+ 5. Home Assistant should auto-detect the mug and prompt you to configure it. Just hit next.
 
 *Note* If it fails to find your mug please try resetting and entering pairing mode again before trying again.
 
@@ -69,7 +56,6 @@ To do so:
     - may affect battery
     - may interfere with other local bluetooth integrations as it can only maintain one connection at a time.
 - Currently, it won't work with more than one mug
-
 
 ## Examples
 
