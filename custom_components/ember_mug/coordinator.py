@@ -8,7 +8,6 @@ from typing import TYPE_CHECKING, Any, cast
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
-import homeassistant.util.dt as dt_util
 
 from .const import DOMAIN
 
@@ -49,16 +48,29 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
         self.data = {
             "mug_id": None,
             "serial_number": None,
-            "last_read_time": None,
             "sw_version": None,
             "mug_name": "Ember Mug",
             "model": "Ember Mug",
         }
 
-    def _sync_callback(self) -> None:
+    def _notification_callback(self) -> None:
         """Add a sync callback to execute async update in hass."""
-        _LOGGER.debug("Sync Callback")
-        self.hass.async_create_task(self.async_refresh())
+        _LOGGER.debug("Notification Callback")
+        self.hass.async_create_task(self._process_queued())
+
+    async def _process_queued(self) -> None:
+        """Process queued changes."""
+        try:
+            await self.connection.connect()
+            changed = await self.connection.update_queued_attributes()
+            self.available = True
+        except Exception as e:
+            _LOGGER.error(e)
+            raise UpdateFailed(f"An error occurred updating mug: {e=}")
+
+        if changed:
+            _LOGGER.debug(f"Changed: {changed}")
+            self.async_update_listeners()
 
     async def _async_update_data(self) -> dict[str, Any]:
         """Update the data of the coordinator."""
@@ -66,7 +78,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
         try:
             if not self.is_connected:
                 await self.connection.connect()
-                await self.connection.subscribe(callback=self._sync_callback)
+                await self.connection.subscribe(callback=self._notification_callback)
             changed = await self.connection.update_all()
             self.available = True
         except Exception as e:
@@ -75,9 +87,13 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
         _LOGGER.debug(f"Changed: {changed}")
         _LOGGER.debug("Update done")
         return {
-            "serial_number": self.mug.meta.serial_number,
-            "last_read_time": dt_util.utcnow(),
-            "sw_version": str(self.mug.firmware.version) if self.mug.firmware else None,
+            "serial_number": getattr(self.mug.meta, "serial_number", None),
+            "hw_version": str(v)
+            if (v := getattr(self.mug.firmware, "hardware", None))
+            else "",
+            "sw_version": str(v)
+            if (v := getattr(self.mug.firmware, "version", None))
+            else "",
             "mug_name": self.mug.name,
             "model": self.mug.model,
         }
@@ -98,6 +114,8 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
             identifiers={(DOMAIN, unique_id)},
             name=self.data["mug_name"],
             model=self.data["model"],
+            suggested_area="Kitchen",
+            hw_version=self.data["hw_version"],
             sw_version=self.data["sw_version"],
             manufacturer="Ember",
         )
