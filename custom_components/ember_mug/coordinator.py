@@ -1,10 +1,13 @@
 """Coordinator for all the sensors."""
 from __future__ import annotations
 
+import asyncio
 from datetime import timedelta
 import logging
 from typing import TYPE_CHECKING, Any, cast
 
+from bleak import BleakError
+from bleak_retry_connector import BleakConnectionError
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
@@ -72,13 +75,27 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
             _LOGGER.debug(f"Changed: {changed}")
             self.async_update_listeners()
 
+    async def establish_initial_connection(self) -> None:
+        """Establish initial connection."""
+        for i in range(30):
+            if self.is_connected:
+                _LOGGER.info(f"Connected after {i} tries by another means")
+                return
+            try:
+                await self.connection.connect()
+                await self.connection.subscribe(callback=self._notification_callback)
+            except (BleakError, BleakConnectionError, EOFError):
+                await asyncio.sleep(1)
+            else:
+                _LOGGER.info(f"Connected after {i} tries")
+                return
+        _LOGGER.error("Gave up after 30 tries")
+
     async def _async_update_data(self) -> dict[str, Any]:
         """Update the data of the coordinator."""
         _LOGGER.debug("Updating")
         try:
-            if not self.is_connected:
-                await self.connection.connect()
-                await self.connection.subscribe(callback=self._notification_callback)
+            await self.connection.connect()
             changed = await self.connection.update_all()
             self.available = True
         except Exception as e:
@@ -87,13 +104,9 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
         _LOGGER.debug(f"Changed: {changed}")
         _LOGGER.debug("Update done")
         return {
-            "serial_number": getattr(self.mug.meta, "serial_number", None),
-            "hw_version": str(v)
-            if (v := getattr(self.mug.firmware, "hardware", None))
-            else "",
-            "sw_version": str(v)
-            if (v := getattr(self.mug.firmware, "version", None))
-            else "",
+            "serial_number": getattr(self.mug.meta, "serial_number", ""),
+            "hw_version": getattr(self.mug.firmware, "hardware", ""),
+            "sw_version": getattr(self.mug.firmware, "version", ""),
             "mug_name": self.mug.name,
             "model": self.mug.model,
         }
@@ -115,7 +128,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
             name=self.data["mug_name"],
             model=self.data["model"],
             suggested_area="Kitchen",
-            hw_version=self.data.get("hw_version"),
-            sw_version=self.data.get("sw_version"),
+            hw_version=str(self.data.get("hw_version")),
+            sw_version=str(self.data.get("sw_version")),
             manufacturer="Ember",
         )

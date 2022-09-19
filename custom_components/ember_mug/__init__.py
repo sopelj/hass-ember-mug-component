@@ -34,13 +34,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         ble_device,
         entry.data[CONF_TEMPERATURE_UNIT] == TEMP_CELSIUS,
     )
-    hass.data[DOMAIN][entry.entry_id] = MugDataUpdateCoordinator(
+    hass.data[DOMAIN][entry.entry_id] = mug_coordinator = MugDataUpdateCoordinator(
         hass,
         _LOGGER,
         ble_device,
         ember_mug,
         entry.entry_id,
     )
+    await mug_coordinator.establish_initial_connection()
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     return True
 
