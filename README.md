@@ -28,6 +28,9 @@ So if you have issues with the mug's internals and not the integration with home
 
 **If you had a version installed before 0.4 and are upgrading, please remove your mug before upgrading and it should be auto-discovered** 
 
+Home Assistant has a list of [officially supported adaptors](https://www.home-assistant.io/integrations/bluetooth/#known-working-adapters), 
+if you have connection issues, please try one of them.
+
 ## Installation / Setup
 
 ### Add Repository
