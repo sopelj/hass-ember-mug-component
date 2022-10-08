@@ -36,7 +36,6 @@ async def set_led_colour(entity: EmberMugSensor, service_call: ServiceCall) -> N
     """Set LED colour of mug."""
     led_colour: tuple[int, int, int] = service_call.data[ATTR_RGB_COLOR]
     _LOGGER.info(f"Called service set led colour of {entity} to {led_colour})")
-    await entity.coordinator.connection.connect()
     await entity.coordinator.connection.set_led_colour((*led_colour, 255))
 
 
@@ -44,7 +43,6 @@ async def set_target_temp(entity: EmberMugSensor, service_call: ServiceCall) -> 
     """Set target temp of mug."""
     target_temp: float = service_call.data[ATTR_TARGET_TEMP]
     _LOGGER.debug(f"Service called to set temp to {target_temp}")
-    await entity.coordinator.connection.connect()
     await entity.coordinator.connection.set_target_temp(target_temp)
 
 
@@ -52,5 +50,4 @@ async def set_mug_name(entity: EmberMugSensor, service_call: ServiceCall) -> Non
     """Set target temp of mug."""
     name: str = service_call.data[ATTR_MUG_NAME]
     _LOGGER.debug(f"Service called to set name to '{name}'")
-    await entity.coordinator.connection.connect()
     await entity.coordinator.connection.set_mug_name(name)
