@@ -35,13 +35,15 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
             hass,
             logger,
             name=f"ember-mug-{entry_id}",
-            update_interval=timedelta(seconds=60),
+            update_interval=timedelta(seconds=15),
         )
         self.ble_device = ble_device
         self.mug = mug
+        self._entry_id = entry_id
         self.connection = self.mug.connection()
         self.data: dict[str, Any] = {}
         self.available = True
+        self.refresh_count = 0
 
         _LOGGER.info(f"Ember Mug {self.name} Setup")
         # Default Data
@@ -52,11 +54,6 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
             "mug_name": "Ember Mug",
             "model": "Ember Mug",
         }
-
-    def _notification_callback(self) -> None:
-        """Add a sync callback to execute async update in hass."""
-        _LOGGER.debug("Notification Callback")
-        self.hass.async_create_task(self._process_queued())
 
     async def _process_queued(self) -> None:
         """Process queued changes."""
@@ -77,7 +74,15 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
         _LOGGER.debug("Updating")
         try:
             await self.connection.ensure_connection()
-            changed = await self.connection.update_all()
+            if self.refresh_count == 0:
+                # Only fully poll all data every one fourth call. So every 60 sec.
+                changed = await self.connection.update_all()
+            else:
+                # Only check for queued changes
+                changed = await self.connection.update_queued_attributes()
+            self.refresh_count = (
+                0 if self.refresh_count >= 4 else self.refresh_count + 1
+            )
             self.available = True
         except Exception as e:
             _LOGGER.error(e)
@@ -95,9 +100,8 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
     @property
     def device_info(self) -> DeviceInfo:
         """Return information about the mug."""
-        entry_id = cast(str, self.config_entry.entry_id)
         return DeviceInfo(
-            identifiers={(DOMAIN, entry_id)},
+            identifiers={(DOMAIN, cast(str, self._entry_id))},
             name=self.data["mug_name"],
             model=self.data["model"],
             suggested_area="Kitchen",

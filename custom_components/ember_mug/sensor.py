@@ -80,16 +80,8 @@ class EmberMugSensorBase(CoordinatorEntity, SensorEntity):
     @callback
     def _handle_coordinator_update(self, *args: Any) -> None:
         """Handle data update."""
+        self.data = self.coordinator.data
         self.async_write_ha_state()
-
-    async def async_added_to_hass(self) -> None:
-        """Register callbacks."""
-        self.async_on_remove(
-            self.coordinator.connection.register_callback(
-                self._handle_coordinator_update,
-            ),
-        )
-        return await super().async_added_to_hass()
 
 
 class EmberMugSensor(EmberMugSensorBase):
@@ -215,7 +207,6 @@ async def async_setup_entry(
         EmberMugTemperatureSensor(coordinator, entry_id, "current", temp_unit),
         EmberMugBatterySensor(coordinator, entry_id),
     ]
-    await coordinator.async_config_entry_first_refresh()
     async_add_entities(entities)
 
     # Setup Services
