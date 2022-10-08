@@ -13,8 +13,10 @@ Please let me know if you have another one and are willing to help test it.
 
 The protocol is not public, so there is quite a bit of guesswork involved. 
 [@orlopau](https://github.com/orlopau) did a great job documenting some [UUIDs here](https://github.com/orlopau/ember-mug) And had to attempt to extract the rest of them. 
+The rest I had to do some testing and reverse engineering.
 
 I can't seem to get writing to attributes working yet, but reading the data works great.
+It seems to be a problem with the BlueZ dbus backend. Because it worked with gatttool before.
 
 The actual Mug logic has been moved to [an external library](https://github.com/sopelj/python-ember-mug) as per the guidelines in Home Assistant. 
 So if you have issues with the mug's internals and not the integration with home assistant please [raise issues there](https://github.com/sopelj/python-ember-mug/issues) :)
@@ -23,6 +25,8 @@ So if you have issues with the mug's internals and not the integration with home
 - Version < 0.3 Only works before 2022.8
 - Version 0.3.X Works on 2022.8.X as long as the Bluetooth Integration is disabled
 - Version 0.4+ Works on 2022.9+ and uses the new Bluetooth integration for discovery and setup
+
+**If you had a version installed before 0.4 and are upgrading, please remove your mug before upgrading and it should be auto-discovered** 
 
 ## Installation / Setup
 
