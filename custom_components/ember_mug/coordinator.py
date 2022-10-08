@@ -95,9 +95,9 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
     @property
     def device_info(self) -> DeviceInfo:
         """Return information about the mug."""
-        unique_id = cast(str, self.config_entry.unique_id)
+        entry_id = cast(str, self.config_entry.entry_id)
         return DeviceInfo(
-            identifiers={(DOMAIN, unique_id)},
+            identifiers={(DOMAIN, entry_id)},
             name=self.data["mug_name"],
             model=self.data["model"],
             suggested_area="Kitchen",

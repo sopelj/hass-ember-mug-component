@@ -51,15 +51,15 @@ class EmberMugSensorBase(CoordinatorEntity, SensorEntity):
     coordinator: MugDataUpdateCoordinator
     _sensor_type: str | None = None
 
-    def __init__(self, coordinator: MugDataUpdateCoordinator, device_id: str) -> None:
+    def __init__(self, coordinator: MugDataUpdateCoordinator, entry_id: str) -> None:
         """Init set names for attributes."""
         super().__init__(coordinator)
         self._device = coordinator.ble_device
-        self._device_id = device_id
+        self._entry_id = entry_id
         self._last_run_success: bool | None = None
         self._address = coordinator.ble_device.address
         self._attr_name = f"Mug {self._sensor_type or ''}".strip()
-        self._attr_unique_id = f"{self._sensor_type or 'ember_mug'}-{device_id}"
+        self._attr_unique_id = f"ember_mug_{self._sensor_type or ''}_{entry_id}"
         self.data = coordinator.data or {}
 
     @property
@@ -144,7 +144,7 @@ class EmberMugTemperatureSensor(EmberMugSensorBase):
     def __init__(
         self,
         coordinator: MugDataUpdateCoordinator,
-        device_id: str,
+        entry_id: str,
         temp_type: str,
         temp_unit: str,
     ) -> None:
@@ -152,7 +152,7 @@ class EmberMugTemperatureSensor(EmberMugSensorBase):
         self._sensor_type = f"{temp_type} temp"
         self._temp_type = temp_type
         self._attr_native_unit_of_measurement = temp_unit
-        super().__init__(coordinator, device_id)
+        super().__init__(coordinator, entry_id)
 
     @property
     def icon(self) -> str | None:
@@ -205,15 +205,15 @@ async def async_setup_entry(
 ) -> None:
     """Set up Entities."""
     coordinator: MugDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
-    device_id = entry.unique_id
-    assert device_id is not None
+    entry_id = entry.entry_id
+    assert entry_id is not None
     temp_unit = TEMP_FAHRENHEIT if coordinator.mug.use_metric is False else TEMP_CELSIUS
     entities: list[SensorEntity] = [
-        EmberMugSensor(coordinator, device_id),
-        EmberMugLiquidLevelSensor(coordinator, device_id),
-        EmberMugTemperatureSensor(coordinator, device_id, "target", temp_unit),
-        EmberMugTemperatureSensor(coordinator, device_id, "current", temp_unit),
-        EmberMugBatterySensor(coordinator, device_id),
+        EmberMugSensor(coordinator, entry_id),
+        EmberMugLiquidLevelSensor(coordinator, entry_id),
+        EmberMugTemperatureSensor(coordinator, entry_id, "target", temp_unit),
+        EmberMugTemperatureSensor(coordinator, entry_id, "current", temp_unit),
+        EmberMugBatterySensor(coordinator, entry_id),
     ]
     await coordinator.async_config_entry_first_refresh()
     async_add_entities(entities)
