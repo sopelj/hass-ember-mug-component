@@ -1,13 +1,10 @@
 """Coordinator for all the sensors."""
 from __future__ import annotations
 
-import asyncio
 from datetime import timedelta
 import logging
 from typing import TYPE_CHECKING, Any, cast
 
-from bleak import BleakError
-from bleak_retry_connector import BleakConnectionError
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
@@ -64,7 +61,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
     async def _process_queued(self) -> None:
         """Process queued changes."""
         try:
-            await self.connection.connect()
+            await self.connection.ensure_connection()
             changed = await self.connection.update_queued_attributes()
             self.available = True
         except Exception as e:
@@ -75,27 +72,11 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
             _LOGGER.debug(f"Changed: {changed}")
             self.async_update_listeners()
 
-    async def establish_initial_connection(self) -> None:
-        """Establish initial connection."""
-        for i in range(30):
-            if self.is_connected:
-                _LOGGER.info(f"Connected after {i} tries by another means")
-                return
-            try:
-                await self.connection.connect()
-                await self.connection.subscribe(callback=self._notification_callback)
-            except (BleakError, BleakConnectionError, EOFError):
-                await asyncio.sleep(1)
-            else:
-                _LOGGER.info(f"Connected after {i} tries")
-                return
-        _LOGGER.error("Gave up after 30 tries")
-
     async def _async_update_data(self) -> dict[str, Any]:
         """Update the data of the coordinator."""
         _LOGGER.debug("Updating")
         try:
-            await self.connection.connect()
+            await self.connection.ensure_connection()
             changed = await self.connection.update_all()
             self.available = True
         except Exception as e:
@@ -110,14 +91,6 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
             "mug_name": self.mug.name,
             "model": self.mug.model,
         }
-
-    @property
-    def is_connected(self) -> bool:
-        """Check if mug is connected via Bluetooth."""
-        return (
-            self.connection.client is not None
-            and self.connection.client.is_connected is True
-        )
 
     @property
     def device_info(self) -> DeviceInfo:
