@@ -47,8 +47,8 @@ If you have previously paired it with another device (like your phone) you will 
 *Note*: This will mean you cannot use that device to connect to at the same time as Home Assistant, and it will default to initial temperature and colour settings.
 
 To do so:
- 1. Forget the Mug on ay device you previously used
- 2. Hold down button on the bottom of the mug until light goes blue, then yellow anf then red 
+ 1. Forget the Mug on any device you previously used
+ 2. Hold down button on the bottom of the mug until light goes blue, then yellow and then red 
  3. It should blink red twice and goes back to white (The default colour) 
  4. Then enter pairing mode again - Hold down the button until the light starts blinking blue
  5. Home Assistant should auto-detect the mug and prompt you to configure it. Just hit next.
