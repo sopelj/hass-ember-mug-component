@@ -5,6 +5,7 @@ import contextlib
 from typing import Any
 
 from bleak import BleakClient, BleakError
+from ember_mug.consts import EMBER_BLUETOOTH_NAMES
 from homeassistant import config_entries
 from homeassistant.components.bluetooth import (
     BluetoothServiceInfoBleak,
@@ -70,6 +71,8 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 address = discovery_info.address
                 unique_id = address.replace(":", "").lower()
                 if unique_id in current_addresses:
+                    continue
+                if discovery_info.name not in EMBER_BLUETOOTH_NAMES:
                     continue
                 try:
                     async with BleakClient(discovery_info.device) as client:
