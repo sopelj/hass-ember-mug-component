@@ -72,7 +72,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 if unique_id in current_addresses:
                     continue
                 try:
-                    with BleakClient(discovery_info.device) as client:
+                    async with BleakClient(discovery_info.device) as client:
                         await client.connect()
                         with contextlib.suppress(BleakError, EOFError):
                             client.pair()
