@@ -39,6 +39,16 @@ Add to HACS as custom repository:
 
 <https://github.com/sopelj/hass-ember-mug-component>
 
+Install the integration in HACS and restart Home Assistant.
+
+**You do not need to add the integration in Home Assistant. Just installing it is enough for autodiscovery to work**
+
+### Setup Bluetooth Integration
+
+Ensure you have the [Home Assistant Bluetooth Integration](https://www.home-assistant.io/integrations/bluetooth/) enabled, and you have your Bluetooth dongle setup.
+
+![https://my.home-assistant.io/badges/config_flow_start.svg](https://my.home-assistant.io/redirect/config_flow_start?domain=bluetooth)
+
 ### Preparing your Mug
 
 The Ember Mug is very finicky. It will only maintain a connection with one device at a time. 
