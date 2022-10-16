@@ -6,6 +6,7 @@ import logging
 from typing import TYPE_CHECKING, Any, cast
 
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.device_registry import CONNECTION_BLUETOOTH
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
@@ -102,6 +103,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
         """Return information about the mug."""
         return DeviceInfo(
             identifiers={(DOMAIN, cast(str, self._entry_id))},
+            connections={(CONNECTION_BLUETOOTH, self.ble_device.address)},
             name=self.data["mug_name"],
             model=self.data["model"],
             suggested_area="Kitchen",

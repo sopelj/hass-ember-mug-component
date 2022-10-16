@@ -32,12 +32,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     ble_device = bluetooth.async_ble_device_from_address(
         hass,
         entry.data[CONF_ADDRESS].upper(),
-        True,
     )
     if not ble_device:
         raise ConfigEntryNotReady(
             f"Could not find Ember Mug with address {entry.data[CONF_ADDRESS]}",
         )
+    # @hack: Try and wake the scanner to ensure the first connection will work
+    scanner = bluetooth.async_get_scanner(hass)
+    await scanner.discover()
 
     ember_mug = EmberMug(
         ble_device,
