@@ -53,10 +53,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         entry.entry_id,
     )
 
-    # @hack: Try and wake the scanner to ensure the first connection will work
-    if USES_BLUEZ:
-        await async_reset_adapter('hci0')
-
     @callback
     def _async_update_ble(
         service_info: bluetooth.BluetoothServiceInfoBleak,
