@@ -1,11 +1,14 @@
 """Ember Mug Custom Integration."""
+import contextlib
 from asyncio import Event
 import logging
 
 import async_timeout
 from ember_mug import EmberMug
+from ember_mug.consts import USES_BLUEZ
 from homeassistant.components import bluetooth
 from homeassistant.components.bluetooth.match import ADDRESS, BluetoothCallbackMatcher
+from homeassistant.components.bluetooth.util import async_reset_adapter
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
     CONF_ADDRESS,
@@ -37,9 +40,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         raise ConfigEntryNotReady(
             f"Could not find Ember Mug with address {entry.data[CONF_ADDRESS]}",
         )
-    # @hack: Try and wake the scanner to ensure the first connection will work
-    scanner = bluetooth.async_get_scanner(hass)
-    await scanner.discover()
 
     ember_mug = EmberMug(
         ble_device,
@@ -52,6 +52,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         ember_mug,
         entry.entry_id,
     )
+
+    # @hack: Try and wake the scanner to ensure the first connection will work
+    if USES_BLUEZ:
+        await async_reset_adapter('hci0')
 
     @callback
     def _async_update_ble(
