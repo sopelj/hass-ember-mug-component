@@ -1,14 +1,14 @@
 """Ember Mug Custom Integration."""
-import contextlib
+import asyncio
 from asyncio import Event
+import contextlib
 import logging
 
 import async_timeout
+from bleak import BleakError, BleakScanner
 from ember_mug import EmberMug
-from ember_mug.consts import USES_BLUEZ
 from homeassistant.components import bluetooth
 from homeassistant.components.bluetooth.match import ADDRESS, BluetoothCallbackMatcher
-from homeassistant.components.bluetooth.util import async_reset_adapter
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
     CONF_ADDRESS,
@@ -52,6 +52,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         ember_mug,
         entry.entry_id,
     )
+    # Hack: Force active scan to try and wake scanner
+    with contextlib.suppress(BleakError):
+        async with BleakScanner():
+            await asyncio.sleep(0.5)
+        logging.debug("Mug test scan")
 
     @callback
     def _async_update_ble(
