@@ -1,5 +1,4 @@
 """Ember Mug Custom Integration."""
-import asyncio
 from asyncio import Event
 import contextlib
 import logging
@@ -54,8 +53,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     )
     # Hack: Force active scan to try and wake scanner
     with contextlib.suppress(BleakError):
-        async with BleakScanner():
-            await asyncio.sleep(0.5)
+        await BleakScanner.discover(timeout=1)
         logging.debug("Mug test scan")
 
     @callback
