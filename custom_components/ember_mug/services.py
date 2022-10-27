@@ -50,4 +50,4 @@ async def set_mug_name(entity: EmberMugSensor, service_call: ServiceCall) -> Non
     """Set target temp of mug."""
     name: str = service_call.data[ATTR_MUG_NAME]
     _LOGGER.debug(f"Service called to set name to '{name}'")
-    await entity.coordinator.connection.set_mug_name(name)
+    await entity.coordinator.connection.set_name(name)
