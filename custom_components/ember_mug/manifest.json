@@ -8,7 +8,7 @@
   "version": "0.4.0",
   "iot_class": "local_polling",
   "dependencies": ["bluetooth"],
-  "requirements": ["python-ember-mug==0.3.3"],
+  "requirements": ["python-ember-mug==0.3.7"],
   "bluetooth": [
     { "local_name": "Ember Ceramic Mug" },
     { "service_uuid": "fc543622-236c-4c94-8fa9-944a3e5353fa" }

@@ -4,11 +4,12 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
+from homeassistant.const import ATTR_NAME
 from homeassistant.core import ServiceCall
 from homeassistant.helpers import config_validation as cv
 import voluptuous as vol
 
-from .const import ATTR_MUG_NAME, ATTR_RGB_COLOR, ATTR_TARGET_TEMP, MUG_NAME_REGEX
+from .const import ATTR_RGB_COLOR, ATTR_TARGET_TEMP, MUG_NAME_REGEX
 
 if TYPE_CHECKING:
     from .sensor import EmberMugSensor
@@ -28,7 +29,7 @@ SET_TARGET_TEMP_SCHEMA = {
 }
 
 SET_MUG_NAME_SCHEMA = {
-    vol.Required(ATTR_MUG_NAME): cv.matches_regex(MUG_NAME_REGEX),
+    vol.Required(ATTR_NAME): cv.matches_regex(MUG_NAME_REGEX),
 }
 
 
@@ -48,6 +49,6 @@ async def set_target_temp(entity: EmberMugSensor, service_call: ServiceCall) -> 
 
 async def set_mug_name(entity: EmberMugSensor, service_call: ServiceCall) -> None:
     """Set target temp of mug."""
-    name: str = service_call.data[ATTR_MUG_NAME]
+    name: str = service_call.data[ATTR_NAME]
     _LOGGER.debug(f"Service called to set name to '{name}'")
     await entity.coordinator.connection.set_name(name)

@@ -29,7 +29,7 @@ set_target_temp:
       example: "55.5"
       selector:
         number:
-          min: 0
+          min: 1
           max: 100
           unit_of_measurement: "C"
 
@@ -41,7 +41,7 @@ set_mug_name:
     entity:
       integration: ember_mug
   fields:
-    mug_name:
+    name:
       name: Mug Name
       description: A name for your mug. Must be safe for Bluetooth devices.
       required: true

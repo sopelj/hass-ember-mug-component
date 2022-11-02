@@ -16,7 +16,6 @@ SERVICE_SET_LED_COLOUR = "set_led_colour"
 ATTR_TARGET_TEMP = "target_temp"
 SERVICE_SET_TARGET_TEMP = "set_target_temp"
 
-ATTR_MUG_NAME = "mug_name"
 SERVICE_SET_MUG_NAME = "set_mug_name"
 
 ATTR_BATTERY_VOLTAGE = "battery_voltage"

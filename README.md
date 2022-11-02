@@ -15,9 +15,6 @@ The protocol is not public, so there is quite a bit of guesswork involved.
 [@orlopau](https://github.com/orlopau) did a great job documenting some [UUIDs here](https://github.com/orlopau/ember-mug) And had to attempt to extract the rest of them. 
 The rest I had to do some testing and reverse engineering.
 
-I can't seem to get writing to attributes working yet, but reading the data works great.
-It seems to be a problem with the BlueZ dbus backend. Because it worked with gatttool before.
-
 The actual Mug logic has been moved to [an external library](https://github.com/sopelj/python-ember-mug) as per the guidelines in Home Assistant. 
 So if you have issues with the mug's internals and not the integration with home assistant please [raise issues there](https://github.com/sopelj/python-ember-mug/issues) :)
 
@@ -26,7 +23,7 @@ So if you have issues with the mug's internals and not the integration with home
 - Version 0.3.X Works on 2022.8.X as long as the Bluetooth Integration is disabled
 - Version 0.4+ Works on 2022.9+ and uses the new Bluetooth integration for discovery and setup
 
-**If you had a version installed before 0.4 and are upgrading, please remove your mug before upgrading and it should be auto-discovered** 
+**If you had a version installed before 0.4 and are upgrading, please remove your mug before upgrading, and it should be auto-discovered afterwards** 
 
 Home Assistant has a list of [officially supported adaptors](https://www.home-assistant.io/integrations/bluetooth/#known-working-adapters), 
 if you have connection issues, please try one of them.
@@ -51,23 +48,27 @@ Ensure you have the [Home Assistant Bluetooth Integration](https://www.home-assi
 
 ### Preparing your Mug
 
-The Ember Mug is very finicky. It will only maintain a connection with one device at a time. 
-If you have previously paired it with another device (like your phone) you will need to forget it from that device and reset the mug to factory settings.
-
-*Note*: This will mean you cannot use that device to connect to at the same time as Home Assistant, and it will default to initial temperature and colour settings.
+In order to function properly please, set up your mug using the app before trying to use this integration. 
+This is not required, but if you don't, changing values such as the name, colour, temp, etc. via home assistant will not work. 
+Once you set it up, then please forget the mug on your phone or at least disable Bluetooth, so they don't fight over the mug.
 
 To do so:
- 1. Forget the Mug on any device you previously used
- 2. Hold down button on the bottom of the mug until light goes blue, then yellow and then red 
- 3. It should blink red twice and goes back to white (The default colour) 
- 4. Then enter pairing mode again - Hold down the button until the light starts blinking blue
- 5. Home Assistant should auto-detect the mug and prompt you to configure it. Just hit next.
+ 1. Set up the mug in the Ember mobile app 
+ 2. Forget the mug from your Bluetooth Devices on your phone (or at least disable Bluetooth on it). 
+ 3. Home Assistant should auto-detect the mug and prompt you to configure it. Just hit next. (If not try holding down the butter on the bottom until it flashes blue)
 
-*Note* If it fails to find your mug please try resetting and entering pairing mode again before trying again.
+#### Troubleshooting
+
+##### 'Operation failed with ATT error: 0x0e' or another connection error
+This seems to be caused by the bluetooth adaptor being in some sort of passive mode. I have not yet figured out how to wake it programmatically so sadly, you need to manually open `bluetoothctl` to do so. 
+Please ensure the mug is in pairing mode (ie. the light is flashing blue) and run the `bluetoothctl` command. You don,t need to type anything. run it and wait until the mug connects.
+
+If you are on Home Assistant OS you can use the Terminal + SSH addon, open the terminal, type `bluetoothctl` and hit enter.
+If you are running in docker or locally via python you can run it on the host.
 
 ## Caveats / known issues:
 
-- The services to change mug values fail with a bluetooth permission error, that I can't figure out yet. 
+- The services to change mug values only works if the mug has been set up in the Ember app initially.
 - If you have another device paired with it like your phone it will cause it to disconnect, so you need to remove it from that device.
 - This maintains a connection to your mug which:
     - may affect battery
