@@ -5,11 +5,12 @@ set_led_colour:
   target:
     entity:
       integration: ember_mug
+      device_class: mug
   fields:
     rgb_color:
-      name: rgb-color
+      name: RGB Colour
+      required: true
       description: Color for the LED in RGB format.
-      advanced: true
       example: "[255, 100, 100]"
       selector:
         color_rgb:
@@ -21,6 +22,7 @@ set_target_temp:
   target:
     entity:
       integration: ember_mug
+      device_class: mug
   fields:
     target_temp:
       name: Target Temp
@@ -40,6 +42,7 @@ set_mug_name:
   target:
     entity:
       integration: ember_mug
+      device_class: mug
   fields:
     name:
       name: Mug Name
@@ -47,3 +50,5 @@ set_mug_name:
       required: true
       example: "EMBER"
       default: "EMBER"
+      selector:
+        text:

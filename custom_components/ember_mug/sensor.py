@@ -31,6 +31,7 @@ from .const import (
     ICON_DEFAULT,
     ICON_EMPTY,
     LIQUID_STATE_TEMP_ICONS,
+    MUG_DEVICE_CLASS,
     SERVICE_SET_LED_COLOUR,
     SERVICE_SET_MUG_NAME,
     SERVICE_SET_TARGET_TEMP,
@@ -86,6 +87,8 @@ class EmberMugSensorBase(CoordinatorEntity, SensorEntity):
 
 class EmberMugSensor(EmberMugSensorBase):
     """Base Mug State Sensor."""
+
+    _attr_device_class = MUG_DEVICE_CLASS
 
     @property
     def icon(self) -> str | None:

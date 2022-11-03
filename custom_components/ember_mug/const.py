@@ -5,10 +5,14 @@ Most of these are UUIDs.
 Since these are not public some were found on this repo https://github.com/orlopau/ember-mug/ (Thank you!)
 Some found from testing and from the App.
 """
+from typing import Final
+
 DOMAIN = "ember_mug"
 
 ICON_DEFAULT = "mdi:coffee"
 ICON_EMPTY = "mdi:coffee-off"
+
+MUG_DEVICE_CLASS: Final[str] = "mug"
 
 ATTR_RGB_COLOR = "rgb_color"
 SERVICE_SET_LED_COLOUR = "set_led_colour"
