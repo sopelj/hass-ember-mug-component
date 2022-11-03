@@ -169,3 +169,17 @@ cards:
             name: battery_charging
             value: true
 ```
+
+### Services
+
+If your mug was initially setup with the mobile app, you can also use the following services in home assistant to change certain things about you mug:
+
+- set_mug_name -> Rename your mug
+- set_led_colour -> Change the LED colour of the mug
+- set_target_temp -> Set the desired temperature of you mug
+
+### Example
+
+You can trigger these manually in developer tools or use them in automations.
+
+![](examples/mug_service_set_name.png)
