@@ -55,7 +55,11 @@ Once you set it up, then please forget the mug on your phone or at least disable
 To do so:
  1. Set up the mug in the Ember mobile app 
  2. Forget the mug from your Bluetooth Devices on your phone (or at least disable Bluetooth on it). 
- 3. Home Assistant should auto-detect the mug and prompt you to configure it. Just hit next. (If not try holding down the butter on the bottom until it flashes blue)
+ 3. Home Assistant should auto-detect the mug and prompt you to configure it.
+    - Choose "Configure"
+    - And then hit "Next"
+4. Once it has been added, then put your mug into pairing mode (Hold down the button on the bottom until it flashes blue)
+5. Your mug will exit paring mode automatically and go back to the default colour when it's setup 
 
 #### Troubleshooting
 
@@ -65,6 +69,11 @@ Please ensure the mug is in pairing mode (ie. the light is flashing blue) and ru
 
 If you are on Home Assistant OS you can use the Terminal + SSH addon, open the terminal, type `bluetoothctl` and hit enter.
 If you are running in docker or locally via python you can run it on the host.
+
+##### Device not found after reboot
+
+Sometimes, after Home Assistant and it's OS are rebooted it will be disconnected from the mug and can't find it anymore.
+Just put your mug back in pairing mode and it should reconnect after a few minutes.
 
 ## Caveats / known issues:
 

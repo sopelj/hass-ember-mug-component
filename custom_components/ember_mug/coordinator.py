@@ -44,7 +44,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
         self.connection = self.mug.connection()
         self.data: dict[str, Any] = {}
         self.available = True
-        self.refresh_count = 0
+        self._last_refresh_was_full = False
 
         _LOGGER.info(f"Ember Mug {self.name} Setup")
         # Default Data
@@ -75,15 +75,14 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
         _LOGGER.debug("Updating")
         try:
             await self.connection.ensure_connection()
-            if self.refresh_count == 0:
-                # Only fully poll all data every one fourth call. So every 60 sec.
+            changed = []
+            if self._last_refresh_was_full is False:
+                # Only fully poll all data every other call to limit time
+                _LOGGER.debug("Full Update")
                 changed = await self.connection.update_all()
-            else:
-                # Only check for queued changes
-                changed = await self.connection.update_queued_attributes()
-            self.refresh_count = (
-                0 if self.refresh_count >= 4 else self.refresh_count + 1
-            )
+            _LOGGER.debug("Updating queued attributes")
+            changed += await self.connection.update_queued_attributes()
+            self._last_refresh_was_full = not self._last_refresh_was_full
             self.available = True
         except Exception as e:
             _LOGGER.error(e)
