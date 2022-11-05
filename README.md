@@ -52,12 +52,14 @@ In order to function properly please, set up your mug using the app before tryin
 This is not required, but if you don't, changing values such as the name, colour, temp, etc. via home assistant will not work. 
 Once you set it up, then please forget the mug on your phone or at least disable Bluetooth, so they don't fight over the mug.
 
+**Note**: If you had a version below 0.4 installed, please remove your device from home assistant and manually remove it in `bluetoothctl remove my-mac-address`. You can do this in the Terminal Addon for HASS OS or on your host for other installation types. 
+
 To do so:
- 1. Set up the mug in the Ember mobile app 
- 2. Forget the mug from your Bluetooth Devices on your phone (or at least disable Bluetooth on it). 
- 3. Home Assistant should auto-detect the mug and prompt you to configure it.
-    - Choose "Configure"
-    - And then hit "Next"
+1. Set up the mug in the Ember mobile app 
+2. Forget the mug from your Bluetooth Devices on your phone (or at least disable Bluetooth on it). 
+3. Home Assistant should auto-detect the mug and prompt you to configure it.
+   - Choose "Configure"
+   - And then hit "Next"
 4. Once it has been added, then put your mug into pairing mode (Hold down the button on the bottom until it flashes blue)
 5. Your mug will exit paring mode automatically and go back to the default colour when it's setup 
 
