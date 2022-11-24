@@ -61,7 +61,8 @@ To do so:
    - Choose "Configure"
    - And then hit "Next"
 4. Once it has been added, then put your mug into pairing mode (Hold down the button on the bottom until it flashes blue)
-5. Your mug will exit paring mode automatically and go back to the default colour when it's setup 
+5. Your mug will exit paring mode automatically and go back to the default colour when it's setup.
+   Note: If you are using Bluetooth Proxies you may need to manually exit pairing mode by tapping once on the button of the mug.
 
 #### Troubleshooting
 

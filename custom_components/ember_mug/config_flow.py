@@ -77,8 +77,17 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 try:
                     async with BleakClient(discovery_info.device) as client:
                         await client.connect()
-                        with contextlib.suppress(BleakError, EOFError):
-                            client.pair()
+                        try:
+                            await client.pair()
+                        except (BleakError, EOFError):
+                            pass
+                        except NotImplementedError:
+                            # workaround for Home Assistant ESPHome Proxy backend which does not allow pairing.
+                            _LOGGER.warning(
+                                'Pairing not implemented. '
+                                'If your mug is still in pairing mode (blinking blue) '
+                                'tap the button on the bottom to exit.'
+                            )
                 except BleakError:
                     self.async_abort(reason="cannot_connect")
                 self._discovery_info = discovery_info
