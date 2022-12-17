@@ -1,4 +1,6 @@
 """Ember Mug Custom Integration."""
+from __future__ import annotations
+
 from asyncio import Event
 import contextlib
 import logging
@@ -64,6 +66,15 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         """Update from a ble callback."""
         mug_coordinator.connection.set_device(service_info.device)
 
+    @callback
+    def _async_unavailable_ble(
+        service_info: bluetooth.BluetoothServiceInfoBleak,
+        change: bluetooth.BluetoothChange,
+    ) -> None:
+        """Update from a ble callback."""
+        mug_coordinator.available = False
+        hass.async_create_task(mug_coordinator.connection.disconnect())
+
     entry.async_on_unload(
         bluetooth.async_register_callback(
             hass,
@@ -71,6 +82,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             BluetoothCallbackMatcher({ADDRESS: entry.data[CONF_ADDRESS]}),
             bluetooth.BluetoothScanningMode.ACTIVE,
         ),
+    )
+    entry.async_on_unload(
+        bluetooth.async_track_unavailable(
+            hass, _async_unavailable_ble, entry.data[CONF_ADDRESS]
+        )
     )
     startup_event = Event()
     cancel_first_update = mug_coordinator.connection.register_callback(

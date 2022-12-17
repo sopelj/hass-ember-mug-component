@@ -1,7 +1,7 @@
 {
   "name": "Ember Mug",
   "render_readme": true,
-  "version": "0.4.1",
+  "version": "0.5.0",
   "iot_class": "Local Polling",
-  "homeassistant": "2022.9"
+  "homeassistant": "2022.11"
 }

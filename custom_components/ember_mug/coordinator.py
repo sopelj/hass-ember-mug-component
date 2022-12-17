@@ -9,6 +9,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import CONNECTION_BLUETOOTH
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
+import homeassistant.util.dt as dt_util
 
 from .const import DOMAIN
 
@@ -36,7 +37,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
             hass,
             logger,
             name=f"ember-mug-{entry_id}",
-            update_interval=timedelta(seconds=15),
+            update_interval=timedelta(seconds=30),
         )
         self.ble_device = ble_device
         self.mug = mug
@@ -54,6 +55,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
             "sw_version": None,
             "mug_name": "Ember Mug",
             "model": "Ember Mug",
+            "last_updated": None,
         }
 
     async def _process_queued(self) -> None:
@@ -96,6 +98,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
             "sw_version": getattr(self.mug.firmware, "version", ""),
             "mug_name": self.mug.name,
             "model": self.mug.model,
+            "last_updated": dt_util.utcnow(),
         }
 
     @property

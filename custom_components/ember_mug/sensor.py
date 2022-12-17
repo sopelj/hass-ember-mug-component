@@ -76,7 +76,10 @@ class EmberMugSensorBase(CoordinatorEntity, SensorEntity):
     @property
     def extra_state_attributes(self) -> Mapping[Any, Any]:
         """Return the state attributes."""
-        return {"last_run_success": self._last_run_success}
+        return {
+            "last_updated": self.data["last_updated"],
+            "last_run_success": self._last_run_success,
+        }
 
     @callback
     def _handle_coordinator_update(self, *args: Any) -> None:
