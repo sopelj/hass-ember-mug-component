@@ -86,6 +86,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator):
             self.available = True
         except Exception as e:
             _LOGGER.error(e)
+            self.available = False
             raise UpdateFailed(f"An error occurred updating mug: {e=}")
         _LOGGER.debug(f"Changed: {changed}")
         _LOGGER.debug("Update done")
