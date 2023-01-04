@@ -1,7 +1,6 @@
 """Add Config Flow for Ember Mug."""
 from __future__ import annotations
 
-import contextlib
 from typing import Any
 
 from bleak import BleakClient, BleakError
@@ -84,9 +83,9 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                         except NotImplementedError:
                             # workaround for Home Assistant ESPHome Proxy backend which does not allow pairing.
                             _LOGGER.warning(
-                                'Pairing not implemented. '
-                                'If your mug is still in pairing mode (blinking blue) '
-                                'tap the button on the bottom to exit.'
+                                "Pairing not implemented. "
+                                "If your mug is still in pairing mode (blinking blue) "
+                                "tap the button on the bottom to exit.",
                             )
                 except BleakError:
                     self.async_abort(reason="cannot_connect")

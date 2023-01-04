@@ -59,11 +59,12 @@ class EmberMugBinarySensorBase(CoordinatorEntity, BinarySensorEntity):
 class EmberMugChargingBinarySensor(EmberMugBinarySensorBase):
     """Mug Battery Sensor."""
 
-    _sensor_type = "charging base"
+    _sensor_type = "on charging base"
     _attr_device_class = BinarySensorDeviceClass.PLUG
 
     @property
     def is_on(self) -> bool:
+        """Return "True" if placed on the charging base."""
         return self.coordinator.mug.battery.on_charging_base
 
 
