@@ -3,5 +3,5 @@
   "render_readme": true,
   "version": "0.5.0",
   "iot_class": "Local Polling",
-  "homeassistant": "2022.11"
+  "homeassistant": "2023.1"
 }

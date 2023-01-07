@@ -1,24 +1,19 @@
 """Ember Mug Custom Integration."""
 from __future__ import annotations
 
-from asyncio import Event
-import contextlib
 import logging
 
-import async_timeout
-from bleak import BleakError, BleakScanner
 from ember_mug import EmberMug
 from homeassistant.components import bluetooth
-from homeassistant.components.bluetooth.match import ADDRESS, BluetoothCallbackMatcher
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
     CONF_ADDRESS,
+    CONF_NAME,
     CONF_TEMPERATURE_UNIT,
-    EVENT_HOMEASSISTANT_STOP,
     TEMP_CELSIUS,
     Platform,
 )
-from homeassistant.core import HomeAssistant, callback
+from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
 
 from .const import DOMAIN
@@ -33,10 +28,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     if DOMAIN not in hass.data:
         hass.data[DOMAIN] = {}
 
-    ble_device = bluetooth.async_ble_device_from_address(
-        hass,
-        entry.data[CONF_ADDRESS].upper(),
-    )
+    address: str = entry.data[CONF_ADDRESS].upper()
+    ble_device = bluetooth.async_ble_device_from_address(hass, address)
     if not ble_device:
         raise ConfigEntryNotReady(
             f"Could not find Ember Mug with address {entry.data[CONF_ADDRESS]}",
@@ -50,75 +43,18 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         hass,
         _LOGGER,
         ble_device,
+        entry.unique_id,
+        entry.data.get(CONF_NAME, entry.title),
         ember_mug,
-        entry.entry_id,
-    )
-    # Hack: Force active scan to try and wake scanner
-    with contextlib.suppress(BleakError):
-        await BleakScanner.discover(timeout=1)
-        logging.debug("Mug test scan")
-
-    @callback
-    def _async_update_ble(
-        service_info: bluetooth.BluetoothServiceInfoBleak,
-        change: bluetooth.BluetoothChange,
-    ) -> None:
-        """Update from a ble callback."""
-        mug_coordinator.connection.set_device(service_info.device)
-
-    @callback
-    def _async_unavailable_ble(
-        service_info: bluetooth.BluetoothServiceInfoBleak,
-        change: bluetooth.BluetoothChange,
-    ) -> None:
-        """Update from a ble callback."""
-        mug_coordinator.available = False
-        hass.async_create_task(mug_coordinator.connection.disconnect())
-
-    entry.async_on_unload(
-        bluetooth.async_register_callback(
-            hass,
-            _async_update_ble,
-            BluetoothCallbackMatcher({ADDRESS: entry.data[CONF_ADDRESS]}),
-            bluetooth.BluetoothScanningMode.ACTIVE,
-        ),
-    )
-    entry.async_on_unload(
-        bluetooth.async_track_unavailable(
-            hass, _async_unavailable_ble, entry.data[CONF_ADDRESS]
-        )
-    )
-    startup_event = Event()
-    cancel_first_update = mug_coordinator.connection.register_callback(
-        lambda *_: startup_event.set(),
     )
 
-    try:
-        await mug_coordinator.async_config_entry_first_refresh()
-    except ConfigEntryNotReady:
-        cancel_first_update()
-        raise
+    entry.async_on_unload(mug_coordinator.async_start())
+    if not await mug_coordinator.async_wait_ready():
+        raise ConfigEntryNotReady(f"{address} is not advertising state")
 
-    try:
-        async with async_timeout.timeout(60):
-            await startup_event.wait()
-    except TimeoutError as ex:
-        raise ConfigEntryNotReady(
-            "Unable to communicate with the device; "
-            f"Try moving the Bluetooth adapter closer to {ember_mug.name}",
-        ) from ex
-    finally:
-        cancel_first_update()
-
+    entry.async_on_unload(entry.add_update_listener(async_update_listener))
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
-    async def _async_stop(event: Event) -> None:
-        """Close the connection."""
-        await mug_coordinator.connection.disconnect()
-
-    entry.async_on_unload(
-        hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STOP, _async_stop),
-    )
     return True
 
 
@@ -133,4 +69,8 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     if unload_ok:
         mug_coordinator = hass.data[DOMAIN].pop(entry.entry_id)
         await mug_coordinator.connection.disconnect()
+
+        if not hass.config_entries.async_entries(DOMAIN):
+            hass.data.pop(DOMAIN)
+
     return unload_ok

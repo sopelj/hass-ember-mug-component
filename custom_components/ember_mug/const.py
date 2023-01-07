@@ -8,6 +8,7 @@ Some found from testing and from the App.
 from typing import Final
 
 DOMAIN = "ember_mug"
+MANUFACTURER = "Ember"
 
 ICON_DEFAULT = "mdi:coffee"
 ICON_EMPTY = "mdi:coffee-off"
