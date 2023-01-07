@@ -14,8 +14,7 @@ from homeassistant.const import (
     CONF_ADDRESS,
     CONF_NAME,
     CONF_TEMPERATURE_UNIT,
-    TEMP_CELSIUS,
-    TEMP_FAHRENHEIT,
+    UnitOfTemperature,
 )
 from homeassistant.data_entry_flow import FlowResult
 import voluptuous as vol
@@ -102,8 +101,11 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     },
                 ),
                 vol.Required(CONF_NAME, default=self._discovery_info.name): str,
-                vol.Required(CONF_TEMPERATURE_UNIT, default=TEMP_CELSIUS): vol.In(
-                    [TEMP_CELSIUS, TEMP_FAHRENHEIT],
+                vol.Required(
+                    CONF_TEMPERATURE_UNIT,
+                    default=UnitOfTemperature.CELSIUS,
+                ): vol.In(
+                    [UnitOfTemperature.CELSIUS, UnitOfTemperature.FAHRENHEIT],
                 ),
             },
         )

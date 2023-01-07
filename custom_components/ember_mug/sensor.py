@@ -17,8 +17,6 @@ from homeassistant.const import (
     CONF_RGB,
     CONF_TEMPERATURE_UNIT,
     PERCENTAGE,
-    TEMP_CELSIUS,
-    TEMP_FAHRENHEIT,
     UnitOfTemperature,
 )
 from homeassistant.core import HomeAssistant
@@ -55,13 +53,13 @@ SENSOR_TYPES = {
     ),
     "liquid_level": SensorEntityDescription(
         key="liquid_level",
-        name="Liquid Level",
+        name="Mug Liquid Level",
         icon="mdi:cup-water",
         native_unit_of_measurement=PERCENTAGE,
     ),
-    "battery": SensorEntityDescription(
+    "battery.percent": SensorEntityDescription(
         key="battery",
-        name="Battery",
+        name="Mug Battery",
         native_unit_of_measurement=PERCENTAGE,
         device_class=SensorDeviceClass.BATTERY,
         state_class=SensorStateClass.MEASUREMENT,
@@ -69,14 +67,14 @@ SENSOR_TYPES = {
     ),
     "target_temp": SensorEntityDescription(
         key="target_temp",
-        name="Target Temperature",
+        name="Mug Target Temperature",
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         state_class=SensorStateClass.MEASUREMENT,
         device_class=SensorDeviceClass.TEMPERATURE,
     ),
     "current_temp": SensorEntityDescription(
         key="current_temp",
-        name="Current Temperature",
+        name="Mug Current Temperature",
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         state_class=SensorStateClass.MEASUREMENT,
         device_class=SensorDeviceClass.TEMPERATURE,
@@ -90,24 +88,16 @@ class BaseEmberMugSensor(BaseMugEntity, SensorEntity):
     def __init__(
         self,
         coordinator: MugDataUpdateCoordinator,
-        sensor_attr: str,
+        mug_attr: str,
     ) -> None:
         """Initialize the Mug sensor."""
-        super().__init__(coordinator)
-        self._sensor_attr = sensor_attr
-        self._attr_device_info = coordinator.device_info
-        self._attr_unique_id = f"{coordinator.base_unique_id}-{sensor_attr}"
-        self.entity_description = SENSOR_TYPES[sensor_attr]
+        super().__init__(coordinator, mug_attr)
+        self.entity_description = SENSOR_TYPES[mug_attr]
 
     @property
     def native_value(self) -> Any:
-        """Return the state of the sensor."""
-        return getattr(self.coordinator.mug, self._sensor_attr)
-
-    @property
-    def available(self) -> bool:
-        """Return if entity is available."""
-        return self.coordinator.available
+        """Return a mug attribute as the state for the sensor."""
+        return self.coordinator.get_mug_attr(self._mug_attr)
 
 
 class EmberMugSensor(BaseEmberMugSensor):
@@ -163,7 +153,7 @@ class EmberMugTemperatureSensor(BaseEmberMugSensor):
     @property
     def icon(self) -> str | None:
         """Set icon based on temperature."""
-        if self._sensor_attr != "current_temp":
+        if self._mug_attr != "current_temp":
             return "mdi:thermometer"
         icon = LIQUID_STATE_TEMP_ICONS.get(
             self.coordinator.mug.liquid_state,
@@ -194,9 +184,12 @@ class EmberMugBatterySensor(BaseEmberMugSensor):
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
         """Return device specific state attributes."""
+        mug = self.coordinator.mug
         return {
-            ATTR_BATTERY_VOLTAGE: self.coordinator.mug.battery_voltage,
-            ATTR_BATTERY_CHARGING: self.coordinator.mug.battery.on_charging_base,
+            ATTR_BATTERY_VOLTAGE: mug.battery_voltage,
+            ATTR_BATTERY_CHARGING: mug.battery.on_charging_base
+            if mug.battery
+            else None,
         }
 
 
@@ -209,13 +202,17 @@ async def async_setup_entry(
     coordinator: MugDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
     entry_id = entry.entry_id
     assert entry_id is not None
-    temp_unit = TEMP_FAHRENHEIT if coordinator.mug.use_metric is False else TEMP_CELSIUS
+    temp_unit = (
+        UnitOfTemperature.FAHRENHEIT
+        if coordinator.mug.use_metric is False
+        else UnitOfTemperature.CELSIUS
+    )
     entities: list[BaseMugEntity] = [
         EmberMugSensor(coordinator, "liquid_state_display"),
         EmberMugLiquidLevelSensor(coordinator, "liquid_level"),
         EmberMugTemperatureSensor(coordinator, "target_temp", temp_unit),
         EmberMugTemperatureSensor(coordinator, "current_temp", temp_unit),
-        EmberMugBatterySensor(coordinator, "battery"),
+        EmberMugBatterySensor(coordinator, "battery.percent"),
     ]
     async_add_entities(entities)
 

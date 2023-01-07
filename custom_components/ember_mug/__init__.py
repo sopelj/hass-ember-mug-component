@@ -10,8 +10,8 @@ from homeassistant.const import (
     CONF_ADDRESS,
     CONF_NAME,
     CONF_TEMPERATURE_UNIT,
-    TEMP_CELSIUS,
     Platform,
+    UnitOfTemperature,
 )
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
@@ -37,7 +37,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     ember_mug = EmberMug(
         ble_device,
-        entry.data[CONF_TEMPERATURE_UNIT] == TEMP_CELSIUS,
+        entry.data[CONF_TEMPERATURE_UNIT] == UnitOfTemperature.CELSIUS,
     )
     hass.data[DOMAIN][entry.entry_id] = mug_coordinator = MugDataUpdateCoordinator(
         hass,

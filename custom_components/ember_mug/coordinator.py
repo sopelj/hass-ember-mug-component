@@ -5,7 +5,7 @@ import asyncio
 import contextlib
 from datetime import datetime
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import async_timeout
 from ember_mug import EmberMug
@@ -139,6 +139,16 @@ class MugDataUpdateCoordinator(ActiveBluetoothDataUpdateCoordinator[EmberMug]):
         self.ble_device = service_info.device
         self.connection.set_device(self.ble_device)
         super()._async_handle_bluetooth_event(service_info, change)
+
+    def get_mug_attr(self, mug_attr: str) -> Any:
+        """Get a mug attribute by name (recursively) or return None."""
+        value = self.mug
+        for attr in mug_attr.split("."):
+            try:
+                value = getattr(value, attr)
+            except AttributeError:
+                return None
+        return value
 
     @property
     def device_info(self) -> DeviceInfo:

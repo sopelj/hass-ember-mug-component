@@ -4,6 +4,7 @@ from __future__ import annotations
 from homeassistant.components.binary_sensor import (
     BinarySensorDeviceClass,
     BinarySensorEntity,
+    BinarySensorEntityDescription,
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -13,17 +14,31 @@ from .const import DOMAIN
 from .coordinator import MugDataUpdateCoordinator
 from .entity import BaseMugEntity
 
+SENSOR_TYPES = {
+    "battery.on_charging_base": BinarySensorEntityDescription(
+        key="on_charging_base",
+        name="Mug on charging base",
+        device_class=BinarySensorDeviceClass.PLUG,
+    ),
+}
 
-class EmberMugChargingBinarySensor(BaseMugEntity, BinarySensorEntity):
-    """Mug Battery Sensor."""
 
-    _sensor_type = "on charging base"
-    _attr_device_class = BinarySensorDeviceClass.PLUG
+class MugBinarySensor(BaseMugEntity, BinarySensorEntity):
+    """Base Entity for Mug Binary Sensors."""
+
+    def __init__(
+        self,
+        coordinator: MugDataUpdateCoordinator,
+        mug_attr: str,
+    ) -> None:
+        """Initialize the Mug sensor."""
+        super().__init__(coordinator, mug_attr)
+        self.entity_description = SENSOR_TYPES[mug_attr]
 
     @property
     def is_on(self) -> bool:
-        """Return "True" if placed on the charging base."""
-        return self.coordinator.mug.battery.on_charging_base
+        """Return mug attribute as binary state."""
+        return self.coordinator.get_mug_attr(self._mug_attr)
 
 
 async def async_setup_entry(
@@ -31,10 +46,10 @@ async def async_setup_entry(
     entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    """Set up Entities."""
+    """Set up Binary Sensor Entities."""
     assert entry.entry_id is not None
     coordinator: MugDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
-    entities: list[BinarySensorEntity] = [
-        EmberMugChargingBinarySensor(coordinator),
+    entities: list[MugBinarySensor] = [
+        MugBinarySensor(coordinator, "battery.on_charging_base"),
     ]
     async_add_entities(entities)
