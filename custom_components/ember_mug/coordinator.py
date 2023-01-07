@@ -70,7 +70,9 @@ class MugDataUpdateCoordinator(ActiveBluetoothDataUpdateCoordinator[EmberMug]):
         service_info: BluetoothServiceInfoBleak,
         seconds_since_last_poll: float | None,
     ) -> bool:
-        return self._was_unavailable or seconds_since_last_poll >= 30
+        should_poll = self._was_unavailable or seconds_since_last_poll >= 30
+        _LOGGER.debug(f"Should Poll: {should_poll}")
+        return should_poll
 
     async def async_wait_ready(self) -> bool:
         """Wait for the device to be ready."""
