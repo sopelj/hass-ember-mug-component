@@ -17,8 +17,8 @@ from .entity import BaseMugEntity
 SENSOR_TYPES = {
     "battery.on_charging_base": BinarySensorEntityDescription(
         key="on_charging_base",
-        name="on charging base",
-        device_class=BinarySensorDeviceClass.PLUG,
+        name="On charging base",
+        device_class=BinarySensorDeviceClass.PRESENCE,
     ),
 }
 
@@ -26,13 +26,15 @@ SENSOR_TYPES = {
 class MugBinarySensor(BaseMugEntity, BinarySensorEntity):
     """Base Entity for Mug Binary Sensors."""
 
+    _domain = "binary_sensor"
+
     def __init__(
         self,
         coordinator: MugDataUpdateCoordinator,
         mug_attr: str,
     ) -> None:
         """Initialize the Mug sensor."""
-        super().__init__(coordinator, "binary_sensor", mug_attr)
+        super().__init__(coordinator, mug_attr)
         self.entity_description = SENSOR_TYPES[mug_attr]
 
     @property

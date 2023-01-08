@@ -84,13 +84,15 @@ SENSOR_TYPES = {
 class BaseEmberMugSensor(BaseMugEntity, SensorEntity):
     """Representation of a Mug sensor."""
 
+    _domain = "sensor"
+
     def __init__(
         self,
         coordinator: MugDataUpdateCoordinator,
         mug_attr: str,
     ) -> None:
         """Initialize the Mug sensor."""
-        super().__init__(coordinator, "sensor", mug_attr)
+        super().__init__(coordinator, mug_attr)
         self.entity_description = SENSOR_TYPES[mug_attr]
 
     @property

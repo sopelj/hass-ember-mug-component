@@ -26,8 +26,6 @@ if TYPE_CHECKING:
     from bleak.backends.device import BLEDevice
 
 
-STARTUP_TIMEOUT = 30
-
 _LOGGER = logging.getLogger(__name__)
 
 

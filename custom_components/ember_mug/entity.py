@@ -11,24 +11,22 @@ class BaseMugEntity(CoordinatorEntity):
     """Generic entity encapsulating common features of an Ember Mug."""
 
     coordinator: MugDataUpdateCoordinator
+    _domain: str = None  # type: ignore[assignment]
     _attr_has_entity_name = True
 
     def __init__(
         self,
         coordinator: MugDataUpdateCoordinator,
-        domain: str,
         mug_attr: str,
     ) -> None:
         """Initialize the entity."""
         self._mug_attr = mug_attr
         base_attr = mug_attr.split(".")[-1]
         self._attr_unique_id = f"ember_mug_{coordinator.base_unique_id}_{base_attr}"
-        self.entity_id = f"{domain}.{self._attr_unique_id}"
+        self.entity_id = f"{self._domain}.{self._attr_unique_id}"
         super().__init__(coordinator)
         self.coordinator = coordinator
-        # self._attr_unique_id = f"ember_mug_{self._sensor_type or ''}_{entry_id}"
         self._address = coordinator.ble_device.address
-        # self._attr_unique_id = coordinator.base_unique_id
         self._attr_device_info = coordinator.device_info
 
     @property
