@@ -67,19 +67,19 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[EmberMug]):
         """Poll the device."""
         _LOGGER.debug("Updating")
         try:
-            async with self._updating.acquire():
-                await self.connection.ensure_connection()
-                changed = []
-                if self._last_refresh_was_full is False:
-                    # Only fully poll all data every other call to limit time
-                    _LOGGER.debug("Full Update")
-                    changed = await self.connection.update_all()
-                else:
-                    _LOGGER.debug("Updating queued attributes")
-                    changed += await self.connection.update_queued_attributes()
-                self._last_refresh_was_full = not self._last_refresh_was_full
-                self.available = True
-                self.last_updated = datetime.now()
+            # async with self._updating.acquire():
+            await self.connection.ensure_connection()
+            changed = []
+            if self._last_refresh_was_full is False:
+                # Only fully poll all data every other call to limit time
+                _LOGGER.debug("Full Update")
+                changed = await self.connection.update_all()
+            else:
+                _LOGGER.debug("Updating queued attributes")
+                changed += await self.connection.update_queued_attributes()
+            self._last_refresh_was_full = not self._last_refresh_was_full
+            self.available = True
+            self.last_updated = datetime.now()
         except Exception as e:
             _LOGGER.error(e)
             self.available = False
