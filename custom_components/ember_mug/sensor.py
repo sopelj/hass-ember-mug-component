@@ -12,7 +12,6 @@ from homeassistant.components.sensor import (
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import ATTR_BATTERY_CHARGING, PERCENTAGE, UnitOfTemperature
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers import entity_platform
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
@@ -24,17 +23,10 @@ from .const import (
     ICON_EMPTY,
     LIQUID_STATE_TEMP_ICONS,
     MUG_DEVICE_CLASS,
-    SERVICE_SET_LED_COLOUR,
 )
 from .entity import BaseMugValueEntity, format_temp
-from .services import SET_LED_COLOUR_SCHEMA, set_led_colour
 
 SENSOR_TYPES = {
-    "led_colour_display": SensorEntityDescription(
-        key="led_colour",
-        name="LED Colour",
-        entity_category=EntityCategory.CONFIG,
-    ),
     "liquid_state_display": SensorEntityDescription(
         key="state",
         name="State",
@@ -167,17 +159,8 @@ async def async_setup_entry(
     assert entry_id is not None
     entities: list[EmberMugSensor] = [
         EmberMugStateSensor(coordinator, "liquid_state_display"),
-        EmberMugSensor(coordinator, "led_colour_display"),
         EmberMugLiquidLevelSensor(coordinator, "liquid_level"),
         EmberMugTemperatureSensor(coordinator, "current_temp"),
         EmberMugBatterySensor(coordinator, "battery.percent"),
     ]
     async_add_entities(entities)
-
-    # Setup Services
-    platform = entity_platform.async_get_current_platform()
-    platform.async_register_entity_service(
-        SERVICE_SET_LED_COLOUR,
-        SET_LED_COLOUR_SCHEMA,
-        set_led_colour,
-    )
