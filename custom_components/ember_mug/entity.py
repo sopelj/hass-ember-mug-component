@@ -1,15 +1,13 @@
 """Generic Entity Logic for multiple platforms."""
 from typing import Any
 
-from homeassistant.components.bluetooth.passive_update_coordinator import (
-    PassiveBluetoothCoordinatorEntity,
-)
 from homeassistant.core import callback
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .coordinator import MugDataUpdateCoordinator
 
 
-class BaseMugEntity(PassiveBluetoothCoordinatorEntity):
+class BaseMugEntity(CoordinatorEntity):
     """Generic entity encapsulating common features of an Ember Mug."""
 
     coordinator: MugDataUpdateCoordinator
