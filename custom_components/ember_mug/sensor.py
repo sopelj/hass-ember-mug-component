@@ -3,7 +3,6 @@ from __future__ import annotations
 
 from typing import Any
 
-from ember_mug.data import BatteryInfo
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntity,
@@ -176,10 +175,8 @@ class EmberMugBatterySensor(BaseEmberMugSensor):
     @property
     def native_value(self) -> float | None:
         """Return sensor state."""
-        battery: BatteryInfo = super().native_value
-        if battery is not None:
-            return round(battery.percent, 2)
-        return None
+        battery_percent: float | None = super().native_value
+        return round(battery_percent, 2) if battery_percent is not None else None
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
