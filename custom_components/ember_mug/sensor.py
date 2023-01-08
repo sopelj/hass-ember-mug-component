@@ -90,7 +90,7 @@ class BaseEmberMugSensor(BaseMugEntity, SensorEntity):
         mug_attr: str,
     ) -> None:
         """Initialize the Mug sensor."""
-        super().__init__(coordinator, mug_attr)
+        super().__init__(coordinator, "sensor", mug_attr)
         self.entity_description = SENSOR_TYPES[mug_attr]
 
     @property
@@ -142,12 +142,12 @@ class EmberMugTemperatureSensor(BaseEmberMugSensor):
     def __init__(
         self,
         coordinator: MugDataUpdateCoordinator,
-        sensor_attr: str,
+        mug_attr: str,
         temp_unit: str,
     ) -> None:
         """Initialize a new temperature sensor."""
         self._attr_native_unit_of_measurement = temp_unit
-        super().__init__(coordinator, sensor_attr)
+        super().__init__(coordinator, mug_attr)
 
     @property
     def icon(self) -> str | None:
