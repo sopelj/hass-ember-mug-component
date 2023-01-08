@@ -112,15 +112,15 @@ class EmberMugSensor(BaseEmberMugSensor):
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
         """Return device specific state attributes."""
-        mug = self.coordinator.mug
+        data = self.coordinator.data
         return {
-            CONF_NAME: mug.name,
-            CONF_RGB: mug.led_colour_display,
-            CONF_TEMPERATURE_UNIT: mug.temperature_unit,
-            "date_time_zone": mug.date_time_zone,
-            "firmware_info": mug.firmware,
-            "udsk": mug.udsk,
-            "dsk": mug.dsk,
+            CONF_NAME: data.name,
+            CONF_RGB: data.led_colour_display,
+            CONF_TEMPERATURE_UNIT: data.temperature_unit,
+            "date_time_zone": data.date_time_zone,
+            "firmware_info": data.firmware,
+            "udsk": data.udsk,
+            "dsk": data.dsk,
         }
 
 
@@ -155,7 +155,7 @@ class EmberMugTemperatureSensor(BaseEmberMugSensor):
         if self._mug_attr != "current_temp":
             return "mdi:thermometer"
         icon = LIQUID_STATE_TEMP_ICONS.get(
-            self.coordinator.mug.liquid_state,
+            self.coordinator.data.liquid_state,
             "thermometer",
         )
         return f"mdi:{icon}"
@@ -181,11 +181,11 @@ class EmberMugBatterySensor(BaseEmberMugSensor):
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
         """Return device specific state attributes."""
-        mug = self.coordinator.mug
+        data = self.coordinator.data
         return {
-            ATTR_BATTERY_VOLTAGE: mug.battery_voltage,
-            ATTR_BATTERY_CHARGING: mug.battery.on_charging_base
-            if mug.battery
+            ATTR_BATTERY_VOLTAGE: data.battery_voltage,
+            ATTR_BATTERY_CHARGING: data.battery.on_charging_base
+            if data.battery
             else None,
         }
 
@@ -201,7 +201,7 @@ async def async_setup_entry(
     assert entry_id is not None
     temp_unit = (
         UnitOfTemperature.FAHRENHEIT
-        if coordinator.mug.use_metric is False
+        if coordinator.data.use_metric is False
         else UnitOfTemperature.CELSIUS
     )
     entities: list[BaseMugEntity] = [
