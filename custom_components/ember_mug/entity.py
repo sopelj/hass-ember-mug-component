@@ -16,9 +16,10 @@ class BaseMugEntity(CoordinatorEntity):
     def __init__(self, coordinator: MugDataUpdateCoordinator, mug_attr: str) -> None:
         """Initialize the entity."""
         self._mug_attr = mug_attr
+        base_attr = mug_attr.split(".")[-1]
         self._attr_unique_id = (
-            f"ember_mug_{coordinator.base_unique_id}-{mug_attr.replace('-', '_')}"
-        )
+            self.entity_id
+        ) = f"ember_mug_{coordinator.base_unique_id}_{base_attr}"
         super().__init__(coordinator)
         self.coordinator = coordinator
         # self._attr_unique_id = f"ember_mug_{self._sensor_type or ''}_{entry_id}"
@@ -47,12 +48,3 @@ class BaseMugEntity(CoordinatorEntity):
         """Handle data update."""
         self._async_update_attrs()
         self.async_write_ha_state()
-
-    # async def async_added_to_hass(self) -> None:
-    #     """Register callbacks."""
-    #     # self.async_on_remove(self._device.subscribe(self._handle_coordinator_update))
-    #     return await super().async_added_to_hass()
-    #
-    # async def async_update(self) -> None:
-    #     """Update the entity."""
-    #     # await self._device.update()

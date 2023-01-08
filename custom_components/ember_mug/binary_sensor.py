@@ -17,7 +17,7 @@ from .entity import BaseMugEntity
 SENSOR_TYPES = {
     "battery.on_charging_base": BinarySensorEntityDescription(
         key="on_charging_base",
-        name="Mug on charging base",
+        name="on charging base",
         device_class=BinarySensorDeviceClass.PLUG,
     ),
 }

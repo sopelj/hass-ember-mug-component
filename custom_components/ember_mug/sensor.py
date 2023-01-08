@@ -48,17 +48,17 @@ from .services import (
 SENSOR_TYPES = {
     "liquid_state_display": SensorEntityDescription(
         key="liquid_state_display",
-        name="Mug State",
+        name="State",
     ),
     "liquid_level": SensorEntityDescription(
         key="liquid_level",
-        name="Mug Liquid Level",
+        name="Liquid Level",
         icon="mdi:cup-water",
         native_unit_of_measurement=PERCENTAGE,
     ),
     "battery.percent": SensorEntityDescription(
         key="battery",
-        name="Mug Battery",
+        name="Battery",
         native_unit_of_measurement=PERCENTAGE,
         device_class=SensorDeviceClass.BATTERY,
         state_class=SensorStateClass.MEASUREMENT,
@@ -66,14 +66,14 @@ SENSOR_TYPES = {
     ),
     "target_temp": SensorEntityDescription(
         key="target_temp",
-        name="Mug Target Temperature",
+        name="Target Temperature",
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         state_class=SensorStateClass.MEASUREMENT,
         device_class=SensorDeviceClass.TEMPERATURE,
     ),
     "current_temp": SensorEntityDescription(
         key="current_temp",
-        name="Mug Current Temperature",
+        name="Current Temperature",
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         state_class=SensorStateClass.MEASUREMENT,
         device_class=SensorDeviceClass.TEMPERATURE,
