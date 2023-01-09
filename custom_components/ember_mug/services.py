@@ -30,12 +30,12 @@ SET_MUG_NAME_SCHEMA = {
 async def set_target_temp(entity: EmberMugSensor, service_call: ServiceCall) -> None:
     """Set target temp of mug."""
     target_temp: float = service_call.data[ATTR_TARGET_TEMP]
-    _LOGGER.debug(f"Service called to set temp to {target_temp}")
+    _LOGGER.debug("Service called to set temp to %s", target_temp)
     await entity.coordinator.connection.set_target_temp(target_temp)
 
 
 async def set_mug_name(entity: EmberMugSensor, service_call: ServiceCall) -> None:
     """Set target temp of mug."""
     name: str = service_call.data[ATTR_NAME]
-    _LOGGER.debug(f"Service called to set name to '{name}'")
+    _LOGGER.debug("Service called to set name to '%s'", name)
     await entity.coordinator.connection.set_name(name)

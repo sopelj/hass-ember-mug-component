@@ -21,6 +21,7 @@ class MugLightEntity(BaseMugEntity, LightEntity):
     """Light entity for Nug LED."""
 
     _domain = "light"
+    _attr_brightness = 255
     _attr_color_mode = ColorMode.RGB
     _attr_supported_color_modes = {ColorMode.RGB}
     entity_description = LightEntityDescription(
@@ -37,7 +38,7 @@ class MugLightEntity(BaseMugEntity, LightEntity):
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Change the LED colour if defined."""
-        _LOGGER.debug(f"Received turn on with {kwargs}")
+        _LOGGER.debug("Received turn on with kwargs %s", kwargs)
         if ATTR_RGB_COLOR in kwargs:
             rgb = kwargs[ATTR_RGB_COLOR]
             await self.coordinator.connection.ensure_connection()

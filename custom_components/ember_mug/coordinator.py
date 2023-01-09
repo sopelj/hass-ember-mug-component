@@ -18,7 +18,7 @@ from homeassistant.components.bluetooth import (
 from homeassistant.core import CALLBACK_TYPE, HomeAssistant, callback
 from homeassistant.helpers.device_registry import CONNECTION_BLUETOOTH
 from homeassistant.helpers.entity import DeviceInfo
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .const import MANUFACTURER
 
@@ -79,11 +79,10 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[EmberMug]):
             self.available = True
             self.last_updated = datetime.now()
         except Exception as e:
-            _LOGGER.error(e)
+            _LOGGER.error("An error occurred whilst updating the mug: %s", e)
             self.available = False
-            return self.data
-            # raise UpdateFailed(f"An error occurred updating mug: {e=}")
-        _LOGGER.debug(f"Changed: {changed}")
+            raise UpdateFailed(f"An error occurred updating mug: {e=}")
+        _LOGGER.debug("Changed: %s", changed)
         _LOGGER.debug("Update done")
         return self.data
 
@@ -139,7 +138,11 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[EmberMug]):
         change: BluetoothChange,
     ) -> None:
         """Handle a Bluetooth event."""
-        _LOGGER.debug(f"Bluetooth event: {service_info} - {change}")
+        _LOGGER.debug(
+            "Bluetooth event. Service Info: %s, change: %s",
+            service_info,
+            change,
+        )
         self.connection.set_device(self.ble_device)
         self.async_request_refresh()
 
