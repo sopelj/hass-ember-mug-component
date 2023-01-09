@@ -18,7 +18,7 @@ SENSOR_TYPES = {
     "battery.on_charging_base": BinarySensorEntityDescription(
         key="on_charging_base",
         name="On charging base",
-        device_class=BinarySensorDeviceClass.PRESENCE,
+        device_class=BinarySensorDeviceClass.PLUG,
     ),
 }
 
