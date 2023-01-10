@@ -12,5 +12,8 @@
   "bluetooth": [
     { "local_name": "Ember Ceramic Mug" },
     { "service_uuid": "fc543622-236c-4c94-8fa9-944a3e5353fa" }
+  ],
+  "loggers": [
+    "ember_mug"
   ]
 }
