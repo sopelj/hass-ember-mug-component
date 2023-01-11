@@ -31,13 +31,16 @@ from .const import (
     ICON_EMPTY,
     LIQUID_STATE_TEMP_ICONS,
     MUG_DEVICE_CLASS,
+    SERVICE_SET_LED_COLOUR,
     SERVICE_SET_MUG_NAME,
     SERVICE_SET_TARGET_TEMP,
 )
 from .entity import BaseMugEntity
 from .services import (
+    SET_LED_COLOUR_SCHEMA,
     SET_MUG_NAME_SCHEMA,
     SET_TARGET_TEMP_SCHEMA,
+    set_led_colour,
     set_mug_name,
     set_target_temp,
 )
@@ -214,6 +217,11 @@ async def async_setup_entry(
 
     # Setup Services
     platform = entity_platform.async_get_current_platform()
+    platform.async_register_entity_service(
+        SERVICE_SET_LED_COLOUR,
+        SET_LED_COLOUR_SCHEMA,
+        set_led_colour,
+    )
     platform.async_register_entity_service(
         SERVICE_SET_TARGET_TEMP,
         SET_TARGET_TEMP_SCHEMA,
