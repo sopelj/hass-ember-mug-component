@@ -93,7 +93,7 @@ Just put your mug back in pairing mode and it should reconnect after a few minut
 
 If you want to have notifications similar to the app you can do something like:
 
-*Note*: If you chose a different name for you mug the sensor names may be different.
+*Note*: Replace `c90f59d633f9` with your mug's MAC address.
 
 ```yaml
 automation:
