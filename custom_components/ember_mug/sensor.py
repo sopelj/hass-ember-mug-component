@@ -47,7 +47,7 @@ from .services import (
 
 SENSOR_TYPES = {
     "liquid_state_display": SensorEntityDescription(
-        key="liquid_state_display",
+        key="state",
         name="State",
     ),
     "liquid_level": SensorEntityDescription(
@@ -57,7 +57,7 @@ SENSOR_TYPES = {
         native_unit_of_measurement=PERCENTAGE,
     ),
     "battery.percent": SensorEntityDescription(
-        key="battery",
+        key="battery_percent",
         name="Battery",
         native_unit_of_measurement=PERCENTAGE,
         device_class=SensorDeviceClass.BATTERY,
@@ -92,8 +92,8 @@ class BaseEmberMugSensor(BaseMugEntity, SensorEntity):
         mug_attr: str,
     ) -> None:
         """Initialize the Mug sensor."""
-        super().__init__(coordinator, mug_attr)
         self.entity_description = SENSOR_TYPES[mug_attr]
+        super().__init__(coordinator, mug_attr)
 
     @property
     def native_value(self) -> Any:

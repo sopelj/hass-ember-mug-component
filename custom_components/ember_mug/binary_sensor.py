@@ -34,8 +34,8 @@ class MugBinarySensor(BaseMugEntity, BinarySensorEntity):
         mug_attr: str,
     ) -> None:
         """Initialize the Mug sensor."""
-        super().__init__(coordinator, mug_attr)
         self.entity_description = SENSOR_TYPES[mug_attr]
+        super().__init__(coordinator, mug_attr)
 
     @property
     def is_on(self) -> bool:

@@ -3,7 +3,7 @@
 [![GitHub Release](https://img.shields.io/github/release/sopelj/hass-ember-mug-component.svg?style=for-the-badge)](https://github.com/sopelj/hass-ember-mug-component/releases)
 [![License](https://img.shields.io/github/license/sopelj/hass-ember-mug-component.svg?style=for-the-badge)](LICENSE.md)
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg?style=for-the-badge)](https://github.com/hacs/integration)
-![Project Maintenance](https://img.shields.io/maintenance/yes/2022.svg?style=for-the-badge)
+![Project Maintenance](https://img.shields.io/maintenance/yes/2023.svg?style=for-the-badge)
 
 ![Device View](./examples/device_example.png)
 
@@ -68,7 +68,7 @@ To do so:
 
 ##### 'Operation failed with ATT error: 0x0e' or another connection error
 This seems to be caused by the bluetooth adaptor being in some sort of passive mode. I have not yet figured out how to wake it programmatically so sadly, you need to manually open `bluetoothctl` to do so. 
-Please ensure the mug is in pairing mode (ie. the light is flashing blue) and run the `bluetoothctl` command. You don,t need to type anything. run it and wait until the mug connects.
+Please ensure the mug is in pairing mode (i.e. the light is flashing blue) and run the `bluetoothctl` command. You don,t need to type anything. run it and wait until the mug connects.
 
 If you are on Home Assistant OS you can use the Terminal + SSH addon, open the terminal, type `bluetoothctl` and hit enter.
 If you are running in docker or locally via python you can run it on the host.
@@ -101,14 +101,14 @@ automation:
     alias: Mug Filled
     trigger:
       - platform: state
-        entity_id: sensor.mug  # your mug entity
+        entity_id: sensor.ember_mug_c90f59d633f9_state  # your mug entity
         from: "Empty"
         to:
           - "Filling"
           - "Heating"
           - "Cooling"
     action:
-      service: notify.mobile_app_jesse_s_pixel_4a  # Mobile device notify or other action
+      service: notify.mobile_app_jesse_s_pixel_7  # Mobile device notify or other action
       data:
         message: Your mug has been filled
 
@@ -116,14 +116,14 @@ automation:
     alias: Mug Temp is right
     trigger:
       - platform: state
-        entity_id: sensor.mug
+        entity_id: sensor.ember_mug_c90f59d633f9_state
         attribute: liquid_state
         from:
           - "Heating"
           - "Cooling"
         to: "Perfect"
     action:
-      service: notify.mobile_app_jesse_s_pixel_4a  # Mobile device notify or other action
+      service: notify.mobile_app_jesse_s_pixel_7  # Mobile device notify or other action
       data_template:
         message: "Your mug is at the desired {{ states('sensor.mug_current_temp') }}{{ state_attr('sensor.mug_current_temp', 'unit_of_measurement') }}."
 
@@ -131,14 +131,14 @@ automation:
     alias: Mug Battery Low
     trigger:
       - platform: numeric_state
-        entity_id: sensor.mug_battery
+        entity_id: sensor.ember_mug_c90f59d633f9_battery_percent
         below: 20
         for:
           minutes: 10
     action:
-      service: notify.mobile_app_jesse_s_pixel_4a  # Mobile device notify or other action
+      service: notify.mobile_app_jesse_s_pixel_7  # Mobile device notify or other action
       data_template:
-        message: "Your mug battery is low ({{ states('sensor.mug_battery') }}%)."
+        message: "Your mug battery is low ({{ states('sensor.ember_mug_c90f59d633f9_battery_percent') }}%)."
 
 ```
 
@@ -165,21 +165,19 @@ cards:
         entities:
           - entity: sensor.mug
             name: State
-          - entity: sensor.mug_current_temp
+          - entity: sensor.ember_mug_c90f59d633f9_current_temp
             name: Current
-          - entity: sensor.mug_target_temp
+          - entity: sensor.ember_mug_c90f59d633f9_target_temp
             name: Target
       - type: custom:template-entity-row
-        entity: sensor.mug_liquid_level
+        entity: sensor.ember_mug_c90f59d633f9_liquid_level
         name: Liquid Level
         unit: '%'
       - type: custom:battery-state-entity
         name: Battery
-        entity: sensor.mug_battery
+        entity: sensor.ember_mug_c90f59d633f9_battery_percent
         charging_state:
-          attribute:
-            name: battery_charging
-            value: true
+          entity_id: binary_sensor.ember_mug_c90f59d633f9_on_charging_base
 ```
 
 ### Services
