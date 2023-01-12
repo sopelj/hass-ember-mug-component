@@ -1,20 +1,27 @@
 {
-  "title": "Ember Mug",
   "config": {
     "step": {
       "user": {
-        "title": "Add an Ember Mug",
         "data": {
-          "address": "Mug (MAC Address)",
-          "name": "Name",
-          "temperature_unit": "Temperature Unit"
+          "address": "[%key:common::config_flow::data::address%]",
+          "name": "[%key:common::config_flow::data::name%]",
+          "temperature_unit": "[%key:common::config_flow::data::temperature_unit%]"
         }
       }
     },
+    "error": {
+      "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]",
+      "no_unconfigured_devices": "[%key:common::config_flow::error::no_unconfigured_devices%]",
+      "unknown": "[%key:common::config_flow::error::unknown%]"
+    },
     "abort": {
-      "unknown": "Unknown error occurred",
-      "cannot_connect": "Unable to connect to the mug.",
-      "no_unconfigured_devices": "No unconfigured Mugs were found. Please ensure it has been reset and is in pairing mode."
+      "already_configured": "[%key:common::config_flow::abort::already_configured_device%]"
+    }
+  },
+  "device_automation": {
+    "action_type": {
+      "set_led_color": "Set LED color for {entity_name}",
+      "set_target_temp": "Set target temp for {entity_name}"
     }
   }
 }
