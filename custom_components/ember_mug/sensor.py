@@ -12,7 +12,6 @@ from homeassistant.components.sensor import (
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
     ATTR_BATTERY_CHARGING,
-    CONF_NAME,
     CONF_RGB,
     CONF_TEMPERATURE_UNIT,
     PERCENTAGE,
@@ -46,6 +45,11 @@ from .services import (
 )
 
 SENSOR_TYPES = {
+    "led_colour_display": SensorEntityDescription(
+        key="led_colour",
+        name="LED Colour",
+        entity_category=EntityCategory.CONFIG,
+    ),
     "liquid_state_display": SensorEntityDescription(
         key="state",
         name="State",
@@ -70,6 +74,7 @@ SENSOR_TYPES = {
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         state_class=SensorStateClass.MEASUREMENT,
         device_class=SensorDeviceClass.TEMPERATURE,
+        entity_category=EntityCategory.CONFIG,
     ),
     "current_temp": SensorEntityDescription(
         key="current_temp",
@@ -81,7 +86,7 @@ SENSOR_TYPES = {
 }
 
 
-class BaseEmberMugSensor(BaseMugEntity, SensorEntity):
+class EmberMugSensor(BaseMugEntity, SensorEntity):
     """Representation of a Mug sensor."""
 
     _domain = "sensor"
@@ -101,9 +106,10 @@ class BaseEmberMugSensor(BaseMugEntity, SensorEntity):
         return self.coordinator.get_mug_attr(self._mug_attr)
 
 
-class EmberMugSensor(BaseEmberMugSensor):
+class EmberMugStateSensor(EmberMugSensor):
     """Base Mug State Sensor."""
 
+    _attr_name = None
     _attr_device_class = MUG_DEVICE_CLASS
 
     @property
@@ -116,7 +122,6 @@ class EmberMugSensor(BaseEmberMugSensor):
         """Return device specific state attributes."""
         data = self.coordinator.data
         return {
-            CONF_NAME: data.name,
             CONF_RGB: data.led_colour_display,
             CONF_TEMPERATURE_UNIT: data.temperature_unit,
             "date_time_zone": data.date_time_zone,
@@ -127,7 +132,7 @@ class EmberMugSensor(BaseEmberMugSensor):
         }
 
 
-class EmberMugLiquidLevelSensor(BaseEmberMugSensor):
+class EmberMugLiquidLevelSensor(EmberMugSensor):
     """Liquid Level Sensor."""
 
     @property
@@ -139,7 +144,7 @@ class EmberMugLiquidLevelSensor(BaseEmberMugSensor):
         return 0
 
 
-class EmberMugTemperatureSensor(BaseEmberMugSensor):
+class EmberMugTemperatureSensor(EmberMugSensor):
     """Mug Temperature sensor."""
 
     def __init__(
@@ -172,7 +177,7 @@ class EmberMugTemperatureSensor(BaseEmberMugSensor):
         return None
 
 
-class EmberMugBatterySensor(BaseEmberMugSensor):
+class EmberMugBatterySensor(EmberMugSensor):
     """Mug Battery Sensor."""
 
     @property
@@ -209,7 +214,8 @@ async def async_setup_entry(
         else UnitOfTemperature.CELSIUS
     )
     entities: list[BaseMugEntity] = [
-        EmberMugSensor(coordinator, "liquid_state_display"),
+        EmberMugStateSensor(coordinator, "liquid_state_display"),
+        EmberMugSensor(coordinator, "led_colour_display"),
         EmberMugLiquidLevelSensor(coordinator, "liquid_level"),
         EmberMugTemperatureSensor(coordinator, "target_temp", temp_unit),
         EmberMugTemperatureSensor(coordinator, "current_temp", temp_unit),
