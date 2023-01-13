@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import logging
-import re
 
 from homeassistant.components.text import TextEntity, TextEntityDescription
 from homeassistant.config_entries import ConfigEntry
@@ -20,6 +19,9 @@ TEXT_TYPES = {
     "name": TextEntityDescription(
         key="name",
         name="Name",
+        native_min=1,
+        native_max=16,
+        pattern=MUG_NAME_REGEX,
         entity_category=EntityCategory.CONFIG,
     ),
 }
@@ -45,10 +47,7 @@ class MugTextEntity(BaseMugEntity, TextEntity):
 
     async def async_set_value(self, value: str) -> None:
         """Set the mug name."""
-        if not re.match(MUG_NAME_REGEX, value):
-            raise ValueError("Invalid name")
         await self.coordinator.connection.set_name(value)
-        self._attr_native_value = value
 
     @property
     def native_value(self) -> str | None:
