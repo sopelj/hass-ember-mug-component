@@ -123,6 +123,7 @@ class EmberMugSensor(BaseEmberMugSensor):
             "firmware_info": data.firmware,
             "udsk": data.udsk,
             "dsk": data.dsk,
+            **super().extra_state_attributes,
         }
 
 
@@ -189,6 +190,7 @@ class EmberMugBatterySensor(BaseEmberMugSensor):
             ATTR_BATTERY_CHARGING: data.battery.on_charging_base
             if data.battery
             else None,
+            **super().extra_state_attributes,
         }
 
 

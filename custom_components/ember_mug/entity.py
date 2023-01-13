@@ -21,13 +21,12 @@ class BaseMugEntity(CoordinatorEntity):
     ) -> None:
         """Initialize the entity."""
         self._mug_attr = mug_attr
-        super().__init__(coordinator)
         entity_key = self.entity_description.key
         self.entity_id = f"{self._domain}.{self._attr_unique_id}"
-        self._attr_unique_id = f"ember_mug_{coordinator.base_unique_id}_{entity_key}"
-        self.coordinator = coordinator
         self._address = coordinator.ble_device.address
         self._attr_device_info = coordinator.device_info
+        self._attr_unique_id = f"ember_mug_{coordinator.base_unique_id}_{entity_key}"
+        super().__init__(coordinator)
 
     @property
     def available(self) -> bool:
