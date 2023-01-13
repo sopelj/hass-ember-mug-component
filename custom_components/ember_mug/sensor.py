@@ -68,14 +68,6 @@ SENSOR_TYPES = {
         state_class=SensorStateClass.MEASUREMENT,
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
-    "target_temp": SensorEntityDescription(
-        key="target_temp",
-        name="Target Temperature",
-        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
-        state_class=SensorStateClass.MEASUREMENT,
-        device_class=SensorDeviceClass.TEMPERATURE,
-        entity_category=EntityCategory.CONFIG,
-    ),
     "current_temp": SensorEntityDescription(
         key="current_temp",
         name="Current Temperature",
@@ -217,7 +209,6 @@ async def async_setup_entry(
         EmberMugStateSensor(coordinator, "liquid_state_display"),
         EmberMugSensor(coordinator, "led_colour_display"),
         EmberMugLiquidLevelSensor(coordinator, "liquid_level"),
-        EmberMugTemperatureSensor(coordinator, "target_temp", temp_unit),
         EmberMugTemperatureSensor(coordinator, "current_temp", temp_unit),
         EmberMugBatterySensor(coordinator, "battery.percent"),
     ]

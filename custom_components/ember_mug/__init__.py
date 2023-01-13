@@ -22,7 +22,7 @@ from homeassistant.exceptions import ConfigEntryNotReady
 from .const import DOMAIN
 from .coordinator import MugDataUpdateCoordinator
 
-PLATFORMS = [Platform.BINARY_SENSOR, Platform.SENSOR, Platform.TEXT]
+PLATFORMS = [Platform.BINARY_SENSOR, Platform.NUMBER, Platform.SENSOR, Platform.TEXT]
 _LOGGER = logging.getLogger(__name__)
 
 
