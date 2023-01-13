@@ -7,6 +7,7 @@ from homeassistant.components.number import (
     NumberDeviceClass,
     NumberEntity,
     NumberEntityDescription,
+    NumberMode,
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import UnitOfTemperature
@@ -24,6 +25,10 @@ TEXT_TYPES = {
     "target_temp": NumberEntityDescription(
         key="target_temp",
         name="Target Temperature",
+        native_max_value=100,
+        native_min_value=0,
+        native_step=1,
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         device_class=NumberDeviceClass.TEMPERATURE,
         entity_category=EntityCategory.CONFIG,
     ),
@@ -34,6 +39,7 @@ class MugNumberEntity(BaseMugEntity, NumberEntity):
     """Base Entity for Mug Binary Sensors."""
 
     _domain = "number"
+    _attr_mode = NumberMode.BOX
 
     def __init__(
         self,
@@ -44,22 +50,17 @@ class MugNumberEntity(BaseMugEntity, NumberEntity):
         self.entity_description = TEXT_TYPES[mug_attr]
         super().__init__(coordinator, mug_attr)
 
-    def _async_update_attrs(self) -> None:
-        unit = self.coordinator.get_mug_attr("temperature_unit")
-        if unit not in (UnitOfTemperature.CELSIUS, UnitOfTemperature.FAHRENHEIT):
-            unit = UnitOfTemperature.CELSIUS
-        self._attr_native_unit_of_measurement = unit
-
     @property
     def native_value(self) -> float | None:
         """Return mug attribute as temp."""
         temp = self.coordinator.get_mug_attr(self._mug_attr)
+        # TODO: convert to Celsius
         if temp:
             return round(temp, 2)
         return None
 
     async def async_set_native_value(self, value: float) -> None:
-        """Set the WLED segment value."""
+        """Set the mug target temp."""
         await self.coordinator.connection.set_target_temp(value)
 
 
