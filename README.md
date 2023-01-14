@@ -22,6 +22,7 @@ So if you have issues with the mug's internals and not the integration with home
 - Version < 0.3 Only works before 2022.8
 - Version 0.3.X Works on 2022.8.X as long as the Bluetooth Integration is disabled
 - Version 0.4+ Works on 2022.9+ and uses the new Bluetooth integration for discovery and setup
+- Version 0.5+ Works on 2023.1+ and uses the same setup as 0.4, but a few things added and renamed
 
 **If you had a version installed before 0.4 and are upgrading, please remove your mug before upgrading, and it should be auto-discovered afterwards** 
 
@@ -186,6 +187,22 @@ If your mug was initially setup with the mobile app, you can also change certain
 Either via the device page, lovelace or services in automations.
 
 - Rename your mug (sensor.ember_mug_c90f59d633f9_name)
-- Change the LED colour of the mug
+- Change the LED colour of the mug (light.ember_mug_c90f59d633f9_led)
 - Set the desired temperature of you mug (number.ember_mug_c90f59d633f9_target_temp)
 - Set the mug's internal temperature unit (select.ember_mug_c90f59d633f9_temperature_unit)
+
+You can change these in de device page or the entities can be added to your dashboard:
+
+![Config entities example](./examples/config-entities.png)
+
+*Note*: Despite being a "light" the LED cannot be turned off and brightness cannot be adjusted. This was simply to provide an easy way to set the colour.
+
+You can also call these in services for your automations.
+
+| Property    | Service              | Params               |
+|-------------|----------------------|----------------------|
+| Mug Name    | text.set_value       | entity_id and value  |
+| LED Colour  | light.turn_on        | entity_id and rgb    |
+| Target Temp | number.set_value     | entity_id and value  |
+| Temp Unit   | select.select_option | entity_id and option |
+
