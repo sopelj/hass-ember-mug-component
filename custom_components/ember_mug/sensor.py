@@ -23,7 +23,6 @@ from .const import (
     ICON_EMPTY,
     LIQUID_STATE_DISPLAY_OPTIONS,
     LIQUID_STATE_TEMP_ICONS,
-    MUG_DEVICE_CLASS,
 )
 from .entity import BaseMugValueEntity, format_temp
 
@@ -77,7 +76,6 @@ class EmberMugStateSensor(EmberMugSensor):
     """Base Mug State Sensor."""
 
     _attr_name = None
-    _attr_device_class = MUG_DEVICE_CLASS
 
     @property
     def icon(self) -> str | None:

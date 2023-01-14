@@ -12,7 +12,6 @@ from ember_mug.consts import (
 
 DOMAIN: Final[str] = "ember_mug"
 MANUFACTURER: Final[str] = "Ember"
-MUG_DEVICE_CLASS: Final[str] = "mug"
 
 ICON_DEFAULT = "mdi:coffee"
 ICON_EMPTY = "mdi:coffee-off"
