@@ -61,7 +61,7 @@ class MugLowBatteryBinarySensor(MugBinarySensor):
         if battery_percent > 40:
             # Even if heating, it is not low yet.
             return False
-        state = self.coordinator.get_mug_attr("state")
+        state = self.coordinator.get_mug_attr("liquid_state")
         # If heating or at target temperature the battery will discharge faster.
         if state in (LIQUID_STATE_HEATING, LIQUID_STATE_TARGET_TEMPERATURE):
             return True
