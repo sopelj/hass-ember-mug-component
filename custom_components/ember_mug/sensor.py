@@ -34,7 +34,7 @@ from .const import (
     SERVICE_SET_MUG_NAME,
     SERVICE_SET_TARGET_TEMP,
 )
-from .entity import BaseMugEntity
+from .entity import BaseMugEntity, format_temp
 from .services import (
     SET_LED_COLOUR_SCHEMA,
     SET_MUG_NAME_SCHEMA,
@@ -139,16 +139,6 @@ class EmberMugLiquidLevelSensor(EmberMugSensor):
 class EmberMugTemperatureSensor(EmberMugSensor):
     """Mug Temperature sensor."""
 
-    def __init__(
-        self,
-        coordinator: MugDataUpdateCoordinator,
-        mug_attr: str,
-        temp_unit: str,
-    ) -> None:
-        """Initialize a new temperature sensor."""
-        self._attr_native_unit_of_measurement = temp_unit
-        super().__init__(coordinator, mug_attr)
-
     @property
     def icon(self) -> str | None:
         """Set icon based on temperature."""
@@ -163,10 +153,7 @@ class EmberMugTemperatureSensor(EmberMugSensor):
     @property
     def native_value(self) -> float | None:
         """Return sensor state."""
-        temp: float | None = super().native_value
-        if temp is not None:
-            return round(temp, 2)
-        return None
+        return format_temp(super().native_value, self.coordinator.mug_temp_unit)
 
 
 class EmberMugBatterySensor(EmberMugSensor):
@@ -200,16 +187,11 @@ async def async_setup_entry(
     coordinator: MugDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
     entry_id = entry.entry_id
     assert entry_id is not None
-    temp_unit = (
-        UnitOfTemperature.FAHRENHEIT
-        if coordinator.data.use_metric is False
-        else UnitOfTemperature.CELSIUS
-    )
     entities: list[BaseMugEntity] = [
         EmberMugStateSensor(coordinator, "liquid_state_display"),
         EmberMugSensor(coordinator, "led_colour_display"),
         EmberMugLiquidLevelSensor(coordinator, "liquid_level"),
-        EmberMugTemperatureSensor(coordinator, "current_temp", temp_unit),
+        EmberMugTemperatureSensor(coordinator, "current_temp"),
         EmberMugBatterySensor(coordinator, "battery.percent"),
     ]
     async_add_entities(entities)

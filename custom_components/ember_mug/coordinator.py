@@ -15,6 +15,7 @@ from homeassistant.components.bluetooth import (
     async_register_callback,
     async_track_unavailable,
 )
+from homeassistant.const import UnitOfTemperature
 from homeassistant.core import CALLBACK_TYPE, HomeAssistant, callback
 from homeassistant.helpers.device_registry import CONNECTION_BLUETOOTH
 from homeassistant.helpers.entity import DeviceInfo
@@ -64,16 +65,15 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[EmberMug]):
     async def _async_update_data(self) -> EmberMug:
         """Poll the device."""
         _LOGGER.debug("Updating")
+        full_update = not self._last_refresh_was_full
         try:
             # async with self._updating.acquire():
             await self.connection.ensure_connection()
             changed = []
             if self._last_refresh_was_full is False:
                 # Only fully poll all data every other call to limit time
-                _LOGGER.debug("Full Update")
                 changed = await self.connection.update_all()
             else:
-                _LOGGER.debug("Updating queued attributes")
                 changed += await self.connection.update_queued_attributes()
             self._last_refresh_was_full = not self._last_refresh_was_full
             self.available = True
@@ -82,9 +82,19 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[EmberMug]):
             _LOGGER.error("An error occurred whilst updating the mug: %s", e)
             self.available = False
             raise UpdateFailed(f"An error occurred updating mug: {e=}")
-        _LOGGER.debug("Changed: %s", changed)
-        _LOGGER.debug("Update done")
+        _LOGGER.debug(
+            "[%s Update] Changed: %s",
+            "Full" if full_update else "Partial",
+            changed,
+        )
         return self.data
+
+    @property
+    def mug_temp_unit(self) -> UnitOfTemperature:
+        """Get the mug's temperature unit as a UnitOfTemperature."""
+        if self.data.temperature_unit[:1] == "F":
+            return UnitOfTemperature.FAHRENHEIT
+        return UnitOfTemperature.CELSIUS
 
     @callback
     def async_start(self) -> CALLBACK_TYPE:

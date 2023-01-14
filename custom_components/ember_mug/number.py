@@ -17,7 +17,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
 from .coordinator import MugDataUpdateCoordinator
-from .entity import BaseMugEntity
+from .entity import BaseMugEntity, format_temp
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -54,10 +54,7 @@ class MugNumberEntity(BaseMugEntity, NumberEntity):
     def native_value(self) -> float | None:
         """Return mug attribute as temp."""
         temp = self.coordinator.get_mug_attr(self._mug_attr)
-        # TODO: convert to Celsius
-        if temp:
-            return round(temp, 2)
-        return None
+        return format_temp(temp, self.coordinator.mug_temp_unit)
 
     async def async_set_native_value(self, value: float) -> None:
         """Set the mug target temp."""
