@@ -1,6 +1,7 @@
 """Binary Sensor Entity for Ember Mug."""
 from __future__ import annotations
 
+from ember_mug.consts import LIQUID_STATE_HEATING, LIQUID_STATE_TARGET_TEMPERATURE
 from homeassistant.components.binary_sensor import (
     BinarySensorDeviceClass,
     BinarySensorEntity,
@@ -20,6 +21,12 @@ SENSOR_TYPES = {
         key="power",
         name="Power",
         device_class=BinarySensorDeviceClass.PLUG,
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+    "battery.percent": BinarySensorEntityDescription(
+        key="low_battery",
+        name="Low battery",
+        device_class=BinarySensorDeviceClass.BATTERY,
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
 }
@@ -45,6 +52,22 @@ class MugBinarySensor(BaseMugEntity, BinarySensorEntity):
         return self.coordinator.get_mug_attr(self._mug_attr)
 
 
+class MugLowBatteryBinarySensor(MugBinarySensor):
+    """Warn about low battery."""
+
+    def is_on(self) -> bool:
+        """Return "on" if battery is low."""
+        battery_percent = self.coordinator.get_mug_attr(self._mug_attr)
+        if battery_percent > 40:
+            # Even if heating, it is not low yet.
+            return False
+        state = self.coordinator.get_mug_attr("state")
+        # If heating or at target temperature the battery will discharge faster.
+        if state in (LIQUID_STATE_HEATING, LIQUID_STATE_TARGET_TEMPERATURE):
+            return True
+        return bool(battery_percent is None or battery_percent < 20)
+
+
 async def async_setup_entry(
     hass: HomeAssistant,
     entry: ConfigEntry,
@@ -53,4 +76,9 @@ async def async_setup_entry(
     """Set up Binary Sensor Entities."""
     assert entry.entry_id is not None
     coordinator: MugDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
-    async_add_entities([MugBinarySensor(coordinator, attr) for attr in SENSOR_TYPES])
+    async_add_entities(
+        [
+            MugBinarySensor(coordinator, "battery.on_charging_base"),
+            MugLowBatteryBinarySensor(coordinator, "battery.percent"),
+        ],
+    )
