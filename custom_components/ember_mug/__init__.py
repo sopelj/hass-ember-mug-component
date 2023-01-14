@@ -5,6 +5,7 @@ from asyncio import Event
 import logging
 
 import async_timeout
+from bleak import BleakError
 from ember_mug import EmberMug
 from homeassistant.components import bluetooth
 from homeassistant.config_entries import ConfigEntry
@@ -45,10 +46,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             f"Could not find Ember Mug with address {entry.data[CONF_ADDRESS]}",
         )
 
-    ember_mug = EmberMug(
-        ble_device,
-        entry.data[CONF_TEMPERATURE_UNIT] == UnitOfTemperature.CELSIUS,
-    )
+    ember_mug = EmberMug(ble_device)
     hass.data[DOMAIN][entry.entry_id] = mug_coordinator = MugDataUpdateCoordinator(
         hass,
         _LOGGER,
@@ -81,6 +79,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     finally:
         cancel_first_update()
 
+    await set_temperature_unit(mug_coordinator, entry.data[CONF_TEMPERATURE_UNIT])
     entry.async_on_unload(entry.add_update_listener(async_update_listener))
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
@@ -93,6 +92,23 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     )
 
     return True
+
+
+async def set_temperature_unit(
+    mug_coordinator: MugDataUpdateCoordinator,
+    unit: UnitOfTemperature,
+) -> None:
+    """Try to set Mug Unit if different from current one."""
+    if mug_coordinator.mug_temp_unit == unit:
+        # No need
+        return
+    try:
+        async with async_timeout.timeout(10):
+            target_unit = unit.value.strip("°")
+            await mug_coordinator.connection.set_temperature_unit(target_unit)
+            mug_coordinator.data.temperature_unit = target_unit
+    except (BleakError, TimeoutError, EOFError) as e:
+        _LOGGER.warning("Unable to set temperature unit to %s: %s.", unit, e)
 
 
 async def async_update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:

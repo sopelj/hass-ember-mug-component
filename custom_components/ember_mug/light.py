@@ -10,6 +10,7 @@ from homeassistant.components.light import (
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
@@ -26,13 +27,17 @@ class MugLightEntity(BaseMugEntity, LightEntity):
     entity_description = LightEntityDescription(
         key="led",
         name="LED",
+        entity_category=EntityCategory.CONFIG,
     )
 
     @callback
     def _async_update_attrs(self) -> None:
         """Handle updating _attr values."""
-        self._attr_is_on = self.coordinator.available  # it's always on, if the mug is.
+        self._attr_is_on = (
+            self.coordinator.available
+        )  # it's always on, if the mug is there.
         colour = self.coordinator.data.led_colour
+        self._attr_brightness = 255
         self._attr_rgb_color = tuple(colour[:3]) if colour else (255, 255, 255)
 
     async def async_turn_on(self, **kwargs: Any) -> None:

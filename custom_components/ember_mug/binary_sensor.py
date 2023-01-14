@@ -8,6 +8,7 @@ from homeassistant.components.binary_sensor import (
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
@@ -16,9 +17,10 @@ from .entity import BaseMugEntity
 
 SENSOR_TYPES = {
     "battery.on_charging_base": BinarySensorEntityDescription(
-        key="on_charging_base",
-        name="On charging base",
-        device_class=BinarySensorDeviceClass.PLUG,
+        key="power",
+        name="Power",
+        device_class=BinarySensorDeviceClass.POWER,
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
 }
 

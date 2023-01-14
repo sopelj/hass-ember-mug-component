@@ -21,6 +21,7 @@ from .const import (
     DOMAIN,
     ICON_DEFAULT,
     ICON_EMPTY,
+    LIQUID_STATE_DISPLAY_OPTIONS,
     LIQUID_STATE_TEMP_ICONS,
     MUG_DEVICE_CLASS,
 )
@@ -30,12 +31,21 @@ SENSOR_TYPES = {
     "liquid_state_display": SensorEntityDescription(
         key="state",
         name="State",
+        device_class=SensorDeviceClass.ENUM,
+        options=LIQUID_STATE_DISPLAY_OPTIONS,
     ),
     "liquid_level": SensorEntityDescription(
         key="liquid_level",
         name="Liquid Level",
         icon="mdi:cup-water",
         native_unit_of_measurement=PERCENTAGE,
+    ),
+    "current_temp": SensorEntityDescription(
+        key="current_temp",
+        name="Current Temperature",
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        state_class=SensorStateClass.MEASUREMENT,
+        device_class=SensorDeviceClass.TEMPERATURE,
     ),
     "battery.percent": SensorEntityDescription(
         key="battery_percent",
@@ -44,13 +54,6 @@ SENSOR_TYPES = {
         device_class=SensorDeviceClass.BATTERY,
         state_class=SensorStateClass.MEASUREMENT,
         entity_category=EntityCategory.DIAGNOSTIC,
-    ),
-    "current_temp": SensorEntityDescription(
-        key="current_temp",
-        name="Current Temperature",
-        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
-        state_class=SensorStateClass.MEASUREMENT,
-        device_class=SensorDeviceClass.TEMPERATURE,
     ),
 }
 
