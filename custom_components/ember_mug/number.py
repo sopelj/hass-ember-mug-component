@@ -17,11 +17,11 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
 from .coordinator import MugDataUpdateCoordinator
-from .entity import BaseMugEntity, format_temp
+from .entity import BaseMugValueEntity, format_temp
 
 _LOGGER = logging.getLogger(__name__)
 
-TEXT_TYPES = {
+NUMBER_TYPES = {
     "target_temp": NumberEntityDescription(
         key="target_temp",
         name="Target Temperature",
@@ -35,8 +35,8 @@ TEXT_TYPES = {
 }
 
 
-class MugNumberEntity(BaseMugEntity, NumberEntity):
-    """Base Entity for Mug Binary Sensors."""
+class MugNumberEntity(BaseMugValueEntity, NumberEntity):
+    """Configurable NumberEntity for a mug attribute."""
 
     _domain = "number"
     _attr_mode = NumberMode.BOX
@@ -46,15 +46,18 @@ class MugNumberEntity(BaseMugEntity, NumberEntity):
         coordinator: MugDataUpdateCoordinator,
         mug_attr: str,
     ) -> None:
-        """Initialize the Mug sensor."""
-        self.entity_description = TEXT_TYPES[mug_attr]
+        """Initialize the Mug Number."""
+        self.entity_description = NUMBER_TYPES[mug_attr]
         super().__init__(coordinator, mug_attr)
+
+
+class MugTargetTempNumberEntity(MugNumberEntity):
+    """Configurable NumerEntity for the Mug's target temp."""
 
     @property
     def native_value(self) -> float | None:
         """Return mug attribute as temp."""
-        temp = self.coordinator.get_mug_attr(self._mug_attr)
-        return format_temp(temp, self.coordinator.mug_temp_unit)
+        return format_temp(super().native_value, self.coordinator.mug_temp_unit)
 
     async def async_set_native_value(self, value: float) -> None:
         """Set the mug target temp."""
@@ -66,10 +69,11 @@ async def async_setup_entry(
     entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    """Set up Binary Sensor Entities."""
+    """Set up Number Entities."""
     assert entry.entry_id is not None
     coordinator: MugDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
-    entities: list[MugNumberEntity] = [
-        MugNumberEntity(coordinator, "target_temp"),
-    ]
-    async_add_entities(entities)
+    async_add_entities(
+        [
+            MugTargetTempNumberEntity(coordinator, "target_temp"),
+        ],
+    )

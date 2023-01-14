@@ -125,7 +125,7 @@ automation:
     action:
       service: notify.mobile_app_jesse_s_pixel_7  # Mobile device notify or other action
       data_template:
-        message: "Your mug is at the desired {{ states('sensor.mug_current_temp') }}{{ state_attr('sensor.mug_current_temp', 'unit_of_measurement') }}."
+        message: "Your mug is at the desired {{ states('sensor.ember_mug_c90f59d633f9_current_temp') }}."
 
   - id: mug_battery_warning
     alias: Mug Battery Low
@@ -180,16 +180,12 @@ cards:
           entity_id: binary_sensor.ember_mug_c90f59d633f9_on_charging_base
 ```
 
-### Services
+### Changing Mug values
 
-If your mug was initially setup with the mobile app, you can also use the following services in home assistant to change certain things about you mug:
+If your mug was initially setup with the mobile app, you can also change certain thing about your mug.
+Either via the device page, lovelace or services in automations.
 
-- set_mug_name -> Rename your mug
-- set_led_colour -> Change the LED colour of the mug
-- set_target_temp -> Set the desired temperature of you mug
-
-### Example
-
-You can trigger these manually in developer tools or use them in automations.
-
-![](examples/mug_service_set_name.png)
+- Rename your mug (sensor.ember_mug_c90f59d633f9_name)
+- Change the LED colour of the mug
+- Set the desired temperature of you mug (number.ember_mug_c90f59d633f9_target_temp)
+- Set the mug's internal temperature unit (select.ember_mug_c90f59d633f9_temperature_unit)

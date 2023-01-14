@@ -75,3 +75,12 @@ class BaseMugEntity(CoordinatorEntity):
         """Handle data update."""
         self._async_update_attrs()
         self.async_write_ha_state()
+
+
+class BaseMugValueEntity(BaseMugEntity):
+    """Base Entity that returns a mug attribute as its `native_value`."""
+
+    @property
+    def native_value(self) -> Any:
+        """Return a mug attribute as the state for the sensor."""
+        return self.coordinator.get_mug_attr(self._mug_attr)

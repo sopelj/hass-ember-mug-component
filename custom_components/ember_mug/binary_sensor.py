@@ -51,7 +51,4 @@ async def async_setup_entry(
     """Set up Binary Sensor Entities."""
     assert entry.entry_id is not None
     coordinator: MugDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
-    entities: list[MugBinarySensor] = [
-        MugBinarySensor(coordinator, "battery.on_charging_base"),
-    ]
-    async_add_entities(entities)
+    async_add_entities([MugBinarySensor(coordinator, attr) for attr in SENSOR_TYPES])

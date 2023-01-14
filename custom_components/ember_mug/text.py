@@ -11,7 +11,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN, MUG_NAME_REGEX
 from .coordinator import MugDataUpdateCoordinator
-from .entity import BaseMugEntity
+from .entity import BaseMugValueEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -27,8 +27,8 @@ TEXT_TYPES = {
 }
 
 
-class MugTextEntity(BaseMugEntity, TextEntity):
-    """Base Entity for Mug Binary Sensors."""
+class MugTextEntity(BaseMugValueEntity, TextEntity):
+    """Configurable TextEntity for text mug attribute."""
 
     _domain = "text"
 
@@ -41,18 +41,9 @@ class MugTextEntity(BaseMugEntity, TextEntity):
         self.entity_description = TEXT_TYPES[mug_attr]
         super().__init__(coordinator, mug_attr)
 
-    def set_value(self, value: str) -> None:
-        """Not needed and we use the Async method."""
-        pass
-
     async def async_set_value(self, value: str) -> None:
         """Set the mug name."""
         await self.coordinator.connection.set_name(value)
-
-    @property
-    def native_value(self) -> str | None:
-        """Return mug attribute as binary state."""
-        return self.coordinator.get_mug_attr(self._mug_attr)
 
 
 async def async_setup_entry(
@@ -63,7 +54,4 @@ async def async_setup_entry(
     """Set up Binary Sensor Entities."""
     assert entry.entry_id is not None
     coordinator: MugDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
-    entities: list[MugTextEntity] = [
-        MugTextEntity(coordinator, "name"),
-    ]
-    async_add_entities(entities)
+    async_add_entities([MugTextEntity(coordinator, attr) for attr in TEXT_TYPES])

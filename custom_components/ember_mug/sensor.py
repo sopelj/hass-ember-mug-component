@@ -10,13 +10,7 @@ from homeassistant.components.sensor import (
     SensorStateClass,
 )
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import (
-    ATTR_BATTERY_CHARGING,
-    CONF_RGB,
-    CONF_TEMPERATURE_UNIT,
-    PERCENTAGE,
-    UnitOfTemperature,
-)
+from homeassistant.const import ATTR_BATTERY_CHARGING, PERCENTAGE, UnitOfTemperature
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_platform
 from homeassistant.helpers.entity import EntityCategory
@@ -31,18 +25,9 @@ from .const import (
     LIQUID_STATE_TEMP_ICONS,
     MUG_DEVICE_CLASS,
     SERVICE_SET_LED_COLOUR,
-    SERVICE_SET_MUG_NAME,
-    SERVICE_SET_TARGET_TEMP,
 )
-from .entity import BaseMugEntity, format_temp
-from .services import (
-    SET_LED_COLOUR_SCHEMA,
-    SET_MUG_NAME_SCHEMA,
-    SET_TARGET_TEMP_SCHEMA,
-    set_led_colour,
-    set_mug_name,
-    set_target_temp,
-)
+from .entity import BaseMugValueEntity, format_temp
+from .services import SET_LED_COLOUR_SCHEMA, set_led_colour
 
 SENSOR_TYPES = {
     "led_colour_display": SensorEntityDescription(
@@ -78,7 +63,7 @@ SENSOR_TYPES = {
 }
 
 
-class EmberMugSensor(BaseMugEntity, SensorEntity):
+class EmberMugSensor(BaseMugValueEntity, SensorEntity):
     """Representation of a Mug sensor."""
 
     _domain = "sensor"
@@ -91,11 +76,6 @@ class EmberMugSensor(BaseMugEntity, SensorEntity):
         """Initialize the Mug sensor."""
         self.entity_description = SENSOR_TYPES[mug_attr]
         super().__init__(coordinator, mug_attr)
-
-    @property
-    def native_value(self) -> Any:
-        """Return a mug attribute as the state for the sensor."""
-        return self.coordinator.get_mug_attr(self._mug_attr)
 
 
 class EmberMugStateSensor(EmberMugSensor):
@@ -114,8 +94,6 @@ class EmberMugStateSensor(EmberMugSensor):
         """Return device specific state attributes."""
         data = self.coordinator.data
         return {
-            CONF_RGB: data.led_colour_display,
-            CONF_TEMPERATURE_UNIT: data.temperature_unit,
             "date_time_zone": data.date_time_zone,
             "firmware_info": data.firmware,
             "udsk": data.udsk,
@@ -187,7 +165,7 @@ async def async_setup_entry(
     coordinator: MugDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
     entry_id = entry.entry_id
     assert entry_id is not None
-    entities: list[BaseMugEntity] = [
+    entities: list[EmberMugSensor] = [
         EmberMugStateSensor(coordinator, "liquid_state_display"),
         EmberMugSensor(coordinator, "led_colour_display"),
         EmberMugLiquidLevelSensor(coordinator, "liquid_level"),
@@ -202,14 +180,4 @@ async def async_setup_entry(
         SERVICE_SET_LED_COLOUR,
         SET_LED_COLOUR_SCHEMA,
         set_led_colour,
-    )
-    platform.async_register_entity_service(
-        SERVICE_SET_TARGET_TEMP,
-        SET_TARGET_TEMP_SCHEMA,
-        set_target_temp,
-    )
-    platform.async_register_entity_service(
-        SERVICE_SET_MUG_NAME,
-        SET_MUG_NAME_SCHEMA,
-        set_mug_name,
     )
