@@ -47,7 +47,7 @@ class MugBinarySensor(BaseMugEntity, BinarySensorEntity):
         super().__init__(coordinator, mug_attr)
 
     @property
-    def is_on(self) -> bool:
+    def is_on(self) -> bool | None:
         """Return mug attribute as binary state."""
         return self.coordinator.get_mug_attr(self._mug_attr)
 
@@ -55,9 +55,11 @@ class MugBinarySensor(BaseMugEntity, BinarySensorEntity):
 class MugLowBatteryBinarySensor(MugBinarySensor):
     """Warn about low battery."""
 
-    def is_on(self) -> bool:
+    def is_on(self) -> bool | None:
         """Return "on" if battery is low."""
         battery_percent = self.coordinator.get_mug_attr(self._mug_attr)
+        if battery_percent is None:
+            return None
         if battery_percent > 40:
             # Even if heating, it is not low yet.
             return False
@@ -65,7 +67,7 @@ class MugLowBatteryBinarySensor(MugBinarySensor):
         # If heating or at target temperature the battery will discharge faster.
         if state in (LIQUID_STATE_HEATING, LIQUID_STATE_TARGET_TEMPERATURE):
             return True
-        return bool(battery_percent is None or battery_percent < 20)
+        return bool(battery_percent < 20)
 
 
 async def async_setup_entry(
