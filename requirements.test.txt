@@ -1,6 +1,6 @@
 pytest
 pytest-cov
 homeassistant==2023.1
-python-ember-mug==0.5.0
+python-ember-mug==0.5.1
 home-assistant-bluetooth
 pytest-homeassistant-custom-component
