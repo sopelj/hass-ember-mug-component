@@ -1,6 +1,8 @@
 """Binary Sensor Entity for Ember Mug."""
 from __future__ import annotations
 
+import logging
+
 from ember_mug.consts import LIQUID_STATE_HEATING, LIQUID_STATE_TARGET_TEMPERATURE
 from homeassistant.components.binary_sensor import (
     BinarySensorDeviceClass,
@@ -13,8 +15,10 @@ from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
-from .coordinator import _LOGGER, MugDataUpdateCoordinator
+from .coordinator import MugDataUpdateCoordinator
 from .entity import BaseMugEntity
+
+_LOGGER = logging.getLogger(__name__)
 
 SENSOR_TYPES = {
     "battery.on_charging_base": BinarySensorEntityDescription(
@@ -55,6 +59,7 @@ class MugBinarySensor(BaseMugEntity, BinarySensorEntity):
 class MugLowBatteryBinarySensor(MugBinarySensor):
     """Warn about low battery."""
 
+    @property
     def is_on(self) -> bool | None:
         """Return "on" if battery is low."""
         battery_percent = self.coordinator.get_mug_attr(self._mug_attr)

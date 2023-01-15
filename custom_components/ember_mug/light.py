@@ -1,4 +1,5 @@
 """Expose the Mug's LEDs as a light entity."""
+import logging
 from typing import Any
 
 from ember_mug.data import Colour
@@ -14,8 +15,10 @@ from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
-from .coordinator import _LOGGER, MugDataUpdateCoordinator
+from .coordinator import MugDataUpdateCoordinator
 from .entity import BaseMugEntity
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class MugLightEntity(BaseMugEntity, LightEntity):
@@ -51,13 +54,9 @@ class MugLightEntity(BaseMugEntity, LightEntity):
             self.async_write_ha_state()
         # Nothing else to do, the light is always on.
 
-    def turn_on(self, **kwargs: Any) -> None:
-        """Do nothing, since these lights can't be turned on."""
-        pass
-
     def turn_off(self, **kwargs: Any) -> None:
         """Do nothing, since these lights can't be turned off."""
-        pass
+        _LOGGER.warning("Mug LED cannot be turned off; doing nothing.")
 
 
 async def async_setup_entry(

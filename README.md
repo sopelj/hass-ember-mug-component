@@ -18,11 +18,7 @@ The rest I had to do some testing and reverse engineering.
 The actual Mug logic has been moved to [an external library](https://github.com/sopelj/python-ember-mug) as per the guidelines in Home Assistant. 
 So if you have issues with the mug's internals and not the integration with home assistant please [raise issues there](https://github.com/sopelj/python-ember-mug/issues) :)
 
-### **Important!** Older versions only work on certain versions of Home Assistant. If you have 2022.8 or newer just install the latest.
-- Version < 0.3 Only works before 2022.8
-- Version 0.3.X Works on 2022.8.X as long as the Bluetooth Integration is disabled
-- Version 0.4+ Works on 2022.9+ and uses the new Bluetooth integration for discovery and setup
-- Version 0.5+ Works on 2023.1+ and uses the same setup as 0.4, but a few things added and renamed
+### **Important** Older versions only work on certain versions of Home Assistant. Please see [Changelog.md](./CHANGELOG.md) for details.
 
 **If you had a version installed before 0.4 and are upgrading, please remove your mug before upgrading, and it should be auto-discovered afterwards** 
 
@@ -155,20 +151,26 @@ This uses a couple custom lovelace cards, you could do something similar with ba
 type: custom:stack-in-card
 cards:
   - type: entities
-    icon: mdi:coffee
-    title: Ember Mug
+    title: Coffee Time
+    icon: mdi:coffee-maker
     show_header_toggle: false
     entities:
-      - entity: sensor.mug_current_temp
+      - entity: sensor.ember_mug_c90f59d633f9_state
+        type: custom:multiple-entity-row
+        entities:
+          - entity: light.ember_mug_c90f59d633f9_led
+            state_color: true
+            icon: mdi:lightbulb
+            name: false
+      - entity: sensor.ember_mug_c90f59d633f9_current_temp
         type: custom:multiple-entity-row
         name: Temperature
+        state_color: true
         show_state: false
         entities:
-          - entity: sensor.mug
-            name: State
           - entity: sensor.ember_mug_c90f59d633f9_current_temp
             name: Current
-          - entity: sensor.ember_mug_c90f59d633f9_target_temp
+          - entity: number.ember_mug_c90f59d633f9_target_temp
             name: Target
       - type: custom:template-entity-row
         entity: sensor.ember_mug_c90f59d633f9_liquid_level
@@ -178,7 +180,7 @@ cards:
         name: Battery
         entity: sensor.ember_mug_c90f59d633f9_battery_percent
         charging_state:
-          entity_id: binary_sensor.ember_mug_c90f59d633f9_on_charging_base
+          entity_id: binary_sensor.ember_mug_c90f59d633f9_power
 ```
 
 ### Changing Mug values
