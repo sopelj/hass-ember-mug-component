@@ -71,7 +71,7 @@ If you are running in docker or locally via python you can run it on the host.
 ##### Device not found after reboot
 
 Sometimes, after Home Assistant and it's OS are rebooted it will be disconnected from the mug and can't find it anymore.
-Just put your mug back in pairing mode and it should reconnect after a few minutes.
+Just put your mug back in pairing mode and, it should reconnect after a few minutes.
 
 ## Caveats / known issues:
 
@@ -186,10 +186,10 @@ cards:
 If your mug was initially setup with the mobile app, you can also change certain thing about your mug.
 Either via the device page, lovelace or services in automations.
 
-- Rename your mug (sensor.ember_mug_c90f59d633f9_name)
-- Change the LED colour of the mug (light.ember_mug_c90f59d633f9_led)
-- Set the desired temperature of you mug (number.ember_mug_c90f59d633f9_target_temp)
-- Set the mug's internal temperature unit (select.ember_mug_c90f59d633f9_temperature_unit)
+- Rename your mug (`sensor.ember_mug_c90f59d633f9_name`)
+- Change the LED colour of the mug (`light.ember_mug_c90f59d633f9_led`)
+- Set the desired temperature of you mug (`number.ember_mug_c90f59d633f9_target_temp`)
+- Set the mug's internal temperature unit (`select.ember_mug_c90f59d633f9_temperature_unit`)
 
 You can change these in de device page or the entities can be added to your dashboard:
 
