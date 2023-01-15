@@ -18,9 +18,7 @@ The rest I had to do some testing and reverse engineering.
 The actual Mug logic has been moved to [an external library](https://github.com/sopelj/python-ember-mug) as per the guidelines in Home Assistant. 
 So if you have issues with the mug's internals and not the integration with home assistant please [raise issues there](https://github.com/sopelj/python-ember-mug/issues) :)
 
-### **Important** Older versions only work on certain versions of Home Assistant. Please see [Changelog.md](./CHANGELOG.md) for details.
-
-**If you had a version installed before 0.4 and are upgrading, please remove your mug before upgrading, and it should be auto-discovered afterwards** 
+**Important** Older versions only work on certain versions of Home Assistant. Please see [Changelog.md](./CHANGELOG.md) for details.
 
 Home Assistant has a list of [officially supported adaptors](https://www.home-assistant.io/integrations/bluetooth/#known-working-adapters), 
 if you have connection issues, please try one of them.
