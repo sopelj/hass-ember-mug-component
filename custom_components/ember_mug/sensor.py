@@ -106,6 +106,14 @@ class EmberMugLiquidLevelSensor(EmberMugSensor):
             return round(liquid_level / 30 * 100, 2)
         return 0
 
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return device specific state attributes."""
+        return {
+            "liquid_level": self.coordinator.data.liquid_level,
+            **super().extra_state_attributes,
+        }
+
 
 class EmberMugTemperatureSensor(EmberMugSensor):
     """Mug Temperature sensor."""

@@ -16,13 +16,9 @@ async def async_get_config_entry_diagnostics(
 ) -> dict[str, Any]:
     """Return diagnostics for a config entry."""
     coordinator: MugDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
-    had_extra = coordinator.data.include_extra
-    coordinator.data.include_extra = True
     data: dict[str, Any] = {
-        "info": coordinator.data.formatted_data,
-        "state": coordinator.data.liquid_state,
+        "info": coordinator.data.as_dict(),
+        "state": coordinator.data.liquid_state_display,
         "address": coordinator.data.device.address,
     }
-    if not had_extra:
-        coordinator.data.include_extra = False
     return data
