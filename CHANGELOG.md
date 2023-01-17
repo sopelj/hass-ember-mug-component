@@ -10,6 +10,7 @@
 * Light Entity for Mug LED
 * Text Entity for Mug Name
 * Select Entity for Mug Temperature Unit
+* Translations (en/fr) for entity states/attributes
 
 ### Changed
 * Target Temperature sensor was converted to editable Number Entity

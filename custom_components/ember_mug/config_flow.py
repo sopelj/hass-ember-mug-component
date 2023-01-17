@@ -91,7 +91,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 self._discovery_info = discovery_info
                 break
             else:
-                return self.async_abort(reason="no_unconfigured_devices")
+                return self.async_abort(reason="no_new_devices")
 
         data_schema = vol.Schema(
             {

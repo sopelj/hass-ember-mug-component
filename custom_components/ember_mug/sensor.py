@@ -21,8 +21,10 @@ from .const import (
     DOMAIN,
     ICON_DEFAULT,
     ICON_EMPTY,
-    LIQUID_STATE_DISPLAY_OPTIONS,
+    LIQUID_STATE_MAPPING,
+    LIQUID_STATE_OPTIONS,
     LIQUID_STATE_TEMP_ICONS,
+    LiquidState,
 )
 from .entity import BaseMugValueEntity, format_temp
 
@@ -30,8 +32,9 @@ SENSOR_TYPES = {
     "liquid_state_display": SensorEntityDescription(
         key="state",
         name="State",
+        translation_key="liquid_state",
         device_class=SensorDeviceClass.ENUM,
-        options=LIQUID_STATE_DISPLAY_OPTIONS,
+        options=LIQUID_STATE_OPTIONS,
     ),
     "liquid_level": SensorEntityDescription(
         key="liquid_level",
@@ -80,7 +83,15 @@ class EmberMugStateSensor(EmberMugSensor):
     @property
     def icon(self) -> str | None:
         """Change icon based on state."""
-        return ICON_EMPTY if self.state == "Empty" else ICON_DEFAULT
+        return ICON_EMPTY if self.state == LiquidState.EMPTY else ICON_DEFAULT
+
+    @property
+    def native_value(self) -> str | None:
+        """Return liquid state key."""
+        state = super().native_value
+        if state:
+            return LIQUID_STATE_MAPPING[state].value
+        return None
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
@@ -91,6 +102,7 @@ class EmberMugStateSensor(EmberMugSensor):
             "firmware_info": data.firmware,
             "udsk": data.udsk,
             "dsk": data.dsk,
+            "raw_state": data.liquid_state,
             **super().extra_state_attributes,
         }
 
@@ -110,7 +122,7 @@ class EmberMugLiquidLevelSensor(EmberMugSensor):
     def extra_state_attributes(self) -> dict[str, Any]:
         """Return device specific state attributes."""
         return {
-            "liquid_level": self.coordinator.data.liquid_level,
+            "raw_liquid_level": self.coordinator.data.liquid_level,
             **super().extra_state_attributes,
         }
 
@@ -167,7 +179,7 @@ async def async_setup_entry(
     entry_id = entry.entry_id
     assert entry_id is not None
     entities: list[EmberMugSensor] = [
-        EmberMugStateSensor(coordinator, "liquid_state_display"),
+        EmberMugStateSensor(coordinator, "liquid_state"),
         EmberMugLiquidLevelSensor(coordinator, "liquid_level"),
         EmberMugTemperatureSensor(coordinator, "current_temp"),
         EmberMugBatterySensor(coordinator, "battery.percent"),

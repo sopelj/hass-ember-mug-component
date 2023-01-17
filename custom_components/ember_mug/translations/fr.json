@@ -5,21 +5,45 @@
       "user": {
         "title": "Ajouter une tasse Ember",
         "data": {
-          "mug": "Tasse (adresse MAC)",
+          "address": "Tasse (adresse MAC)",
           "name": "Nom",
           "temperature_unit": "Unité de température"
         }
       }
     },
-    "error": {
-      "invalid_mac": "Adresse MAC invalide",
-      "connection_failed": "Un erreur est survenue lors du tentative de connexion à la tasse.",
-      "connection_timeout": "Le temps de connection à dépassé le délais maximal.",
-      "cannot_connect": "Impossible de se connecter à la tasse"
-    },
     "abort": {
-      "unknown": "Un erreur inconue est survenue",
-      "not_found": "Aucune tasse a été trouvé. Veuillez assurer qu'il à été réinitialisé et est en mode jumelage."
+      "unknown": "Une erreur inconue est survenue",
+      "cannot_connect": "Impossible de se connecter à la tasse.",
+      "no_new_devices": "Aucune nouvelle tasse a été trouvé. Veuillez assurer qu'il est en mode de jumelage."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "liquid_level": {
+        "state": {
+          "unknown": "Inconnu",
+          "empty": "Vide",
+          "filling": "Remplissage",
+          "cold_no_control":  "Froid (sans contrôle)",
+          "cooling": "Refroidissement",
+          "heating": "Chauffage",
+          "perfect": "Parfait",
+          "warm_no_control": "Chaud (sans contrôle)"
+        }
+      }
+    }
+  },
+  "state_attributes": {
+    "sensor": {
+      "date_time_zone": { "name": "Date et fuseau horaire" },
+      "firmware_info": { "name": "Informations sur le micrologiciel"},
+      "udsk": { "name": "UDSK" },
+      "dsk": { "name": "DSK" },
+      "raw_state": { "name": "État" },
+      "raw_liquid_level": { "name": "Niveau du liquid" },
+      "battery_voltage": { "name": "Voltage de batterie" },
+      "battery_charging": { "name": "Sur la charge" },
+      "last_updated": { "name": "Dernière mise à jour" }
     }
   }
 }

@@ -14,7 +14,36 @@
     "abort": {
       "unknown": "Unknown error occurred",
       "cannot_connect": "Unable to connect to the mug.",
-      "no_unconfigured_devices": "No unconfigured Mugs were found. Please ensure it has been reset and is in pairing mode."
+      "no_new_devices": "No New Mugs were found. Please ensure it is in pairing mode."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "liquid_level": {
+        "state": {
+          "unknown": "Unknown",
+          "empty": "Empty",
+          "filling": "Filling",
+          "cold_no_control":  "Cold (No control)",
+          "cooling": "Cooling",
+          "heating": "Heating",
+          "perfect": "Perfect",
+          "warm_no_control": "Warm (No control)"
+        }
+      }
+    }
+  },
+  "state_attributes": {
+    "sensor": {
+      "date_time_zone": { "name": "Date and Timezone" },
+      "firmware_info": { "name": "Firmware info"},
+      "udsk": { "name": "UDSK" },
+      "dsk": { "name": "DSK" },
+      "raw_state": { "name": "Raw state" },
+      "raw_liquid_level": { "name": "Raw liquid level" },
+      "battery_voltage": { "name": "Battery voltage" },
+      "battery_charging": { "name": "Mug on charging base" },
+      "last_updated": { "name": "Last update" }
     }
   }
 }
