@@ -29,7 +29,7 @@ from .const import (
 from .entity import BaseMugValueEntity, format_temp
 
 SENSOR_TYPES = {
-    "liquid_state_display": SensorEntityDescription(
+    "liquid_state": SensorEntityDescription(
         key="state",
         name="State",
         translation_key="liquid_state",
