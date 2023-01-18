@@ -115,6 +115,9 @@ class EmberMugLiquidLevelSensor(EmberMugSensor):
         """Return information about the liquid level."""
         liquid_level: float | None = super().native_value
         if liquid_level:
+            # 30 -> Full
+            # 5, 6 -> Low
+            # 0 -> Empty
             return round(liquid_level / 30 * 100, 2)
         return 0
 

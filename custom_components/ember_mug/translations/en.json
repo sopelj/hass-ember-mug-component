@@ -34,7 +34,7 @@
     }
   },
   "state_attributes": {
-    "sensor": {
+    "_": {
       "date_time_zone": { "name": "Date and Timezone" },
       "firmware_info": { "name": "Firmware info"},
       "udsk": { "name": "UDSK" },
