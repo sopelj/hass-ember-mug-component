@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from ember_mug.consts import LiquidState
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntity,
@@ -24,7 +25,6 @@ from .const import (
     LIQUID_STATE_MAPPING,
     LIQUID_STATE_OPTIONS,
     LIQUID_STATE_TEMP_ICONS,
-    LiquidState,
 )
 from .entity import BaseMugValueEntity, format_temp
 
@@ -90,7 +90,7 @@ class EmberMugStateSensor(EmberMugSensor):
         """Return liquid state key."""
         state = super().native_value
         if state:
-            return LIQUID_STATE_MAPPING[state].value
+            return LIQUID_STATE_MAPPING[state.value].value
         return None
 
     @property
