@@ -147,7 +147,7 @@ class EmberMugTemperatureSensor(EmberMugSensor):
     @property
     def native_value(self) -> float | None:
         """Return sensor state."""
-        return format_temp(super().native_value, self.coordinator.mug_temp_unit)
+        return format_temp(super().native_value, self.coordinator.data.temperature_unit)
 
 
 class EmberMugBatterySensor(EmberMugSensor):

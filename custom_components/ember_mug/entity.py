@@ -4,6 +4,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
+from ember_mug.consts import TemperatureUnit
 from homeassistant.core import callback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.util.unit_conversion import TemperatureConverter, UnitOfTemperature
@@ -13,7 +14,10 @@ from .coordinator import MugDataUpdateCoordinator
 _LOGGER = logging.getLogger(__name__)
 
 
-def format_temp(value: float | None, source_unit: UnitOfTemperature) -> float | None:
+def format_temp(
+    value: float | None,
+    source_unit: UnitOfTemperature | TemperatureUnit,
+) -> float | None:
     """Convert unit back to Celsius for a base and round."""
     if value is None:
         return None

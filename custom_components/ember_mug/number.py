@@ -57,7 +57,7 @@ class MugTargetTempNumberEntity(MugNumberEntity):
     @property
     def native_value(self) -> float | None:
         """Return mug attribute as temp."""
-        return format_temp(super().native_value, self.coordinator.mug_temp_unit)
+        return format_temp(super().native_value, self.coordinator.data.temperature_unit)
 
     async def async_set_native_value(self, value: float) -> None:
         """Set the mug target temp."""
