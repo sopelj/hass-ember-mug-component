@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import logging
 
-from ember_mug.consts import LIQUID_STATE_HEATING, LIQUID_STATE_TARGET_TEMPERATURE
+from ember_mug.consts import LiquidState
 from homeassistant.components.binary_sensor import (
     BinarySensorDeviceClass,
     BinarySensorEntity,
@@ -70,7 +70,7 @@ class MugLowBatteryBinarySensor(MugBinarySensor):
             return False
         state = self.coordinator.get_mug_attr("liquid_state")
         # If heating or at target temperature the battery will discharge faster.
-        if state in (LIQUID_STATE_HEATING, LIQUID_STATE_TARGET_TEMPERATURE):
+        if state in (LiquidState.HEATING, LiquidState.TARGET_TEMPERATURE):
             return True
         return bool(battery_percent < 20)
 

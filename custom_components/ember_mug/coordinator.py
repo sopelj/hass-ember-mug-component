@@ -7,7 +7,6 @@ import logging
 from typing import TYPE_CHECKING, Any
 
 from ember_mug import EmberMug
-from ember_mug.consts import TEMP_FAHRENHEIT
 from home_assistant_bluetooth import BluetoothServiceInfoBleak
 from homeassistant.components.bluetooth import (
     BluetoothCallbackMatcher,
@@ -16,7 +15,6 @@ from homeassistant.components.bluetooth import (
     async_register_callback,
     async_track_unavailable,
 )
-from homeassistant.const import UnitOfTemperature
 from homeassistant.core import CALLBACK_TYPE, HomeAssistant, callback
 from homeassistant.helpers.device_registry import CONNECTION_BLUETOOTH
 from homeassistant.helpers.entity import DeviceInfo
@@ -89,13 +87,6 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[EmberMug]):
             changed,
         )
         return self.data
-
-    @property
-    def mug_temp_unit(self) -> UnitOfTemperature:
-        """Get the mug's temperature unit as a UnitOfTemperature."""
-        if self.data.temperature_unit == TEMP_FAHRENHEIT:
-            return UnitOfTemperature.FAHRENHEIT
-        return UnitOfTemperature.CELSIUS
 
     @callback
     def async_start(self) -> CALLBACK_TYPE:

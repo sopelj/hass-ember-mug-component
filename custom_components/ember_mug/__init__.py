@@ -99,14 +99,13 @@ async def set_temperature_unit(
     unit: UnitOfTemperature,
 ) -> None:
     """Try to set Mug Unit if different from current one."""
-    if mug_coordinator.mug_temp_unit == unit:
+    if mug_coordinator.data.temperature_unit == unit:
         # No need
         return
     try:
         async with async_timeout.timeout(10):
-            target_unit = unit.value.strip("°")
-            await mug_coordinator.connection.set_temperature_unit(target_unit)
-            mug_coordinator.data.temperature_unit = target_unit
+            await mug_coordinator.connection.set_temperature_unit(unit)
+            mug_coordinator.data.temperature_unit = unit
     except (BleakError, TimeoutError, EOFError) as e:
         _LOGGER.warning("Unable to set temperature unit to %s: %s.", unit, e)
 
