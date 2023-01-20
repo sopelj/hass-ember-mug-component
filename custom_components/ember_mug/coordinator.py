@@ -103,6 +103,9 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[EmberMug]):
     def _async_start(self) -> None:
         """Start the Bluetooth callbacks."""
         address = self.connection.mug.device.address
+        self._cancel_callback = self.connection.register_callback(
+            self._async_handle_callback,
+        )
         self._cancel_bluetooth_advertisements = async_register_callback(
             self.hass,
             self._async_handle_bluetooth_event,
@@ -118,6 +121,8 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[EmberMug]):
     @callback
     def _async_stop(self) -> None:
         """Stop the Bluetooth callbacks."""
+        if self._cancel_callback is not None:
+            self._cancel_callback()
         if self._cancel_bluetooth_advertisements is not None:
             self._cancel_bluetooth_advertisements()
             self._cancel_bluetooth_advertisements = None
@@ -146,6 +151,12 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[EmberMug]):
             change,
         )
         self.connection.set_device(self.ble_device)
+        self.async_request_refresh()
+
+    @callback
+    def _async_handle_callback(self) -> None:
+        """Handle a Bluetooth event."""
+        _LOGGER.debug("Callback called in Home Assistant")
         self.async_request_refresh()
 
     def get_mug_attr(self, mug_attr: str) -> Any:
