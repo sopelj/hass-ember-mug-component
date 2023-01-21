@@ -92,4 +92,3 @@
 
 ### Changed
 * feat: Update doc, version number and add a license on principle.
-

@@ -11,16 +11,16 @@ Custom integration for the Ember Mug in Home Assistant.
 I only have the Ember Mug 2, but in theory it should be the same with other Ember Mugs.
 Please let me know if you have another one and are willing to help test it.
 
-The protocol is not public, so there is quite a bit of guesswork involved. 
-[@orlopau](https://github.com/orlopau) did a great job documenting some [UUIDs here](https://github.com/orlopau/ember-mug) And had to attempt to extract the rest of them. 
+The protocol is not public, so there is quite a bit of guesswork involved.
+[@orlopau](https://github.com/orlopau) did a great job documenting some [UUIDs here](https://github.com/orlopau/ember-mug) And had to attempt to extract the rest of them.
 The rest I had to do some testing and reverse engineering.
 
-The actual Mug logic has been moved to [an external library](https://github.com/sopelj/python-ember-mug) as per the guidelines in Home Assistant. 
+The actual Mug logic has been moved to [an external library](https://github.com/sopelj/python-ember-mug) as per the guidelines in Home Assistant.
 So if you have issues with the mug's internals and not the integration with home assistant please [raise issues there](https://github.com/sopelj/python-ember-mug/issues) :)
 
 **Important** Older versions only work on certain versions of Home Assistant. Please see [Changelog.md](./CHANGELOG.md) for details.
 
-Home Assistant has a list of [officially supported adaptors](https://www.home-assistant.io/integrations/bluetooth/#known-working-adapters), 
+Home Assistant has a list of [officially supported adaptors](https://www.home-assistant.io/integrations/bluetooth/#known-working-adapters),
 if you have connection issues, please try one of them.
 
 ## Installation / Setup
@@ -43,15 +43,15 @@ Ensure you have the [Home Assistant Bluetooth Integration](https://www.home-assi
 
 ### Preparing your Mug
 
-In order to function properly please, set up your mug using the app before trying to use this integration. 
-This is not required, but if you don't, changing values such as the name, colour, temp, etc. via home assistant will not work. 
+In order to function properly please, set up your mug using the app before trying to use this integration.
+This is not required, but if you don't, changing values such as the name, colour, temp, etc. via home assistant will not work.
 Once you set it up, then please forget the mug on your phone or at least disable Bluetooth, so they don't fight over the mug.
 
-**Note**: If you had a version below 0.4 installed, please remove your device from home assistant and manually remove it in `bluetoothctl remove my-mac-address`. You can do this in the Terminal Addon for HASS OS or on your host for other installation types. 
+**Note**: If you had a version below 0.4 installed, please remove your device from home assistant and manually remove it in `bluetoothctl remove my-mac-address`. You can do this in the Terminal Addon for HASS OS or on your host for other installation types.
 
 To do so:
-1. Set up the mug in the Ember mobile app 
-2. Forget the mug from your Bluetooth Devices on your phone (or at least disable Bluetooth on it). 
+1. Set up the mug in the Ember mobile app
+2. Forget the mug from your Bluetooth Devices on your phone (or at least disable Bluetooth on it).
 3. Home Assistant should auto-detect the mug and prompt you to configure it.
    - Choose "Configure"
    - And then hit "Next"
@@ -62,7 +62,7 @@ To do so:
 #### Troubleshooting
 
 ##### 'Operation failed with ATT error: 0x0e' or another connection error
-This seems to be caused by the bluetooth adaptor being in some sort of passive mode. I have not yet figured out how to wake it programmatically so sadly, you need to manually open `bluetoothctl` to do so. 
+This seems to be caused by the bluetooth adaptor being in some sort of passive mode. I have not yet figured out how to wake it programmatically so sadly, you need to manually open `bluetoothctl` to do so.
 Please ensure the mug is in pairing mode (i.e. the light is flashing blue) and run the `bluetoothctl` command. You don,t need to type anything. run it and wait until the mug connects.
 
 If you are on Home Assistant OS you can use the Terminal + SSH addon, open the terminal, type `bluetoothctl` and hit enter.
@@ -139,8 +139,8 @@ automation:
 
 ### Lovelace
 
-An example for what I use in my lovelace config. 
-This uses a couple custom lovelace cards, you could do something similar with base widgets, but I've used these here 
+An example for what I use in my lovelace config.
+This uses a couple custom lovelace cards, you could do something similar with base widgets, but I've used these here
 ([battery-state-card](https://github.com/maxwroc/battery-state-card), [lovelace-multiple-entity-row](https://github.com/benct/lovelace-multiple-entity-row) and [stack-in-card](https://github.com/custom-cards/stack-in-card))
 
 ![Lovelace Example](./examples/lovelace_example.png)
@@ -205,4 +205,3 @@ You can also call these in services for your automations.
 | LED Colour  | light.turn_on        | entity_id and rgb    |
 | Target Temp | number.set_value     | entity_id and value  |
 | Temp Unit   | select.select_option | entity_id and option |
-

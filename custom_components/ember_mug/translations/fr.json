@@ -19,7 +19,7 @@
   },
   "entity": {
     "sensor": {
-      "liquid_level": {
+      "liquid_state": {
         "state": {
           "unknown": "Inconnu",
           "empty": "Vide",

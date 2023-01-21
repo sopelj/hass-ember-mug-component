@@ -4,3 +4,9 @@ homeassistant==2023.1
 python-ember-mug==0.5.3
 home-assistant-bluetooth
 pytest-homeassistant-custom-component
+
+# home assistant dependencies for bluetooth
+pyserial==3.5
+bluetooth-auto-recovery==1.0.3
+aiohttp_cors==0.7.0
+pyudev==0.23.2
