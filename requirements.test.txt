@@ -9,4 +9,4 @@ pytest-homeassistant-custom-component
 pyserial==3.5
 bluetooth-auto-recovery==1.0.3
 aiohttp_cors==0.7.0
-pyudev==0.23.2
+pyudev==0.24.0
