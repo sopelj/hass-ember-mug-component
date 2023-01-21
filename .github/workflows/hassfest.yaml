@@ -8,6 +8,8 @@ on:
 
 jobs:
   validate:
+    env:
+      ALLOW_NAME_TRANSLATION: true
     runs-on: "ubuntu-latest"
     steps:
       - uses: "actions/checkout@v2"
