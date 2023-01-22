@@ -1,0 +1,48 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "エンバー・マグカップを追加",
+        "data": {
+          "address": "マグカップ（MACアドレス）",
+          "name": "名",
+          "temperature_unit": "温度単位"
+        }
+      }
+    },
+    "abort": {
+      "unknown": "未知数エラーが発生した。",
+      "cannot_connect": "マグカップに接続できません。",
+      "no_new_devices": "新しいマグカップは見つかりませんでした。ペアリングモードにしてください。"
+    }
+  },
+  "entity": {
+    "sensor": {
+      "liquid_state": {
+        "state": {
+          "unknown": "未知数です",
+          "empty": "空です",
+          "filling": "埋まっている",
+          "cold_no_control":  "寒い（管理ない）",
+          "cooling": "冷めている",
+          "heating": "加熱している",
+          "perfect": "うってつけです",
+          "warm_no_control": "暑い（管理ない）"
+        }
+      }
+    }
+  },
+  "state_attributes": {
+    "_": {
+      "date_time_zone": { "name": "日付と時間帯" },
+      "firmware_info": { "name": "ファームウェア"},
+      "udsk": { "name": "UDSK" },
+      "dsk": { "name": "DSK" },
+      "raw_state": { "name": "状態" },
+      "raw_liquid_level": { "name": "液量" },
+      "battery_voltage": { "name": "電池電圧" },
+      "battery_charging": { "name": "充電スタンドで" },
+      "last_updated": { "name": "最後のアップデート" }
+    }
+  }
+}
