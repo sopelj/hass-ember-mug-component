@@ -65,7 +65,7 @@ class MugLowBatteryBinarySensor(MugBinarySensor):
         battery_percent = self.coordinator.get_mug_attr(self._mug_attr)
         if battery_percent is None:
             return None
-        if battery_percent > 40:
+        if battery_percent > 30:
             # Even if heating, it is not low yet.
             return False
         state = self.coordinator.get_mug_attr("liquid_state")
