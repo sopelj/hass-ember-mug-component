@@ -136,7 +136,9 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[EmberMug]):
         service_info: BluetoothServiceInfoBleak,
     ) -> None:
         """Handle the device going unavailable."""
+        _LOGGER.warning("Mug is unavailable")
         self.available = False
+        self.async_request_refresh()
 
     @callback
     def _async_handle_bluetooth_event(
