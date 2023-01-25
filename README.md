@@ -18,7 +18,10 @@ The rest I had to do some testing and reverse engineering.
 The actual Mug logic has been moved to [an external library](https://github.com/sopelj/python-ember-mug) as per the guidelines in Home Assistant.
 So if you have issues with the mug's internals and not the integration with home assistant please [raise issues there](https://github.com/sopelj/python-ember-mug/issues) :)
 
-**Important** Older versions only work on certain versions of Home Assistant. Please see [Changelog.md](./CHANGELOG.md) for details.
+> **Note**
+> The latest version should always work on the latest version of Home Assistant.
+> However, some older versions only work on certain versions of Home Assistant.
+> Please see [Changelog.md](./CHANGELOG.md) for details if you need an older one.
 
 Home Assistant has a list of [officially supported adaptors](https://www.home-assistant.io/integrations/bluetooth/#known-working-adapters),
 if you have connection issues, please try one of them.
@@ -33,7 +36,8 @@ Add to HACS as custom repository:
 
 Install the integration in HACS and restart Home Assistant.
 
-**You do not need to add the integration in Home Assistant. Just installing it is enough for autodiscovery to work**
+> **Note**
+> You do *not* need to manually add the integration in Home Assistant. Just installing it is enough for autodiscovery to work.
 
 ### Setup Bluetooth Integration
 
@@ -47,7 +51,9 @@ In order to function properly please, set up your mug using the app before tryin
 This is not required, but if you don't, changing values such as the name, colour, temp, etc. via home assistant will not work.
 Once you set it up, then please forget the mug on your phone or at least disable Bluetooth, so they don't fight over the mug.
 
-**Note**: If you had a version below 0.4 installed, please remove your device from home assistant and manually remove it in `bluetoothctl remove my-mac-address`. You can do this in the Terminal Addon for HASS OS or on your host for other installation types.
+> **Note**
+> If you had a version below 0.4 installed, please remove your device from home assistant and manually remove it in `bluetoothctl remove my-mac-address`.
+> You can do this in the Terminal Addon for HASS OS or on your host for other installation types.
 
 To do so:
 1. Set up the mug in the Ember mobile app
@@ -62,16 +68,27 @@ To do so:
 #### Troubleshooting
 
 ##### 'Operation failed with ATT error: 0x0e' or another connection error
+
 This seems to be caused by the bluetooth adaptor being in some sort of passive mode. I have not yet figured out how to wake it programmatically so sadly, you need to manually open `bluetoothctl` to do so.
 Please ensure the mug is in pairing mode (i.e. the light is flashing blue) and run the `bluetoothctl` command. You don,t need to type anything. run it and wait until the mug connects.
 
 If you are on Home Assistant OS you can use the Terminal + SSH addon, open the terminal, type `bluetoothctl` and hit enter.
 If you are running in docker or locally via python you can run it on the host.
 
-##### Device not found after reboot
+##### 'Failed to start Bluetooth' - \[org.bluez.Error.NotReady\] Resource Not Ready
 
-Sometimes, after Home Assistant and it's OS are rebooted it will be disconnected from the mug and can't find it anymore.
-Just put your mug back in pairing mode and, it should reconnect after a few minutes.
+This indicates the Bluetooth Adapter is not currently available. Please ensure it is correctly plugged in and powered on.
+If you are running in HassOS it should automatically start, but sometimes in docker you might need to start it manually with `bluetoothctl power on`.
+
+#### Connectivity or other issues with Bluetooth
+
+Many things can cause issues with connectivity, such as unsupported adapters and interference.
+The [Home Assistant Bluetooth Documentation](https://www.home-assistant.io/integrations/bluetooth/#troubleshooting) has some excellent steps for troubleshooting.
+
+##### Device not found or stops updating
+
+On rare occasions the mug may disconnect and have trouble reconnecting. In those cases you can just put your mug back in pairing mode and, it should reconnect within a minute.
+If that fails you can try reloading the integration.
 
 ## Caveats / known issues:
 
@@ -97,11 +114,11 @@ automation:
     trigger:
       - platform: state
         entity_id: sensor.ember_mug_c90f59d633f9_state  # your mug entity
-        from: "Empty"
+        from: empty
         to:
-          - "Filling"
-          - "Heating"
-          - "Cooling"
+          - filling
+          - heating
+          - cooling
     action:
       service: notify.mobile_app_jesse_s_pixel_7  # Mobile device notify or other action
       data:
@@ -114,9 +131,9 @@ automation:
         entity_id: sensor.ember_mug_c90f59d633f9_state
         attribute: liquid_state
         from:
-          - "Heating"
-          - "Cooling"
-        to: "Perfect"
+          - heating
+          - cooling
+        to: perfect
     action:
       service: notify.mobile_app_jesse_s_pixel_7  # Mobile device notify or other action
       data_template:
