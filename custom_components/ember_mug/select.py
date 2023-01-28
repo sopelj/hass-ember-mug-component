@@ -52,15 +52,9 @@ class MugSelectEntity(BaseMugEntity, SelectEntity):
 class MugTempUnitSelectEntity(MugSelectEntity):
     """Configurable SelectEntity for a mug temp unit."""
 
-    @property
-    def current_option(self) -> str | None:
-        """Return temp unit as string."""
-        unit = super().current_option
-        return f"°{unit}" if unit else None
-
     async def async_select_option(self, option: str) -> None:
         """Change the selected option."""
-        await self.coordinator.connection.set_temperature_unit(option.strip("°"))
+        await self.coordinator.connection.set_temperature_unit(option)
 
 
 async def async_setup_entry(
