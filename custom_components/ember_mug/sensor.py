@@ -40,11 +40,13 @@ SENSOR_TYPES = {
         key="liquid_level",
         name="Liquid Level",
         icon="mdi:cup-water",
+        native_precision=2,
         native_unit_of_measurement=PERCENTAGE,
     ),
     "current_temp": SensorEntityDescription(
         key="current_temp",
         name="Current Temperature",
+        native_precision=2,
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         state_class=SensorStateClass.MEASUREMENT,
         device_class=SensorDeviceClass.TEMPERATURE,
@@ -52,6 +54,7 @@ SENSOR_TYPES = {
     "battery.percent": SensorEntityDescription(
         key="battery_percent",
         name="Battery",
+        native_precision=2,
         native_unit_of_measurement=PERCENTAGE,
         device_class=SensorDeviceClass.BATTERY,
         state_class=SensorStateClass.MEASUREMENT,
@@ -118,7 +121,7 @@ class EmberMugLiquidLevelSensor(EmberMugSensor):
             # 30 -> Full
             # 5, 6 -> Low
             # 0 -> Empty
-            return round(liquid_level / 30 * 100, 2)
+            return liquid_level / 30 * 100
         return 0
 
     @property
@@ -152,12 +155,6 @@ class EmberMugTemperatureSensor(EmberMugSensor):
 
 class EmberMugBatterySensor(EmberMugSensor):
     """Mug Battery Sensor."""
-
-    @property
-    def native_value(self) -> float | None:
-        """Return sensor state."""
-        battery_percent: float | None = super().native_value
-        return round(battery_percent, 2) if battery_percent is not None else None
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:

@@ -3,7 +3,8 @@
 ## [0.5.0 - UNRELEASED]
 
 ### Notes
-* Requires Home Assistant 2023.1
+* Requires Home Assistant 2023.2
+* Only supports Python 3.10+ (like 2023.2)
 
 ### Added
 * Binary sensor for low battery warning
