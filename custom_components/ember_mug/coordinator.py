@@ -66,7 +66,6 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[EmberMug]):
         _LOGGER.debug("Updating")
         full_update = not self._last_refresh_was_full
         try:
-            # async with self._updating.acquire():
             await self.connection.ensure_connection()
             changed = []
             if self._last_refresh_was_full is False:
@@ -81,6 +80,15 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[EmberMug]):
             _LOGGER.error("An error occurred whilst updating the mug: %s", e)
             self.available = False
             raise UpdateFailed(f"An error occurred updating mug: {e=}")
+
+        if self._async_handle_callback not in self.connection._callbacks:
+            _LOGGER.warning(
+                "Update called, but no callback in %s. Registering again.",
+                self.connection._callbacks,
+            )
+            self._cancel_callback = self.connection.register_callback(
+                self._async_handle_callback,
+            )
         _LOGGER.debug(
             "[%s Update] Changed: %s",
             "Full" if full_update else "Partial",
@@ -158,7 +166,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[EmberMug]):
     @callback
     def _async_handle_callback(self, mug: EmberMug) -> None:
         """Handle a Bluetooth event."""
-        _LOGGER.debug("Callback called in Home Assistant %s", mug)
+        _LOGGER.debug("Callback called in Home Assistant")
         self.async_request_refresh()
 
     def get_mug_attr(self, mug_attr: str) -> Any:
