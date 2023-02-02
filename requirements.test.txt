@@ -1,7 +1,7 @@
-pytest>=7.2.0
+pytest>=7.2.1
 pytest-cov>=3.0.0
 pytest-asyncio>=0.20.2
-homeassistant>=2023.2.0b4
+homeassistant>=2023.2.0
 python-ember-mug==0.5.3
 home-assistant-bluetooth
 git+https://github.com/MatthewFlamm/pytest-homeassistant-custom-component.git@master

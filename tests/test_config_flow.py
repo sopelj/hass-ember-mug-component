@@ -6,6 +6,7 @@ from homeassistant.const import (
     CONF_TEMPERATURE_UNIT,
     UnitOfTemperature,
 )
+from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
 import pytest
 from voluptuous import MultipleInvalid
@@ -13,7 +14,7 @@ from voluptuous import MultipleInvalid
 from tests import MUG_SERVICE_INFO, TEST_MAC, TEST_MUG_NAME, patch_async_setup_entry
 
 
-async def test_bluetooth_discovery(hass):
+async def test_bluetooth_discovery(hass: HomeAssistant) -> None:
     """Test discovery via bluetooth with a valid device."""
     result = await hass.config_entries.flow.async_init(
         "ember_mug",
