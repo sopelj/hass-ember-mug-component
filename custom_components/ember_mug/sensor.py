@@ -3,7 +3,6 @@ from __future__ import annotations
 
 from typing import Any
 
-from ember_mug.consts import LiquidState
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntity,
@@ -25,6 +24,7 @@ from .const import (
     LIQUID_STATE_MAPPING,
     LIQUID_STATE_OPTIONS,
     LIQUID_STATE_TEMP_ICONS,
+    LiquidStateValue,
 )
 from .entity import BaseMugValueEntity, format_temp
 
@@ -86,7 +86,7 @@ class EmberMugStateSensor(EmberMugSensor):
     @property
     def icon(self) -> str:
         """Change icon based on state."""
-        return ICON_EMPTY if self.state == LiquidState.EMPTY else ICON_DEFAULT
+        return ICON_EMPTY if self.state == LiquidStateValue.EMPTY else ICON_DEFAULT
 
     @property
     def native_value(self) -> str | None:
