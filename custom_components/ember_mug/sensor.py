@@ -84,7 +84,7 @@ class EmberMugStateSensor(EmberMugSensor):
     _attr_name = None
 
     @property
-    def icon(self) -> str | None:
+    def icon(self) -> str:
         """Change icon based on state."""
         return ICON_EMPTY if self.state == LiquidState.EMPTY else ICON_DEFAULT
 

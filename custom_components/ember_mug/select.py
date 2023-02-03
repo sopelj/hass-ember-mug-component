@@ -54,6 +54,16 @@ class MugSelectEntity(BaseMugEntity, SelectEntity):
 class MugTempUnitSelectEntity(MugSelectEntity):
     """Configurable SelectEntity for a mug temp unit."""
 
+    @property
+    def icon(self) -> str:
+        """Change icon based on current option."""
+        if current := self.current_option:
+            unit = (
+                "fahrenheit" if current == UnitOfTemperature.FAHRENHEIT else "celsius"
+            )
+            return f"mdi:temperature-{unit}"
+        return "mdi:help-rhombus-outline"
+
     async def async_select_option(self, option: str) -> None:
         """Change the selected option."""
         await self.coordinator.connection.set_temperature_unit(option)

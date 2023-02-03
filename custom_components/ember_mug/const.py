@@ -8,7 +8,7 @@ DOMAIN: Final[str] = "ember_mug"
 MANUFACTURER: Final[str] = "Ember"
 
 ICON_DEFAULT = "mdi:coffee"
-ICON_EMPTY = "mdi:coffee-off"
+ICON_EMPTY = "mdi:coffee-outline"
 
 ATTR_BATTERY_VOLTAGE = "battery_voltage"
 
