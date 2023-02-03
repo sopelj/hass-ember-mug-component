@@ -1,6 +1,7 @@
 """Select Entity for Ember Mug."""
 from __future__ import annotations
 
+from enum import Enum
 import logging
 
 from homeassistant.components.select import SelectEntity, SelectEntityDescription
@@ -46,7 +47,8 @@ class MugSelectEntity(BaseMugEntity, SelectEntity):
     @property
     def current_option(self) -> str | None:
         """Return a mug attribute as the state for the current option."""
-        return self.coordinator.get_mug_attr(self._mug_attr)
+        option = self.coordinator.get_mug_attr(self._mug_attr)
+        return option.value if isinstance(option, Enum) else option
 
 
 class MugTempUnitSelectEntity(MugSelectEntity):
