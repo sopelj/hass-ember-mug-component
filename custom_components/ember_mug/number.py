@@ -18,7 +18,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
 from .coordinator import MugDataUpdateCoordinator
-from .entity import BaseMugValueEntity, ensure_celsius
+from .entity import BaseMugValueEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -54,14 +54,6 @@ class MugNumberEntity(BaseMugValueEntity, NumberEntity):
 
 class MugTargetTempNumberEntity(MugNumberEntity):
     """Configurable NumerEntity for the Mug's target temp."""
-
-    @property
-    def native_value(self) -> float | None:
-        """Return mug attribute as temp."""
-        return ensure_celsius(
-            super().native_value,
-            self.coordinator.data.temperature_unit,
-        )
 
     async def async_set_native_value(self, value: float) -> None:
         """Set the mug target temp."""
