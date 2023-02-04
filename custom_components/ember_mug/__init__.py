@@ -6,7 +6,6 @@ import logging
 
 import async_timeout
 from bleak import BleakError
-from ember_mug import EmberMug
 from homeassistant.components import bluetooth
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
@@ -45,15 +44,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         raise ConfigEntryNotReady(
             f"Could not find Ember Mug with address {entry.data[CONF_ADDRESS]}",
         )
-
-    ember_mug = EmberMug(ble_device)
     hass.data[DOMAIN][entry.entry_id] = mug_coordinator = MugDataUpdateCoordinator(
         hass,
         _LOGGER,
         ble_device,
         entry.unique_id,
         entry.data.get(CONF_NAME, entry.title),
-        ember_mug,
     )
 
     entry.async_on_unload(mug_coordinator.async_start())
@@ -74,7 +70,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     except TimeoutError as ex:
         raise ConfigEntryNotReady(
             "Unable to communicate with the device; "
-            f"Try moving the Bluetooth adapter closer to {ember_mug.name}",
+            f"Try moving the Bluetooth adapter closer to {mug_coordinator.data.name}",
         ) from ex
     finally:
         cancel_first_update()
@@ -105,7 +101,6 @@ async def set_temperature_unit(
     try:
         async with async_timeout.timeout(10):
             await mug_coordinator.connection.set_temperature_unit(unit)
-            mug_coordinator.data.temperature_unit = unit
     except (BleakError, TimeoutError, EOFError) as e:
         _LOGGER.warning("Unable to set temperature unit to %s: %s.", unit, e)
 

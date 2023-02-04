@@ -39,7 +39,6 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[EmberMug]):
         ble_device: BLEDevice,
         base_unique_id: str,
         device_name: str,
-        mug: EmberMug,
     ) -> None:
         """Initialize global Mug data updater."""
         super().__init__(
@@ -48,10 +47,9 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[EmberMug]):
             name=f"ember-mug-{base_unique_id}",
             update_interval=timedelta(seconds=15),
         )
-        self.ble_device = ble_device
         self.device_name = device_name
         self.base_unique_id = base_unique_id
-        self.data = mug
+        self.data = EmberMug(ble_device)
         self.connection = self.data.connection()
         self.available = False
         self.last_updated: datetime | None = None
@@ -160,7 +158,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[EmberMug]):
             service_info,
             change,
         )
-        self.connection.set_device(self.ble_device)
+        self.connection.set_device(service_info.device)
         self.async_request_refresh()
 
     @callback
@@ -184,7 +182,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[EmberMug]):
         """Return information about the mug."""
         firmware = self.data.firmware
         return DeviceInfo(
-            connections={(CONNECTION_BLUETOOTH, self.ble_device.address)},
+            connections={(CONNECTION_BLUETOOTH, self.data.device.address)},
             name=name if (name := self.data.name) != "EMBER" else self.device_name,
             model=self.data.model,
             suggested_area="Kitchen",
