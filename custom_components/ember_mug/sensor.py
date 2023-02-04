@@ -93,7 +93,7 @@ class EmberMugStateSensor(EmberMugSensor):
         """Return liquid state key."""
         state = super().native_value
         if state:
-            return LIQUID_STATE_MAPPING[state.value].value
+            return LIQUID_STATE_MAPPING[state].value
         return None
 
     @property
