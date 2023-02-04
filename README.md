@@ -8,7 +8,7 @@
 ![Device View](./examples/device_example.png)
 
 Custom integration for the Ember Mug in Home Assistant.
-I only have the Ember Mug 2, but in theory it should be the same with other Ember Mugs.
+It should work with the Ember Mug 1 & 2, but I have not tested with the thermos.
 Please let me know if you have another one and are willing to help test it.
 
 The protocol is not public, so there is quite a bit of guesswork involved.
@@ -63,9 +63,13 @@ To do so:
    - And then hit "Next"
 4. Once it has been added, then put your mug into pairing mode (Hold down the button on the bottom until it flashes blue)
 5. Your mug will exit paring mode automatically and go back to the default colour when it's setup.
-   Note: If you are using Bluetooth Proxies you may need to manually exit pairing mode by tapping once on the button of the mug.
 
 #### Troubleshooting
+
+##### Device randomly becomes unavailable
+
+If you mug stops updating and becomes unavailable, simply try putting it in pairing mode and waiting 15-60 seconds. It should reconnect automatically.
+This doesn't happen often unless using Bluetooth Proxies.
 
 ##### 'Operation failed with ATT error: 0x0e' or another connection error
 
@@ -97,7 +101,7 @@ If that fails you can try reloading the integration.
 - This maintains a connection to your mug which:
     - may affect battery
     - may interfere with other local bluetooth integrations as it can only maintain one connection at a time.
-- Currently, it won't work with more than one mug
+- With Bluetooth Proxies you may have to put it into pairing mode manually if it disconnects
 
 ## Examples
 

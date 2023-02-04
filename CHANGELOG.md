@@ -12,6 +12,7 @@
 * Text Entity for Mug Name
 * Select Entity for Mug Temperature Unit
 * Translations (en/fr) for entity states/attributes
+* Partial support for Bluetooth Proxies
 
 ### Changed
 * Target Temperature sensor was converted to editable Number Entity
