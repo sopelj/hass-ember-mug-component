@@ -21,6 +21,7 @@ from .const import (
     DOMAIN,
     ICON_DEFAULT,
     ICON_EMPTY,
+    ICON_UNAVAILABLE,
     LIQUID_STATE_MAPPING,
     LIQUID_STATE_OPTIONS,
     LIQUID_STATE_TEMP_ICONS,
@@ -86,7 +87,13 @@ class EmberMugStateSensor(EmberMugSensor):
     @property
     def icon(self) -> str:
         """Change icon based on state."""
-        return ICON_EMPTY if self.state == LiquidStateValue.EMPTY else ICON_DEFAULT
+        match self.state:
+            case LiquidStateValue.UNKNOWN | None:
+                return ICON_UNAVAILABLE
+            case LiquidStateValue.EMPTY:
+                return ICON_EMPTY
+            case _:
+                return ICON_DEFAULT
 
     @property
     def native_value(self) -> str | None:

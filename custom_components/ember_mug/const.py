@@ -9,6 +9,7 @@ MANUFACTURER: Final[str] = "Ember"
 
 ICON_DEFAULT = "mdi:coffee"
 ICON_EMPTY = "mdi:coffee-outline"
+ICON_UNAVAILABLE = "mdi:coffee-off-outline"
 
 ATTR_BATTERY_VOLTAGE = "battery_voltage"
 
