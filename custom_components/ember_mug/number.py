@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import logging
+from typing import Any
 
 from homeassistant.components.number import (
     NumberDeviceClass,
@@ -17,7 +18,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
 from .coordinator import MugDataUpdateCoordinator
-from .entity import BaseMugValueEntity, format_temp
+from .entity import BaseMugValueEntity, ensure_celsius
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -57,11 +58,23 @@ class MugTargetTempNumberEntity(MugNumberEntity):
     @property
     def native_value(self) -> float | None:
         """Return mug attribute as temp."""
-        return format_temp(super().native_value, self.coordinator.data.temperature_unit)
+        return ensure_celsius(
+            super().native_value,
+            self.coordinator.data.temperature_unit,
+        )
 
     async def async_set_native_value(self, value: float) -> None:
         """Set the mug target temp."""
         await self.coordinator.connection.set_target_temp(value)
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return device specific state attributes."""
+        return {
+            "native_value": self.coordinator.data.target_temp,
+            "internal_temperature_unit": self.coordinator.data.temperature_unit,
+            **super().extra_state_attributes,
+        }
 
 
 async def async_setup_entry(

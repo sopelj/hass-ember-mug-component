@@ -14,7 +14,7 @@ from .coordinator import MugDataUpdateCoordinator
 _LOGGER = logging.getLogger(__name__)
 
 
-def format_temp(
+def ensure_celsius(
     value: float | None,
     source_unit: UnitOfTemperature | TemperatureUnit,
 ) -> float | None:
@@ -27,7 +27,7 @@ def format_temp(
             source_unit,
             UnitOfTemperature.CELSIUS,
         )
-    return round(value, 2)
+    return value
 
 
 class BaseMugEntity(CoordinatorEntity):

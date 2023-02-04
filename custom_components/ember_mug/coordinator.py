@@ -184,7 +184,6 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[EmberMug]):
         """Return information about the mug."""
         firmware = self.data.firmware
         return DeviceInfo(
-            # identifiers={(DOMAIN, cast(str, self._entry_id))},
             connections={(CONNECTION_BLUETOOTH, self.ble_device.address)},
             name=name if (name := self.data.name) != "EMBER" else self.device_name,
             model=self.data.model,

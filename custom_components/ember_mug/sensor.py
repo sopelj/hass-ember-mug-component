@@ -26,7 +26,7 @@ from .const import (
     LIQUID_STATE_TEMP_ICONS,
     LiquidStateValue,
 )
-from .entity import BaseMugValueEntity, format_temp
+from .entity import BaseMugValueEntity, ensure_celsius
 
 SENSOR_TYPES = {
     "liquid_state": SensorEntityDescription(
@@ -150,7 +150,19 @@ class EmberMugTemperatureSensor(EmberMugSensor):
     @property
     def native_value(self) -> float | None:
         """Return sensor state."""
-        return format_temp(super().native_value, self.coordinator.data.temperature_unit)
+        return ensure_celsius(
+            super().native_value,
+            self.coordinator.data.temperature_unit,
+        )
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return device specific state attributes."""
+        return {
+            "native_value": self.coordinator.data.current_temp,
+            "internal_temperature_unit": self.coordinator.data.temperature_unit,
+            **super().extra_state_attributes,
+        }
 
 
 class EmberMugBatterySensor(EmberMugSensor):

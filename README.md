@@ -89,6 +89,33 @@ If you are running in HassOS it should automatically start, but sometimes in doc
 Many things can cause issues with connectivity, such as unsupported adapters and interference.
 The [Home Assistant Bluetooth Documentation](https://www.home-assistant.io/integrations/bluetooth/#troubleshooting) has some excellent steps for troubleshooting.
 
+#### Debugging
+
+If something isn't working, and you aren't sure why, you can increase logging levels in Home Assistant in your configuration.yaml to get more information.
+Even if you're not sure what it means, it can help debug if you open an issue with this information.
+
+```yaml
+logger:
+    default: error  # or whatever you want
+    logs:
+      custom_components.ember_mug: debug
+      ember_mug: debug
+      bleak.backends.bluezdbus.client: debug
+      bleak_retry_connector: debug
+```
+
+Also, if you use Bluetooth proxies you can also activate verbose logging in ESPHome with:
+
+```yaml
+esp32:
+  framework:
+    sdkconfig_options:
+      CONFIG_BT_LOG_GATT_TRACE_LEVEL: VERBOSE
+
+logger:
+  level: VERBOSE
+```
+
 ##### Device not found or stops updating
 
 On rare occasions the mug may disconnect and have trouble reconnecting. In those cases you can just put your mug back in pairing mode and, it should reconnect within a minute.
