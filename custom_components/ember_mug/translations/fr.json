@@ -6,12 +6,13 @@
         "data": {
           "address": "Tasse (adresse MAC)",
           "name": "Nom",
-          "temperature_unit": "Unité de température"
+          "temperature_unit": "Unité de température",
+          "include_extra": "Inclure des attributes supplémentaire pour développement"
         }
       }
     },
     "abort": {
-      "unknown": "Une erreur inconue est survenue",
+      "unknown": "Une erreur inconnue est survenue",
       "cannot_connect": "Impossible de se connecter à la tasse.",
       "no_new_devices": "Aucune nouvelle tasse a été trouvé. Veuillez assurer qu'il est en mode de jumelage."
     }

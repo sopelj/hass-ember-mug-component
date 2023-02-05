@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from enum import Enum
 import logging
+from typing import Literal
 
 from homeassistant.components.select import SelectEntity, SelectEntityDescription
 from homeassistant.config_entries import ConfigEntry
@@ -64,7 +65,10 @@ class MugTempUnitSelectEntity(MugSelectEntity):
             return f"mdi:temperature-{unit}"
         return "mdi:help-rhombus-outline"
 
-    async def async_select_option(self, option: str) -> None:
+    async def async_select_option(
+        self,
+        option: Literal["°C", "°F"] | UnitOfTemperature,
+    ) -> None:
         """Change the selected option."""
         await self.coordinator.connection.set_temperature_unit(option)
 

@@ -107,14 +107,17 @@ class EmberMugStateSensor(EmberMugSensor):
     def extra_state_attributes(self) -> dict[str, Any]:
         """Return device specific state attributes."""
         data = self.coordinator.data
-        return {
-            "date_time_zone": data.date_time_zone,
+        attrs = {
             "firmware_info": data.firmware,
-            "udsk": data.udsk,
-            "dsk": data.dsk,
             "raw_state": data.liquid_state,
-            **super().extra_state_attributes,
         }
+        if data.include_extra:
+            attrs |= {
+                "date_time_zone": data.date_time_zone,
+                "udsk": data.udsk,
+                "dsk": data.dsk,
+            }
+        return attrs | super().extra_state_attributes
 
 
 class EmberMugLiquidLevelSensor(EmberMugSensor):
@@ -159,7 +162,6 @@ class EmberMugTemperatureSensor(EmberMugSensor):
         """Return device specific state attributes."""
         return {
             "native_value": self.coordinator.data.current_temp,
-            "internal_temperature_unit": self.coordinator.data.temperature_unit,
             **super().extra_state_attributes,
         }
 
@@ -171,13 +173,14 @@ class EmberMugBatterySensor(EmberMugSensor):
     def extra_state_attributes(self) -> dict[str, Any]:
         """Return device specific state attributes."""
         data = self.coordinator.data
-        return {
-            ATTR_BATTERY_VOLTAGE: data.battery_voltage,
+        attrs = {
             ATTR_BATTERY_CHARGING: data.battery.on_charging_base
             if data.battery
             else None,
-            **super().extra_state_attributes,
         }
+        if data.include_extra:
+            attrs[ATTR_BATTERY_VOLTAGE] = data.battery_voltage
+        return attrs | super().extra_state_attributes
 
 
 async def async_setup_entry(

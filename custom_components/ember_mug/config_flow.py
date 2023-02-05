@@ -20,7 +20,7 @@ from homeassistant.data_entry_flow import FlowResult
 import voluptuous as vol
 
 from . import _LOGGER
-from .const import DOMAIN
+from .const import CONF_INCLUDE_EXTRA, DOMAIN
 
 
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -107,6 +107,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 ): vol.In(
                     [UnitOfTemperature.CELSIUS, UnitOfTemperature.FAHRENHEIT],
                 ),
+                vol.Optional(CONF_INCLUDE_EXTRA, default=False): vol.Boolean(),
             },
         )
         return self.async_show_form(

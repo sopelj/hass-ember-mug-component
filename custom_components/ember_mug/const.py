@@ -12,6 +12,7 @@ ICON_EMPTY = "mdi:coffee-outline"
 ICON_UNAVAILABLE = "mdi:coffee-off-outline"
 
 ATTR_BATTERY_VOLTAGE = "battery_voltage"
+CONF_INCLUDE_EXTRA = "include_extra"
 
 
 class LiquidStateValue(StrEnum):

@@ -39,6 +39,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[EmberMug]):
         ble_device: BLEDevice,
         base_unique_id: str,
         device_name: str,
+        include_extra: bool = False,
     ) -> None:
         """Initialize global Mug data updater."""
         super().__init__(
@@ -49,7 +50,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[EmberMug]):
         )
         self.device_name = device_name
         self.base_unique_id = base_unique_id
-        self.data = EmberMug(ble_device)
+        self.data = EmberMug(ble_device, include_extra=include_extra)
         self.connection = self.data.connection()
         self.available = False
         self.last_updated: datetime | None = None

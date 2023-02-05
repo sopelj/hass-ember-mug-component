@@ -19,7 +19,7 @@ from homeassistant.const import (
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
 
-from .const import DOMAIN
+from .const import CONF_INCLUDE_EXTRA, DOMAIN
 from .coordinator import MugDataUpdateCoordinator
 
 PLATFORMS = [
@@ -50,6 +50,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         ble_device,
         entry.unique_id,
         entry.data.get(CONF_NAME, entry.title),
+        include_extra=entry.data.get(CONF_INCLUDE_EXTRA, False),
     )
 
     entry.async_on_unload(mug_coordinator.async_start())

@@ -6,7 +6,8 @@
         "data": {
           "address": "マグカップ（MACアドレス）",
           "name": "名",
-          "temperature_unit": "温度単位"
+          "temperature_unit": "温度単位",
+          "include_extra": "開発用に追加の属性を含めます"
         }
       }
     },

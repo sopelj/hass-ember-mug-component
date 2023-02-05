@@ -6,7 +6,8 @@
         "data": {
           "address": "Mug (MAC Address)",
           "name": "Name",
-          "temperature_unit": "Temperature Unit"
+          "temperature_unit": "Temperature Unit",
+          "include_extra": "Include extra attributes for development"
         }
       }
     },

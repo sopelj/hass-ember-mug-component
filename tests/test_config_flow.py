@@ -11,6 +11,8 @@ from homeassistant.data_entry_flow import FlowResultType
 import pytest
 from voluptuous import MultipleInvalid
 
+from custom_components.ember_mug import CONF_INCLUDE_EXTRA
+
 from tests import MUG_SERVICE_INFO, TEST_MAC, TEST_MUG_NAME, patch_async_setup_entry
 
 
@@ -48,6 +50,7 @@ async def test_bluetooth_discovery(hass: HomeAssistant) -> None:
         CONF_ADDRESS: TEST_MAC,
         CONF_NAME: TEST_MUG_NAME,
         CONF_TEMPERATURE_UNIT: UnitOfTemperature.CELSIUS,
+        CONF_INCLUDE_EXTRA: False,
     }
 
     assert len(mock_setup_entry.mock_calls) == 1
