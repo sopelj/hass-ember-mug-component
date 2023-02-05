@@ -136,7 +136,8 @@ If that fails you can try reloading the integration.
 
 If you want to have notifications similar to the app you can do something like:
 
-*Note*: Replace `c90f59d633f9` with your mug's MAC address.
+> **Note**
+>  Replace `c90f59d633f9` with your mug's MAC address.
 
 ```yaml
 automation:
@@ -243,7 +244,9 @@ You can change these in de device page or the entities can be added to your dash
 
 ![Config entities example](./examples/config-entities.png)
 
-*Note*: Despite being a "light" the LED cannot be turned off and brightness cannot be adjusted. This was simply to provide an easy way to set the colour.
+> **Note**
+> Despite being a "light" the LED cannot be turned off and brightness cannot be adjusted. This was simply to provide an easy way to set the colour.
+> The "Temperature Unit" selected will be written to the mug, but does not change the value displayed in Home Assistant.
 
 You can also call these in services for your automations.
 
