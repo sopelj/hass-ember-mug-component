@@ -1,0 +1,49 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Dodaj kubek Ember",
+        "data": {
+          "address": "Kubek (adres MAC)",
+          "name": "Nazwa",
+          "temperature_unit": "Jednostka temperatury",
+          "include_extra": "Uwzględnij dodatkowe atrybuty dla rozwoju"
+        }
+      }
+    },
+    "abort": {
+      "unknown": "Wystąpił nieznany błąd",
+      "cannot_connect": "Nie można połączyć się z kubkiem",
+      "no_new_devices": "Nie znaleziono nowych kubków. Upewnij się, że jest w trybie parowania."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "liquid_state": {
+        "state": {
+          "unknown": "Nieznany",
+          "empty": "Pussty",
+          "filling": "Napełniając",
+          "cold_no_control":  "Zimno (bez kontroli)",
+          "cooling": "Chłodzić",
+          "heating": "Ogrzać",
+          "perfect": "Idealny",
+          "warm_no_control": "Ciepło (bez kontroli)"
+        }
+      }
+    }
+  },
+  "state_attributes": {
+    "_": {
+      "date_time_zone": { "name": "Data i strefa czasowa" },
+      "firmware_info": { "name": "Oprogramowanie układowe"},
+      "udsk": { "name": "UDSK" },
+      "dsk": { "name": "DSK" },
+      "raw_state": { "name": "Stan surowy" },
+      "raw_liquid_level": { "name": "Poziom surowej cieczy" },
+      "battery_voltage": { "name": "Napięcie bateria" },
+      "battery_charging": { "name": "Kubek na podstawce ładującej" },
+      "last_updated": { "name": "Nowa wersja" }
+    }
+  }
+}
