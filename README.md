@@ -66,6 +66,11 @@ To do so:
 
 #### Troubleshooting
 
+##### Changing modes / button functions
+
+If you are unsure exactly how long to press the buttons, are wish to have more information on the basic functionality of the mug,
+you can look at the "Quick Start Guide" that came with your mug, or consult the digital version [on their website](https://support.ember.com/hc/en-us/articles/115002624512-Ember-Mug-Quick-Start-Guide)
+
 ##### Device randomly becomes unavailable
 
 If you mug stops updating and becomes unavailable, simply try putting it in pairing mode and waiting 15-60 seconds. It should reconnect automatically.
