@@ -80,14 +80,11 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[EmberMug]):
             self.available = False
             raise UpdateFailed(f"An error occurred updating mug: {e=}")
 
-        if self._async_handle_callback not in self.connection._callbacks:
-            _LOGGER.warning(
-                "Update called, but no callback in %s. Registering again.",
-                self.connection._callbacks,
-            )
-            self._cancel_callback = self.connection.register_callback(
-                self._async_handle_callback,
-            )
+        # Ensure callbacks are registered
+        self._cancel_callback = self.connection.register_callback(
+            self._async_handle_callback,
+        )
+
         _LOGGER.debug(
             "[%s Update] Changed: %s",
             "Full" if full_update else "Partial",
