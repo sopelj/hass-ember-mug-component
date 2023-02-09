@@ -160,13 +160,13 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[EmberMug]):
             change,
         )
         self.connection.set_device(service_info.device)
-        self.async_request_refresh()
+        self.hass.loop.create_task(self.async_request_refresh())
 
     @callback
     def _async_handle_callback(self, mug: EmberMug) -> None:
         """Handle a Bluetooth event."""
         _LOGGER.debug("Callback called in Home Assistant")
-        self.async_update_listeners()
+        self.async_set_updated_data(mug)
 
     def get_mug_attr(self, mug_attr: str) -> Any:
         """Get a mug attribute by name (recursively) or return None."""
