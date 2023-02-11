@@ -69,6 +69,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[EmberMug]):
             changed = []
             if self._last_refresh_was_full is False:
                 # Only fully poll all data every other call to limit time
+                changed = await self.mug.update_initial()
                 changed = await self.mug.update_all()
             else:
                 changed += await self.mug.update_queued_attributes()
