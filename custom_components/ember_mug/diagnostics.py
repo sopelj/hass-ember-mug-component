@@ -19,6 +19,6 @@ async def async_get_config_entry_diagnostics(
     data: dict[str, Any] = {
         "info": coordinator.data.as_dict(),
         "state": coordinator.data.liquid_state_display,
-        "address": coordinator.data.device.address,
+        "address": coordinator.mug.device.address,
     }
     return data

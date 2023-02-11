@@ -30,7 +30,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class MugDataUpdateCoordinator(DataUpdateCoordinator[EmberMug]):
+class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
     """Class to manage fetching Mug data."""
 
     def __init__(
@@ -161,10 +161,10 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[EmberMug]):
         self.hass.loop.create_task(self.async_request_refresh())
 
     @callback
-    def _async_handle_callback(self, mug: EmberMug) -> None:
+    def _async_handle_callback(self, mug_data: MugData) -> None:
         """Handle a Bluetooth event."""
         _LOGGER.debug("Callback called in Home Assistant")
-        self.async_set_updated_data(mug)
+        self.async_set_updated_data(mug_data)
 
     def get_mug_attr(self, mug_attr: str) -> Any:
         """Get a mug attribute by name (recursively) or return None."""
@@ -181,7 +181,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[EmberMug]):
         """Return information about the mug."""
         firmware = self.data.firmware
         return DeviceInfo(
-            connections={(CONNECTION_BLUETOOTH, self.data.device.address)},
+            connections={(CONNECTION_BLUETOOTH, self.mug.device.address)},
             name=name if (name := self.data.name) != "EMBER" else self.device_name,
             model=self.data.model,
             suggested_area="Kitchen",
