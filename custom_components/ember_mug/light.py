@@ -48,8 +48,7 @@ class MugLightEntity(BaseMugEntity, LightEntity):
         _LOGGER.debug(f"Received turn on with {kwargs}")
         if ATTR_RGB_COLOR in kwargs:
             rgb = kwargs[ATTR_RGB_COLOR]
-            await self.coordinator.connection.ensure_connection()
-            await self.coordinator.connection.set_led_colour(Colour(*rgb))
+            await self.coordinator.mug.set_led_colour(Colour(*rgb))
             self._attr_rgb_color = rgb
             self.async_write_ha_state()
         # Nothing else to do, the light is always on.

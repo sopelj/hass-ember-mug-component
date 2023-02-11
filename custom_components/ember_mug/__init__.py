@@ -55,7 +55,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     entry.async_on_unload(mug_coordinator.async_start())
     startup_event = Event()
-    cancel_first_update = mug_coordinator.connection.register_callback(
+    cancel_first_update = mug_coordinator.mug.register_callback(
         lambda *_: startup_event.set(),
     )
 
@@ -82,7 +82,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     async def _async_stop(event: Event) -> None:
         """Close the connection."""
-        await mug_coordinator.connection.disconnect()
+        await mug_coordinator.mug.disconnect()
 
     entry.async_on_unload(
         hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STOP, _async_stop),
@@ -101,7 +101,7 @@ async def set_temperature_unit(
         return
     try:
         async with async_timeout.timeout(10):
-            await mug_coordinator.connection.set_temperature_unit(unit)
+            await mug_coordinator.mug.set_temperature_unit(unit)
     except (BleakError, TimeoutError, EOFError) as e:
         _LOGGER.warning("Unable to set temperature unit to %s: %s.", unit, e)
 
@@ -116,7 +116,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
     if unload_ok:
         mug_coordinator = hass.data[DOMAIN].pop(entry.entry_id)
-        await mug_coordinator.connection.disconnect()
+        await mug_coordinator.mug.disconnect()
 
         if not hass.config_entries.async_entries(DOMAIN):
             hass.data.pop(DOMAIN)

@@ -70,7 +70,7 @@ class MugTempUnitSelectEntity(MugSelectEntity):
         option: Literal["°C", "°F"] | UnitOfTemperature,
     ) -> None:
         """Change the selected option."""
-        await self.coordinator.connection.set_temperature_unit(option)
+        await self.coordinator.mug.set_temperature_unit(option)
 
 
 async def async_setup_entry(
