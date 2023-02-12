@@ -15,7 +15,6 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from . import MugDataUpdateCoordinator
 from .const import (
     ATTR_BATTERY_VOLTAGE,
     DOMAIN,
@@ -27,7 +26,9 @@ from .const import (
     LIQUID_STATE_TEMP_ICONS,
     LiquidStateValue,
 )
+from .coordinator import MugDataUpdateCoordinator
 from .entity import BaseMugValueEntity
+from .models import HassMugData
 
 SENSOR_TYPES = {
     "liquid_state": SensorEntityDescription(
@@ -189,13 +190,13 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up Entities."""
-    coordinator: MugDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
+    data: HassMugData = hass.data[DOMAIN][entry.entry_id]
     entry_id = entry.entry_id
     assert entry_id is not None
     entities: list[EmberMugSensor] = [
-        EmberMugStateSensor(coordinator, "liquid_state"),
-        EmberMugLiquidLevelSensor(coordinator, "liquid_level"),
-        EmberMugTemperatureSensor(coordinator, "current_temp"),
-        EmberMugBatterySensor(coordinator, "battery.percent"),
+        EmberMugStateSensor(data.coordinator, "liquid_state"),
+        EmberMugLiquidLevelSensor(data.coordinator, "liquid_level"),
+        EmberMugTemperatureSensor(data.coordinator, "current_temp"),
+        EmberMugBatterySensor(data.coordinator, "battery.percent"),
     ]
     async_add_entities(entities)

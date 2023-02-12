@@ -1,31 +1,20 @@
 """Coordinator for all the sensors."""
 from __future__ import annotations
 
-import asyncio
 from datetime import datetime, timedelta
 import logging
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 from ember_mug import EmberMug
 from ember_mug.data import MugData
 from home_assistant_bluetooth import BluetoothServiceInfoBleak
-from homeassistant.components.bluetooth import (
-    BluetoothCallbackMatcher,
-    BluetoothChange,
-    BluetoothScanningMode,
-    async_register_callback,
-    async_track_unavailable,
-)
-from homeassistant.core import CALLBACK_TYPE, HomeAssistant, callback
+from homeassistant.components.bluetooth import BluetoothChange
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.device_registry import CONNECTION_BLUETOOTH
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .const import MANUFACTURER
-
-if TYPE_CHECKING:
-    from bleak.backends.device import BLEDevice
-
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -37,10 +26,9 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
         self,
         hass: HomeAssistant,
         logger: logging.Logger,
-        ble_device: BLEDevice,
+        mug: EmberMug,
         base_unique_id: str,
         device_name: str,
-        include_extra: bool = False,
     ) -> None:
         """Initialize global Mug data updater."""
         super().__init__(
@@ -51,14 +39,12 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
         )
         self.device_name = device_name
         self.base_unique_id = base_unique_id
-        self.mug = EmberMug(ble_device, include_extra=include_extra)
+        self.mug = mug
         self.data = self.mug.data
         self.available = False
+        self._initial_update = True
         self.last_updated: datetime | None = None
-        self._updating = asyncio.Lock()
         self._last_refresh_was_full = False
-        self._cancel_track_unavailable: CALLBACK_TYPE | None = None
-        self._cancel_bluetooth_advertisements: CALLBACK_TYPE | None = None
         _LOGGER.info(f"Ember Mug {self.name} Setup")
 
     async def _async_update_data(self) -> MugData:
@@ -67,10 +53,12 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
         full_update = not self._last_refresh_was_full
         try:
             changed = []
+            if self._initial_update is True:
+                changed = await self.mug.update_initial()
+                self._initial_update = False
             if self._last_refresh_was_full is False:
                 # Only fully poll all data every other call to limit time
-                changed = await self.mug.update_initial()
-                changed = await self.mug.update_all()
+                changed += await self.mug.update_all()
             else:
                 changed += await self.mug.update_queued_attributes()
             self._last_refresh_was_full = not self._last_refresh_was_full
@@ -94,49 +82,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
         return self.mug.data
 
     @callback
-    def async_start(self) -> CALLBACK_TYPE:
-        """Start the data updater."""
-        self._async_start()
-
-        @callback
-        def _async_cancel() -> None:
-            self._async_stop()
-
-        return _async_cancel
-
-    @callback
-    def _async_start(self) -> None:
-        """Start the Bluetooth callbacks."""
-        address = self.mug.device.address
-        self._cancel_callback = self.mug.register_callback(
-            self._async_handle_callback,
-        )
-        self._cancel_bluetooth_advertisements = async_register_callback(
-            self.hass,
-            self._async_handle_bluetooth_event,
-            BluetoothCallbackMatcher(address=address),
-            BluetoothScanningMode.ACTIVE,
-        )
-        self._cancel_track_unavailable = async_track_unavailable(
-            self.hass,
-            self._async_handle_unavailable,
-            address,
-        )
-
-    @callback
-    def _async_stop(self) -> None:
-        """Stop the Bluetooth callbacks."""
-        if self._cancel_callback is not None:
-            self._cancel_callback()
-        if self._cancel_bluetooth_advertisements is not None:
-            self._cancel_bluetooth_advertisements()
-            self._cancel_bluetooth_advertisements = None
-        if self._cancel_track_unavailable is not None:
-            self._cancel_track_unavailable()
-            self._cancel_track_unavailable = None
-
-    @callback
-    def _async_handle_unavailable(
+    def handle_unavailable(
         self,
         service_info: BluetoothServiceInfoBleak,
     ) -> None:
@@ -146,7 +92,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
         self.async_update_listeners()
 
     @callback
-    def _async_handle_bluetooth_event(
+    def handle_bluetooth_event(
         self,
         service_info: BluetoothServiceInfoBleak,
         change: BluetoothChange,
@@ -158,7 +104,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
             change,
         )
         self.mug.set_device(service_info.device)
-        self.hass.loop.create_task(self.async_request_refresh())
+        # self.hass.loop.create_task(self.async_request_refresh())
 
     @callback
     def _async_handle_callback(self, mug_data: MugData) -> None:

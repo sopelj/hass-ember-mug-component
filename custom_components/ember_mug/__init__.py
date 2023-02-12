@@ -1,12 +1,17 @@
 """Ember Mug Custom Integration."""
 from __future__ import annotations
 
-from asyncio import Event
+import asyncio
 import logging
 
 import async_timeout
 from bleak import BleakError
+from ember_mug import EmberMug
 from homeassistant.components import bluetooth
+from homeassistant.components.bluetooth import (
+    BluetoothCallbackMatcher,
+    BluetoothScanningMode,
+)
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
     CONF_ADDRESS,
@@ -16,11 +21,12 @@ from homeassistant.const import (
     Platform,
     UnitOfTemperature,
 )
-from homeassistant.core import HomeAssistant
+from homeassistant.core import Event, HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
 
 from .const import CONF_INCLUDE_EXTRA, DOMAIN
 from .coordinator import MugDataUpdateCoordinator
+from .models import HassMugData
 
 PLATFORMS = [
     Platform.BINARY_SENSOR,
@@ -44,19 +50,31 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         raise ConfigEntryNotReady(
             f"Could not find Ember Mug with address {entry.data[CONF_ADDRESS]}",
         )
-    hass.data[DOMAIN][entry.entry_id] = mug_coordinator = MugDataUpdateCoordinator(
-        hass,
-        _LOGGER,
+
+    ember_mug = EmberMug(
         ble_device,
-        entry.unique_id,
-        entry.data.get(CONF_NAME, entry.title),
         include_extra=entry.data.get(CONF_INCLUDE_EXTRA, False),
     )
+    mug_coordinator = MugDataUpdateCoordinator(
+        hass,
+        _LOGGER,
+        ember_mug,
+        entry.unique_id,
+        entry.data.get(CONF_NAME, entry.title),
+    )
 
-    entry.async_on_unload(mug_coordinator.async_start())
-    startup_event = Event()
+    startup_event = asyncio.Event()
     cancel_first_update = mug_coordinator.mug.register_callback(
         lambda *_: startup_event.set(),
+    )
+
+    entry.async_on_unload(
+        bluetooth.async_register_callback(
+            hass,
+            mug_coordinator.handle_bluetooth_event,
+            BluetoothCallbackMatcher(address=address),
+            BluetoothScanningMode.ACTIVE,
+        ),
     )
 
     try:
@@ -75,6 +93,19 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         ) from ex
     finally:
         cancel_first_update()
+
+    entry.async_on_unload(
+        bluetooth.async_track_unavailable(
+            hass,
+            mug_coordinator.handle_unavailable,
+            address,
+        ),
+    )
+
+    hass.data.setdefault(DOMAIN, {})[entry.entry_id] = HassMugData(
+        ember_mug,
+        mug_coordinator,
+    )
 
     await set_temperature_unit(mug_coordinator, entry.data[CONF_TEMPERATURE_UNIT])
     entry.async_on_unload(entry.add_update_listener(async_update_listener))
@@ -115,8 +146,8 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
     unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
     if unload_ok:
-        mug_coordinator = hass.data[DOMAIN].pop(entry.entry_id)
-        await mug_coordinator.mug.disconnect()
+        hass_mug_data: HassMugData = hass.data[DOMAIN].pop(entry.entry_id)
+        await hass_mug_data.coordinator.mug.disconnect()
 
         if not hass.config_entries.async_entries(DOMAIN):
             hass.data.pop(DOMAIN)

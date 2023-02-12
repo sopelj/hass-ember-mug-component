@@ -15,8 +15,8 @@ from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
-from .coordinator import MugDataUpdateCoordinator
 from .entity import BaseMugEntity
+from .models import HassMugData
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -64,5 +64,5 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the mug light."""
-    coordinator: MugDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
-    async_add_entities([MugLightEntity(coordinator, "led_colour")])
+    data: HassMugData = hass.data[DOMAIN][entry.entry_id]
+    async_add_entities([MugLightEntity(data.coordinator, "led_colour")])

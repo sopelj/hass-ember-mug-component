@@ -9,6 +9,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
+from . import HassMugData
 from .const import DOMAIN, MUG_NAME_REGEX
 from .coordinator import MugDataUpdateCoordinator
 from .entity import BaseMugValueEntity
@@ -53,5 +54,5 @@ async def async_setup_entry(
 ) -> None:
     """Set up Binary Sensor Entities."""
     assert entry.entry_id is not None
-    coordinator: MugDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
-    async_add_entities([MugTextEntity(coordinator, attr) for attr in TEXT_TYPES])
+    data: HassMugData = hass.data[DOMAIN][entry.entry_id]
+    async_add_entities([MugTextEntity(data.coordinator, attr) for attr in TEXT_TYPES])

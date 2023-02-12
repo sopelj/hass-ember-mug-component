@@ -18,6 +18,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import DOMAIN
 from .coordinator import MugDataUpdateCoordinator
 from .entity import BaseMugValueEntity
+from .models import HassMugData
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -66,9 +67,9 @@ async def async_setup_entry(
 ) -> None:
     """Set up Number Entities."""
     assert entry.entry_id is not None
-    coordinator: MugDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
+    data: HassMugData = hass.data[DOMAIN][entry.entry_id]
     async_add_entities(
         [
-            MugTargetTempNumberEntity(coordinator, "target_temp"),
+            MugTargetTempNumberEntity(data.coordinator, "target_temp"),
         ],
     )
