@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 import logging
 from typing import Any
 
+from bleak_retry_connector import close_stale_connections
 from ember_mug import EmberMug
 from ember_mug.data import MugData
 from home_assistant_bluetooth import BluetoothServiceInfoBleak
@@ -105,6 +106,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
         )
         self.mug.set_device(service_info.device)
         # self.hass.loop.create_task(self.async_request_refresh())
+        self.hass.loop.create_task(close_stale_connections(service_info.device))
 
     @callback
     def _async_handle_callback(self, mug_data: MugData) -> None:
