@@ -1,7 +1,6 @@
 {
   "name": "Ember Mug",
   "render_readme": true,
-  "version": "0.5.0",
   "iot_class": "Local Polling",
   "homeassistant": "2023.2.0"
 }
