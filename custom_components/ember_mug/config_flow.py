@@ -17,6 +17,7 @@ from homeassistant.const import (
     UnitOfTemperature,
 )
 from homeassistant.data_entry_flow import FlowResult
+from homeassistant.helpers import config_validation as cv
 import voluptuous as vol
 
 from . import _LOGGER
@@ -107,7 +108,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 ): vol.In(
                     [UnitOfTemperature.CELSIUS, UnitOfTemperature.FAHRENHEIT],
                 ),
-                vol.Optional(CONF_INCLUDE_EXTRA, default=False): vol.Boolean(),
+                vol.Optional(CONF_INCLUDE_EXTRA, default=False): cv.boolean,
             },
         )
         return self.async_show_form(
