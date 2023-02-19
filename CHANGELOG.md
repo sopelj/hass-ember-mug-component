@@ -1,9 +1,9 @@
 # Changelog
 
-## [0.5.0 - UNRELEASED]
+## [0.5.0]
 
 ### Notes
-* Requires Home Assistant 2023.2
+* Requires Home Assistant 2023.2+
 * Only supports Python 3.10+ (like 2023.2)
 
 ### Added
@@ -12,7 +12,7 @@
 * Text Entity for Mug Name
 * Select Entity for Mug Temperature Unit
 * Translations (en/fr) for entity states/attributes
-* Partial support for Bluetooth Proxies
+* *Partial* support for Bluetooth Proxies
 
 ### Changed
 * Target Temperature sensor was converted to editable Number Entity

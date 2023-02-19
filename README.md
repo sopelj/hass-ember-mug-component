@@ -7,13 +7,9 @@
 
 ![Device View](./examples/device_example.png)
 
-Custom integration for the Ember Mug in Home Assistant.
-It should work with the Ember Mug 1 & 2, but I have not tested with the thermos.
+A custom integration for the Ember Mug for Home Assistant.
+It should work with both the Ember Mug 1 & 2, but I have not tested with the thermos.
 Please let me know if you have another one and are willing to help test it.
-
-The protocol is not public, so there is quite a bit of guesswork involved.
-[@orlopau](https://github.com/orlopau) did a great job documenting some [UUIDs here](https://github.com/orlopau/ember-mug) And had to attempt to extract the rest of them.
-The rest I had to do some testing and reverse engineering.
 
 The actual Mug logic has been moved to [an external library](https://github.com/sopelj/python-ember-mug) as per the guidelines in Home Assistant.
 So if you have issues with the mug's internals and not the integration with home assistant please [raise issues there](https://github.com/sopelj/python-ember-mug/issues) :)
@@ -261,3 +257,9 @@ You can also call these in services for your automations.
 | LED Colour  | light.turn_on        | entity_id and rgb    |
 | Target Temp | number.set_value     | entity_id and value  |
 | Temp Unit   | select.select_option | entity_id and option |
+
+## Notice of Non-Affiliation and Disclaimer
+
+This project is not affiliated, associated, authorized, endorsed by, or in any way officially connected with Ember.
+
+The name Ember as well as related names, marks, emblems and images are registered trademarks of their respective owners.
