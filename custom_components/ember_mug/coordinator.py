@@ -105,7 +105,6 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
             change,
         )
         self.mug.set_device(service_info.device)
-        # self.hass.loop.create_task(self.async_request_refresh())
         self.hass.loop.create_task(close_stale_connections(service_info.device))
 
     @callback
