@@ -6,8 +6,8 @@ from typing import Any
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 
+from . import HassMugData
 from .const import DOMAIN
-from .coordinator import MugDataUpdateCoordinator
 
 
 async def async_get_config_entry_diagnostics(
@@ -15,7 +15,8 @@ async def async_get_config_entry_diagnostics(
     entry: ConfigEntry,
 ) -> dict[str, Any]:
     """Return diagnostics for a config entry."""
-    coordinator: MugDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
+    hass_data: HassMugData = hass.data[DOMAIN][entry.entry_id]
+    coordinator = hass_data.coordinator
     data: dict[str, Any] = {
         "info": coordinator.data.as_dict(),
         "state": coordinator.data.liquid_state_display,
