@@ -46,6 +46,9 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
         self._initial_update = True
         self.last_updated: datetime | None = None
         self._last_refresh_was_full = False
+        self._cancel_callback = self.mug.register_callback(
+            self._async_handle_callback,
+        )
         _LOGGER.info(f"Ember Mug {self.name} Setup")
 
     async def _async_update_data(self) -> MugData:
@@ -69,11 +72,6 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
             _LOGGER.error("An error occurred whilst updating the mug: %s", e)
             self.available = False
             raise UpdateFailed(f"An error occurred updating mug: {e=}")
-
-        # Ensure callbacks are registered
-        self._cancel_callback = self.mug.register_callback(
-            self._async_handle_callback,
-        )
 
         _LOGGER.debug(
             "[%s Update] Changed: %s",
@@ -105,6 +103,10 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
             change,
         )
         self.mug.set_device(service_info.device)
+        # Register or update callback
+        self._cancel_callback = self.mug.register_callback(
+            self._async_handle_callback,
+        )
         self.hass.loop.create_task(close_stale_connections(service_info.device))
 
     @callback
