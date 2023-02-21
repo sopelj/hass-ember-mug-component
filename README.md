@@ -244,6 +244,7 @@ Either via the device page, lovelace or services in automations.
 
 > **Note**
 > Despite being a "light" the LED cannot be turned off and brightness cannot be adjusted. This was simply to provide an easy way to set the colour.
+>
 > The "Temperature Unit" selected will be written to the mug, but does not change the value displayed in Home Assistant.
 
 #### Via the UI
