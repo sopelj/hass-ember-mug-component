@@ -43,24 +43,28 @@ Ensure you have the [Home Assistant Bluetooth Integration](https://www.home-assi
 
 ![https://my.home-assistant.io/badges/config_flow_start.svg](https://my.home-assistant.io/redirect/config_flow_start?domain=bluetooth)
 
-### Preparing your Mug
+### Setting up your Mug
 
 In order to function properly please, set up your mug using the app before trying to use this integration.
 This is not required, but if you don't, changing values such as the name, colour, temp, etc. via home assistant will not work.
 Once you set it up, then please forget the mug on your phone or at least disable Bluetooth, so they don't fight over the mug.
 
-> **Note**
-> If you had a version below 0.4 installed, please remove your device from home assistant and manually remove it in `bluetoothctl remove my-mac-address`.
-> You can do this in the Terminal Addon for HASS OS or on your host for other installation types.
-
-To do so:
 1. Set up the mug in the Ember mobile app
 2. Forget the mug from your Bluetooth Devices on your phone (or at least disable Bluetooth on it).
-3. Home Assistant should auto-detect the mug and prompt you to configure it.
-   - Choose "Configure"
-   - And then hit "Next"
-4. Once it has been added, then put your mug into pairing mode (Hold down the button on the bottom until it flashes blue)
-5. Your mug will exit paring mode automatically and go back to the default colour when it's setup.
+3. Home Assistant should auto-detect the mug and you should get a notification to set it up<br/>
+   ![Auto discovery Notification](./examples/discovery_setup_1_notification.png)
+   Choose "Check it out" or go to "Settings" -> "Devices"
+4. In your devices you should see an option for the mug<br/>
+   ![Discovered Device](./examples/discovery_setup_2_device.png)
+   Then choose "Configure"
+5. In the prompt change any options you wish.<br/>
+   ![Configuration](./examples/discovery_setup_3_prompt.png)
+   **You probably don't want extra attributes, they are for debugging and development only**
+   Then hit "Next"
+6. It will then try and connect to the mug. On success, you be prompted to choose a location.<br/>
+   ![Configuration](./examples/discovery_setup_4_location.png )
+7. Once it has been added, then put your mug into pairing mode (Hold down the button on the bottom until it flashes blue)
+8. Your mug will exit paring mode automatically and go back to the default colour when it's setup.
 
 #### Troubleshooting
 
@@ -238,18 +242,24 @@ cards:
 If your mug was initially setup with the mobile app, you can also change certain thing about your mug.
 Either via the device page, lovelace or services in automations.
 
+> **Note**
+> Despite being a "light" the LED cannot be turned off and brightness cannot be adjusted. This was simply to provide an easy way to set the colour.
+> The "Temperature Unit" selected will be written to the mug, but does not change the value displayed in Home Assistant.
+
+#### Via the UI
+
+You can change these in de device page via the UI. The entities can also be added to your dashboard if you prefer:
+
+![Config entities example](./examples/config_entities.png)
+
+Simply tap on the entity you wish to configure and change the value as desired.
+
+#### Via Scripts/Lovelace/Automations
+
 - Rename your mug (`sensor.ember_mug_c90f59d633f9_name`)
 - Change the LED colour of the mug (`light.ember_mug_c90f59d633f9_led`)
 - Set the desired temperature of you mug (`number.ember_mug_c90f59d633f9_target_temp`)
 - Set the mug's internal temperature unit (`select.ember_mug_c90f59d633f9_temperature_unit`)
-
-You can change these in de device page or the entities can be added to your dashboard:
-
-![Config entities example](./examples/config-entities.png)
-
-> **Note**
-> Despite being a "light" the LED cannot be turned off and brightness cannot be adjusted. This was simply to provide an easy way to set the colour.
-> The "Temperature Unit" selected will be written to the mug, but does not change the value displayed in Home Assistant.
 
 You can also call these in services for your automations.
 
