@@ -88,13 +88,12 @@ class EmberMugStateSensor(EmberMugSensor):
     @property
     def icon(self) -> str:
         """Change icon based on state."""
-        match self.state:
-            case LiquidStateValue.UNKNOWN | None:
-                return ICON_UNAVAILABLE
-            case LiquidStateValue.EMPTY:
-                return ICON_EMPTY
-            case _:
-                return ICON_DEFAULT
+        state = self.state
+        if state is None or self.coordinator.available is False:
+            return ICON_UNAVAILABLE
+        if state == LiquidStateValue.EMPTY:
+            return ICON_EMPTY
+        return ICON_DEFAULT
 
     @property
     def native_value(self) -> str | None:
