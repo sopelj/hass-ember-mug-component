@@ -26,13 +26,11 @@ if you have connection issues, please try one of them.
 
 ## Installation / Setup
 
-### Add Repository
+### Install via HACS
 
-Add to HACS as custom repository:
-
-<https://github.com/sopelj/hass-ember-mug-component>
-
-Install the integration in HACS and restart Home Assistant.
+1. Setup [HACS](https://hacs.xyz/docs/basic/getting_started) if you haven't already.
+2. Then you can add this repository as a custom repository: `https://github.com/sopelj/hass-ember-mug-component`
+3. Install the integration in HACS and restart Home Assistant.
 
 > **Note**
 > You do *not* need to manually add the integration in Home Assistant. Just installing it is enough for autodiscovery to work.
@@ -41,7 +39,7 @@ Install the integration in HACS and restart Home Assistant.
 
 Ensure you have the [Home Assistant Bluetooth Integration](https://www.home-assistant.io/integrations/bluetooth/) enabled, and you have your Bluetooth dongle setup.
 
-![https://my.home-assistant.io/badges/config_flow_start.svg](https://my.home-assistant.io/redirect/config_flow_start?domain=bluetooth)
+[![Open your Home Assistant instance and start setting up a new integration.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=bluetooth)
 
 ### Setting up your Mug
 
@@ -110,6 +108,10 @@ logger:
       bleak.backends.bluezdbus.client: debug
       bleak_retry_connector: debug
 ```
+
+You need to restart for it to take effect. You can see your logs here:
+
+[![Open your Home Assistant instance and show your Home Assistant logs.](https://my.home-assistant.io/badges/logs.svg)](https://my.home-assistant.io/redirect/logs/)
 
 Also, if you use Bluetooth proxies you can also activate verbose logging in ESPHome with:
 
@@ -249,7 +251,11 @@ Either via the device page, lovelace or services in automations.
 
 #### Via the UI
 
-You can change these in de device page via the UI. The entities can also be added to your dashboard if you prefer:
+You can change these in de device page via the UI:
+
+[![Open your Home Assistant instance and show your devices.](https://my.home-assistant.io/badges/devices.svg)](https://my.home-assistant.io/redirect/devices/)
+
+The entities can also be added to your dashboard if you prefer:
 
 ![Config entities example](./examples/config_entities.png)
 
