@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.5.1]
+
+### Notes
+* Requires Home Assistant 2023.3+
+
+### Fixed
+* Compatibility with changes decimal precision option
+
+
 ## [0.5.0]
 
 ### Notes

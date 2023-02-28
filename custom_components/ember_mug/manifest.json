@@ -5,7 +5,7 @@
   "issue_tracker": "https://github.com/sopelj/hass_ember_mug/issues",
   "domain": "ember_mug",
   "name": "Ember Mug",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "iot_class": "local_polling",
   "dependencies": ["bluetooth_adapters"],
   "requirements": ["python-ember-mug==0.6.0"],
