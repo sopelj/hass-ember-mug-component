@@ -1,21 +1,21 @@
 {
-  "codeowners": ["@sopelj"],
-  "config_flow": true,
-  "documentation": "https://github.com/sopelj/hass_ember_mug",
-  "issue_tracker": "https://github.com/sopelj/hass_ember_mug/issues",
   "domain": "ember_mug",
   "name": "Ember Mug",
-  "version": "0.5.1",
-  "iot_class": "local_polling",
-  "dependencies": ["bluetooth_adapters"],
-  "requirements": ["python-ember-mug==0.6.0"],
   "bluetooth": [
     { "local_name": "Ember Ceramic Mug" },
     { "service_uuid": "fc543622-236c-4c94-8fa9-944a3e5353fa" }
   ],
+  "codeowners": ["@sopelj"],
+  "config_flow": true,
+  "dependencies": ["bluetooth_adapters"],
+  "documentation": "https://github.com/sopelj/hass_ember_mug",
+  "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/sopelj/hass_ember_mug/issues",
+  "version": "0.5.1",
+  "requirements": ["python-ember-mug==0.6.0"],
   "loggers": [
-    "ember_mug",
     "bleak",
-    "bleak_retry_connector"
+    "bleak_retry_connector",
+    "ember_mug"
   ]
 }
