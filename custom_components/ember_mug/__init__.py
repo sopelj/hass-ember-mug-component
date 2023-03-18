@@ -72,7 +72,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         bluetooth.async_register_callback(
             hass,
             mug_coordinator.handle_bluetooth_event,
-            BluetoothCallbackMatcher(address=address),
+            BluetoothCallbackMatcher(address=address, connectable=True),
             BluetoothScanningMode.ACTIVE,
         ),
     )
