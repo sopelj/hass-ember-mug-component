@@ -36,7 +36,7 @@ MUG_SERVICE_INFO = BluetoothServiceInfoBleak(
         platform_data=((),),
         tx_power=-127,
     ),
-    device=BLEDevice(TEST_MAC, MUG_DEVICE_NAME),
+    device=BLEDevice(TEST_MAC, MUG_DEVICE_NAME, {}, 1),
     time=0,
     connectable=True,
 )
