@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.5.2]
+
+### Changes
+* Request only connectable adapters
+
 ## [0.5.1]
 
 ### Notes
