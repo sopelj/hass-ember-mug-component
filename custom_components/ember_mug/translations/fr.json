@@ -32,18 +32,5 @@
         }
       }
     }
-  },
-  "state_attributes": {
-    "_": {
-      "date_time_zone": { "name": "Date et fuseau horaire" },
-      "firmware_info": { "name": "Informations sur le micrologiciel"},
-      "udsk": { "name": "UDSK" },
-      "dsk": { "name": "DSK" },
-      "raw_state": { "name": "État" },
-      "raw_liquid_level": { "name": "Niveau du liquid" },
-      "battery_voltage": { "name": "Voltage de batterie" },
-      "battery_charging": { "name": "Sur la charge" },
-      "last_updated": { "name": "Dernière mise à jour" }
-    }
   }
 }

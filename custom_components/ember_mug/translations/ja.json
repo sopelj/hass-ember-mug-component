@@ -32,18 +32,5 @@
         }
       }
     }
-  },
-  "state_attributes": {
-    "_": {
-      "date_time_zone": { "name": "日付と時間帯" },
-      "firmware_info": { "name": "ファームウェア"},
-      "udsk": { "name": "UDSK" },
-      "dsk": { "name": "DSK" },
-      "raw_state": { "name": "状態" },
-      "raw_liquid_level": { "name": "液量" },
-      "battery_voltage": { "name": "電池電圧" },
-      "battery_charging": { "name": "充電スタンドで" },
-      "last_updated": { "name": "最後のアップデート" }
-    }
   }
 }

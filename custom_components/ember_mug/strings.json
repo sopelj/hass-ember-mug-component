@@ -32,18 +32,5 @@
         }
       }
     }
-  },
-  "state_attributes": {
-    "_": {
-      "date_time_zone": { "name": "Date and Timezone" },
-      "firmware_info": { "name": "Firmware info"},
-      "udsk": { "name": "UDSK" },
-      "dsk": { "name": "DSK" },
-      "raw_state": { "name": "Raw state" },
-      "raw_liquid_level": { "name": "Raw liquid level" },
-      "battery_voltage": { "name": "Battery voltage" },
-      "battery_charging": { "name": "Mug on charging base" },
-      "last_updated": { "name": "Last update" }
-    }
   }
 }
