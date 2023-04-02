@@ -65,8 +65,7 @@ Once you set it up, then please forget the mug on your phone or at least disable
 8. Your mug will exit paring mode automatically and go back to the default colour when it's setup.
 
 > **Note**
-> If using Bluetooth Proxies, it will stay in pairing mode unless you press the button once to take it out.
-> If you leave the range of your proxy you may need to put it back in pairing temporarily in order to reconnect.
+> If using Bluetooth Proxies please ensure you are using Home Assistant 2023.4 and ESPHome 2023.2 or later for best experience
 
 #### Troubleshooting
 
@@ -98,10 +97,7 @@ If you are running in HassOS it should automatically start, but sometimes in doc
 Many things can cause issues with connectivity, such as unsupported adapters and interference.
 The [Home Assistant Bluetooth Documentation](https://www.home-assistant.io/integrations/bluetooth/#troubleshooting) has some excellent steps for troubleshooting.
 
-#### Mug unavailable with Bluetooth Proxy
-
-If your mug goes out of range of your Bluetooth proxy it will become unavailable. You may need to manually put it back in pairing mode for it to reconnect.
-As long as your mug stays within range it should stay connected.
+If using Bluetooth Proxies please ensure you are using Home Assistant 2023.4 and ESPHome 2023.2 or later for the best experience
 
 #### Debugging
 
