@@ -1,7 +1,7 @@
 """Coordinator for all the sensors."""
 from __future__ import annotations
 
-from datetime import datetime, timedelta
+from datetime import timedelta
 import logging
 from typing import Any
 
@@ -44,7 +44,6 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
         self.data = self.mug.data
         self.available = False
         self._initial_update = True
-        self.last_updated: datetime | None = None
         self._last_refresh_was_full = False
         self._cancel_callback = self.mug.register_callback(
             self._async_handle_callback,
@@ -67,7 +66,6 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
                 changed += await self.mug.update_queued_attributes()
             self._last_refresh_was_full = not self._last_refresh_was_full
             self.available = True
-            self.last_updated = datetime.now()
         except Exception as e:
             _LOGGER.error("An error occurred whilst updating the mug: %s", e)
             self.available = False

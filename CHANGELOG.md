@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.6.0]
+
+### Notes
+* Requires Home Assistant 2023.4+
+
+### Features
+* Use new translations for entity names and state attributes
+
+### Fixes
+* Pairing with Bluetooth Proxies (just because of Home Assistant 2023.4)
+
+
 ## [0.5.2]
 
 ### Changes

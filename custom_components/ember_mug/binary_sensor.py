@@ -24,13 +24,11 @@ _LOGGER = logging.getLogger(__name__)
 SENSOR_TYPES = {
     "battery.on_charging_base": BinarySensorEntityDescription(
         key="power",
-        name="Power",
         device_class=BinarySensorDeviceClass.PLUG,
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
     "battery.percent": BinarySensorEntityDescription(
         key="low_battery",
-        name="Low battery",
         device_class=BinarySensorDeviceClass.BATTERY,
         entity_category=EntityCategory.DIAGNOSTIC,
     ),

@@ -18,8 +18,32 @@
     }
   },
   "entity": {
+    "binary_sensor": {
+      "low_battery": { "name": "低バッテリー" },
+      "power": { "name": "電源" }
+    },
+    "light": {
+      "led": { "name": "LED" }
+    },
+    "number": {
+      "target_temp": { "name": "目標温度" }
+    },
     "sensor": {
-      "liquid_state": {
+      "battery_percent": {
+        "name": "電池",
+        "state_attributes": {
+          "battery_voltage": { "name": "電池電圧" }
+        }
+      },
+      "current_temp": { "name": "現在の温度" },
+      "liquid_level": {
+        "name": "液量",
+        "state_attributes": {
+          "raw_liquid_level": { "name": "液量" }
+        }
+      },
+      "state": {
+        "name": "液体状態",
         "state": {
           "unknown": "未知数です",
           "empty": "空です",
@@ -29,8 +53,21 @@
           "heating": "加熱している",
           "perfect": "うってつけです",
           "warm_no_control": "暑い（管理ない）"
+        },
+        "state_attributes": {
+          "date_time_zone": { "name": "日付と時間帯" },
+          "dsk": { "name": "DSK" },
+          "firmware_info": { "name": "ファームウェア"},
+          "raw_state": { "name": "液体状態" },
+          "udsk": { "name": "UDSK" }
         }
       }
+    },
+    "select": {
+      "temperature_unit": { "name": "温度単位" }
+    },
+    "text": {
+      "name": { "name": "名" }
     }
   }
 }

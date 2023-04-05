@@ -33,21 +33,18 @@ from .models import HassMugData
 SENSOR_TYPES = {
     "liquid_state": SensorEntityDescription(
         key="state",
-        name="State",
-        translation_key="liquid_state",
         device_class=SensorDeviceClass.ENUM,
         options=LIQUID_STATE_OPTIONS,
     ),
     "liquid_level": SensorEntityDescription(
         key="liquid_level",
-        name="Liquid Level",
         icon="mdi:cup-water",
+        translation_key="liquid_level",
         suggested_display_precision=0,
         native_unit_of_measurement=PERCENTAGE,
     ),
     "current_temp": SensorEntityDescription(
         key="current_temp",
-        name="Current Temperature",
         suggested_display_precision=1,
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         state_class=SensorStateClass.MEASUREMENT,
@@ -55,7 +52,6 @@ SENSOR_TYPES = {
     ),
     "battery.percent": SensorEntityDescription(
         key="battery_percent",
-        name="Battery",
         suggested_display_precision=1,
         native_unit_of_measurement=PERCENTAGE,
         device_class=SensorDeviceClass.BATTERY,

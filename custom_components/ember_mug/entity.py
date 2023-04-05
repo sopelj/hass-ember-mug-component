@@ -1,6 +1,7 @@
 """Generic Entity Logic for multiple platforms."""
 from __future__ import annotations
 
+from collections.abc import Mapping
 import logging
 from typing import Any
 
@@ -48,6 +49,7 @@ class BaseMugEntity(CoordinatorEntity):
         entity_key = self.entity_description.key
         self._mug_attr = mug_attr
         self._address = coordinator.mug.device.address
+        self._attr_translation_key = entity_key
         self._attr_device_info = coordinator.device_info
         self._attr_unique_id = f"ember_mug_{coordinator.base_unique_id}_{entity_key}"
         self.entity_id = f"{self._domain}.{self._attr_unique_id}"
@@ -58,11 +60,9 @@ class BaseMugEntity(CoordinatorEntity):
         return self.coordinator.available
 
     @property
-    def extra_state_attributes(self) -> dict[str, Any]:
-        """Return the state attributes."""
-        return {
-            "last_updated": self.coordinator.last_updated,
-        }
+    def extra_state_attributes(self) -> Mapping[str, Any] | None:
+        """Return empty dict by default."""
+        return {}
 
     @callback
     def _async_update_attrs(self) -> None:

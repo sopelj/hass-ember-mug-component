@@ -18,8 +18,35 @@
     }
   },
   "entity": {
+    "binary_sensor": {
+      "low_battery": { "name": "Batterie faible" },
+      "power": { "name": "Allimentation" }
+    },
+    "light": {
+      "led": { "name": "DEL" }
+    },
+    "number": {
+      "target_temp": { "name": "Température cible" }
+    },
+    "select": {
+      "temperature_unit": { "name": "Unité de température" }
+    },
     "sensor": {
-      "liquid_state": {
+      "battery_percent": {
+        "name": "Batterie",
+        "state_attributes": {
+          "battery_voltage": { "name": "Voltage de batterie" }
+        }
+      },
+      "current_temp": { "name": "Température actuel" },
+      "liquid_level": {
+        "name": "Niveau de liquide",
+        "state_attributes": {
+          "raw_liquid_level": { "name": "Niveau du liquide brute" }
+        }
+      },
+      "state": {
+        "name": "État du liquide",
         "state": {
           "unknown": "Inconnu",
           "empty": "Vide",
@@ -29,8 +56,18 @@
           "heating": "Chauffage",
           "perfect": "Parfait",
           "warm_no_control": "Chaud (sans contrôle)"
+        },
+        "state_attributes": {
+          "date_time_zone": { "name": "Date et fuseau horaire" },
+          "dsk": { "name": "DSK" },
+          "firmware_info": { "name": "Informations sur le micrologiciel"},
+          "raw_state": { "name": "État brute" },
+          "udsk": { "name": "UDSK" }
         }
       }
+    },
+    "text": {
+      "name": { "name": "Nom" }
     }
   }
 }

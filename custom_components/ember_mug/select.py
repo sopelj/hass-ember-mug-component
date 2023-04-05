@@ -25,7 +25,6 @@ TEMPERATURE_UNITS = [
 SELECT_TYPES = {
     "temperature_unit": SelectEntityDescription(
         key="temperature_unit",
-        name="Temperature Unit",
         options=TEMPERATURE_UNITS,
         entity_category=EntityCategory.CONFIG,
     ),

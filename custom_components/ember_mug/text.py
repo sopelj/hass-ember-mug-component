@@ -19,7 +19,6 @@ _LOGGER = logging.getLogger(__name__)
 TEXT_TYPES = {
     "name": TextEntityDescription(
         key="name",
-        name="Name",
         native_min=1,
         native_max=16,
         pattern=MUG_NAME_REGEX,

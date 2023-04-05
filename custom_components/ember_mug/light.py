@@ -1,4 +1,6 @@
 """Expose the Mug's LEDs as a light entity."""
+from __future__ import annotations
+
 import logging
 from typing import Any
 
@@ -29,16 +31,17 @@ class MugLightEntity(BaseMugEntity, LightEntity):
     _attr_supported_color_modes = {ColorMode.RGB}
     entity_description = LightEntityDescription(
         key="led",
-        name="LED",
         entity_category=EntityCategory.CONFIG,
     )
+
+    @property
+    def is_on(self) -> bool | None:
+        """The light is always on if it is available."""
+        return self.coordinator.available or None
 
     @callback
     def _async_update_attrs(self) -> None:
         """Handle updating _attr values."""
-        self._attr_is_on = (
-            self.coordinator.available
-        )  # it's always on, if the mug is there.
         colour = self.coordinator.data.led_colour
         self._attr_brightness = 255
         self._attr_rgb_color = tuple(colour[:3]) if colour else (255, 255, 255)

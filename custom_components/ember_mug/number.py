@@ -25,7 +25,6 @@ _LOGGER = logging.getLogger(__name__)
 NUMBER_TYPES = {
     "target_temp": NumberEntityDescription(
         key="target_temp",
-        name="Target Temperature",
         native_max_value=100,
         native_min_value=0,
         native_step=1,
