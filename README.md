@@ -21,9 +21,6 @@ So if you have issues with the mug's internals and not the integration with home
 > However, some older versions only work on certain versions of Home Assistant.
 > Please see [Changelog.md](./CHANGELOG.md) for details if you need an older one.
 
-Home Assistant has a list of [officially supported adaptors](https://www.home-assistant.io/integrations/bluetooth/#known-working-adapters),
-if you have connection issues, please try one of them.
-
 ## Installation / Setup
 
 ### Install via HACS
@@ -35,11 +32,11 @@ if you have connection issues, please try one of them.
 > **Note**
 > You do *not* need to manually add the integration in Home Assistant. Just installing it is enough for autodiscovery to work.
 
-### Setup Bluetooth Integration
+### Prerequisite - Set up the Bluetooth Integration
 
-Ensure you have the [Home Assistant Bluetooth Integration](https://www.home-assistant.io/integrations/bluetooth/) enabled, and you have your Bluetooth dongle setup.
-
-[![Open your Home Assistant instance and start setting up a new integration.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=bluetooth)
+Ensure you have the [Home Assistant Bluetooth Integration](https://www.home-assistant.io/integrations/bluetooth/) enabled, and you also need to have Bluetooth Dongle setup or a Bluetooth Proxy.
+If you use a Bluetooth adapter it is recommended to use one of the [officially supported adapters](https://www.home-assistant.io/integrations/bluetooth/#known-working-adapters)
+You can also use [Bluetooth Proxies](https://www.home-assistant.io/integrations/bluetooth/#remote-adapters-bluetooth-proxies) as well, just be sure the proxy supports "active" connections and you use Home Assistant 2023.4 or later.
 
 ### Setting up your Mug
 
