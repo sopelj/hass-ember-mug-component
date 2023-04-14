@@ -1,10 +1,10 @@
 pytest>=7.2.1
 pytest-cov>=3.0.0
 pytest-asyncio>=0.20.2
-homeassistant>=2023.4.0b7
-python-ember-mug==0.6.0
+homeassistant>=2023.4
+python-ember-mug==0.6.1
 home-assistant-bluetooth
-pytest-homeassistant-custom-component>=0.13.16
+pytest-homeassistant-custom-component>=0.13.20
 
 # home assistant dependencies for bluetooth
 pyserial==3.5

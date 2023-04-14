@@ -21,7 +21,7 @@ from homeassistant.helpers import config_validation as cv
 import voluptuous as vol
 
 from . import _LOGGER
-from .const import CONF_INCLUDE_EXTRA, DOMAIN
+from .const import CONF_DEBUG, CONF_INCLUDE_EXTRA, DOMAIN
 
 
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -109,6 +109,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     [UnitOfTemperature.CELSIUS, UnitOfTemperature.FAHRENHEIT],
                 ),
                 vol.Optional(CONF_INCLUDE_EXTRA, default=False): cv.boolean,
+                vol.Optional(CONF_DEBUG, default=False): cv.boolean,
             },
         )
         return self.async_show_form(

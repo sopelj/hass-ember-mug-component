@@ -24,7 +24,7 @@ from homeassistant.const import (
 from homeassistant.core import Event, HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
 
-from .const import CONF_INCLUDE_EXTRA, DOMAIN
+from .const import CONF_DEBUG, CONF_INCLUDE_EXTRA, DOMAIN
 from .coordinator import MugDataUpdateCoordinator
 from .models import HassMugData
 
@@ -54,6 +54,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     ember_mug = EmberMug(
         ble_device,
         include_extra=entry.data.get(CONF_INCLUDE_EXTRA, False),
+        debug=entry.data.get(CONF_DEBUG, False),
     )
     mug_coordinator = MugDataUpdateCoordinator(
         hass,
