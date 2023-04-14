@@ -7,7 +7,8 @@
           "address": "Tasse (adresse MAC)",
           "name": "Nom",
           "temperature_unit": "Unité de température",
-          "include_extra": "Inclure des attributes supplémentaire pour développement"
+          "include_extra": "Inclure des attributes supplémentaire pour développement",
+          "debug": "Lister les services et caractéristiques pour développement au connexion"
         }
       }
     },
