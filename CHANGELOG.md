@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.6.1]
+
+### Added
+* Debug option in config (for development)
+* Allow initial support for Cup and Thermos although, they are not ready for use yet.
+
 ## [0.6.0]
 
 ### Notes
