@@ -54,4 +54,7 @@ async def async_setup_entry(
     """Set up Binary Sensor Entities."""
     assert entry.entry_id is not None
     data: HassMugData = hass.data[DOMAIN][entry.entry_id]
-    async_add_entities([MugTextEntity(data.coordinator, attr) for attr in TEXT_TYPES])
+    entities = []
+    if data.mug.data.model.is_cup is False:
+        entities = [MugTextEntity(data.coordinator, attr) for attr in TEXT_TYPES]
+    async_add_entities(entities)

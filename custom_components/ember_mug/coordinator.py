@@ -129,8 +129,10 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
         firmware = self.data.firmware
         return DeviceInfo(
             connections={(CONNECTION_BLUETOOTH, self.mug.device.address)},
-            name=name if (name := self.data.name) != "EMBER" else self.device_name,
-            model=self.data.model,
+            name=name
+            if (name := self.data.name) and name != "EMBER"
+            else self.device_name,
+            model=self.data.model.name,
             suggested_area="Kitchen",
             hw_version=str(firmware.hardware) if firmware else None,
             sw_version=str(firmware.version) if firmware else None,

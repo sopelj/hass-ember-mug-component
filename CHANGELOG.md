@@ -4,7 +4,8 @@
 
 ### Added
 * Debug option in config (for development)
-* Allow initial support for Cup and Thermos although, they are not ready for use yet.
+* Add support for Ember Cup
+* Allow Travel Mug to be setup although, they are not supported yet.
 
 ## [0.6.0]
 

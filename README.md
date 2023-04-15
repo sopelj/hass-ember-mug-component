@@ -10,7 +10,7 @@
 ![Device View](./examples/device_example.png)
 
 A custom integration for the Ember Mug for Home Assistant.
-It should work with both the Ember Mug 1 & 2, but I have not tested with the thermos.
+It should work with both the Ember Mug (1 & 2) and the Ember Cup, but I have not tested with the Travel Mug.
 Please let me know if you have another one and are willing to help test it.
 
 The actual Mug logic has been moved to [an external library](https://github.com/sopelj/python-ember-mug) as per the guidelines in Home Assistant.
