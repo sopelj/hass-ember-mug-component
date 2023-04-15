@@ -107,7 +107,7 @@ class EmberMugStateSensor(EmberMugSensor):
             "firmware_info": data.firmware,
             "raw_state": data.liquid_state,
         }
-        if data.include_extra:
+        if data.model.include_extra:
             attrs |= {
                 "date_time_zone": data.date_time_zone,
                 "udsk": data.udsk,
@@ -174,7 +174,7 @@ class EmberMugBatterySensor(EmberMugSensor):
             if data.battery
             else None,
         }
-        if data.include_extra:
+        if ATTR_BATTERY_VOLTAGE in data.model.attribute_labels:
             attrs[ATTR_BATTERY_VOLTAGE] = data.battery_voltage
         return attrs | super().extra_state_attributes
 
