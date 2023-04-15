@@ -1,0 +1,74 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Añadir una taza Ember",
+        "data": {
+          "address": "Taza (Dirección MAC)",
+          "name": "Nombre",
+          "temperature_unit": "Unidad de temperatura",
+          "include_extra": "Incluir atributos adicionales para el desarrollo",
+          "debug": "Registro de servicios y características para el desarrollo al conectarse"
+        }
+      }
+    },
+    "abort": {
+      "unknown": "Un error desconocido ocurrió",
+      "cannot_connect": "No se puede conectar a la taza",
+      "no_new_devices": "No se encontraron tazas nuevas. Asegúrese de que esté en modo de emparejamiento."
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "low_battery": { "name": "Batería baja" },
+      "power": { "name": "Energía" }
+    },
+    "light": {
+      "led": { "name": "LED" }
+    },
+    "number": {
+      "target_temp": { "name": "Temperatura deseada" }
+    },
+    "select": {
+      "temperature_unit": { "name": "Unidad de temperatura" }
+    },
+    "sensor": {
+      "battery_percent": {
+        "name": "Batería",
+        "state_attributes": {
+          "battery_voltage": { "name": "Voltaje de la batería" }
+        }
+      },
+      "current_temp": { "name": "Temperatura actual" },
+      "liquid_level": {
+        "name": "Nivel de liquido",
+        "state_attributes": {
+          "raw_liquid_level": { "name": "Nivel de líquido bruto" }
+        }
+      },
+      "state": {
+        "name": "Estado liquido",
+        "state": {
+          "unknown": "Desconocido",
+          "empty": "Vacío",
+          "filling": "Llenando",
+          "cold_no_control":  "Frío (Sin control)",
+          "cooling": "Enfriando",
+          "heating": "Calentamiento",
+          "perfect": "Perfecto",
+          "warm_no_control": "Cálido (sin control)"
+        },
+        "state_attributes": {
+          "date_time_zone": { "name": "Fecha y Zona Horaria" },
+          "dsk": { "name": "DSK" },
+          "firmware_info": { "name": "Información de firmware"},
+          "raw_state": { "name": "Estado bruto" },
+          "udsk": { "name": "UDSK" }
+        }
+      }
+    },
+    "text": {
+      "name": { "name": "Nombre" }
+    }
+  }
+}

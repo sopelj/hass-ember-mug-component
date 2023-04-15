@@ -8,7 +8,7 @@
           "name": "Name",
           "temperature_unit": "Temperature Unit",
           "include_extra": "Include extra attributes for development",
-          "debug": "Log services and characteristics for development on connection"
+          "debug": "Log services and characteristics for development upon connection"
         }
       }
     },

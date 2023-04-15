@@ -7,7 +7,8 @@
           "address": "Kubek (adres MAC)",
           "name": "Nazwa",
           "temperature_unit": "Jednostka temperatury",
-          "include_extra": "Uwzględnij dodatkowe atrybuty dla rozwoju"
+          "include_extra": "Uwzględnij dodatkowe atrybuty dla rozwoju",
+          "debug": "Log usługi i cechy do rozwoju po połączeniu."
         }
       }
     },
