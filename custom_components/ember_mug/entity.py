@@ -51,7 +51,14 @@ class BaseMugEntity(CoordinatorEntity):
         self._address = coordinator.mug.device.address
         self._attr_translation_key = entity_key
         self._attr_device_info = coordinator.device_info
-        self._attr_unique_id = f"ember_mug_{coordinator.base_unique_id}_{entity_key}"
+        self._device_type = "mug"
+        if coordinator.data.model.is_cup:
+            self._device_type = "cup"
+        elif coordinator.data.model.is_travel_mug:
+            self._device_type = "travel_mug"
+        self._attr_unique_id = (
+            f"ember_{self._device_type}_{coordinator.base_unique_id}_{entity_key}"
+        )
         self.entity_id = f"{self._domain}.{self._attr_unique_id}"
 
     @property
