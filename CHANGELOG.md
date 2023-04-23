@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.7.0]
+
+### Added
+* Attempting to add support for Travel Mug
+
+### Changes
+* Entity ID prefix is changed for non "Mug" entities.
+  * It is now: `ember_cup` for the Cup
+  * And: `ember_travel_mug` for the Travel Mug.
+
 ## [0.6.1]
 
 ### Added

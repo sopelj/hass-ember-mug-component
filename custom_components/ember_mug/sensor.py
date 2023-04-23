@@ -190,8 +190,9 @@ async def async_setup_entry(
     assert entry_id is not None
     entities: list[EmberMugSensor] = [
         EmberMugStateSensor(data.coordinator, "liquid_state"),
-        EmberMugLiquidLevelSensor(data.coordinator, "liquid_level"),
         EmberMugTemperatureSensor(data.coordinator, "current_temp"),
         EmberMugBatterySensor(data.coordinator, "battery.percent"),
     ]
+    if data.mug.data.model.is_travel_mug is False:
+        entities.insert(1, EmberMugLiquidLevelSensor(data.coordinator, "liquid_level"))
     async_add_entities(entities)

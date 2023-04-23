@@ -68,4 +68,7 @@ async def async_setup_entry(
 ) -> None:
     """Set up the mug light."""
     data: HassMugData = hass.data[DOMAIN][entry.entry_id]
-    async_add_entities([MugLightEntity(data.coordinator, "led_colour")])
+    entities = []
+    if data.mug.data.model.is_travel_mug is False:
+        entities = [MugLightEntity(data.coordinator, "led_colour")]
+    async_add_entities(entities)
