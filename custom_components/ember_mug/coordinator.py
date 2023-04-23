@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from datetime import timedelta
+from functools import cached_property
 import logging
 from typing import Any
 
@@ -122,6 +123,15 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
             except AttributeError:
                 return None
         return value
+
+    @cached_property
+    def device_type(self) -> str:
+        """Centralize device type for unique_id."""
+        if self.data.model.is_cup:
+            return "cup"
+        elif self.data.model.is_travel_mug:
+            return "travel_mug"
+        return "mug"
 
     @property
     def device_info(self) -> DeviceInfo:
