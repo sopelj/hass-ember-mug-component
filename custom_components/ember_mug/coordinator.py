@@ -2,13 +2,12 @@
 from __future__ import annotations
 
 from datetime import timedelta
-from functools import cached_property
 import logging
 from typing import Any
 
 from bleak_retry_connector import close_stale_connections
 from ember_mug import EmberMug
-from ember_mug.data import MugData
+from ember_mug.data import Model, MugData
 from home_assistant_bluetooth import BluetoothServiceInfoBleak
 from homeassistant.components.bluetooth import BluetoothChange
 from homeassistant.core import HomeAssistant, callback
@@ -19,6 +18,15 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 from .const import MANUFACTURER
 
 _LOGGER = logging.getLogger(__name__)
+
+
+def device_name_from_model(model: Model) -> str:
+    """Centralize device type for unique_id."""
+    if model.is_cup:
+        return "cup"
+    elif model.is_travel_mug:
+        return "travel_mug"
+    return "mug"
 
 
 class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
@@ -33,13 +41,15 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
         device_name: str,
     ) -> None:
         """Initialize global Mug data updater."""
+        device_type = device_name_from_model(mug.data.model)
         super().__init__(
             hass=hass,
             logger=logger,
-            name=f"ember-mug-{base_unique_id}",
+            name=f"ember-{device_type.replace('_', '-')}-{base_unique_id}",
             update_interval=timedelta(seconds=15),
         )
         self.device_name = device_name
+        self.device_type = device_type
         self.base_unique_id = base_unique_id
         self.mug = mug
         self.data = self.mug.data
@@ -123,15 +133,6 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
             except AttributeError:
                 return None
         return value
-
-    @cached_property
-    def device_type(self) -> str:
-        """Centralize device type for unique_id."""
-        if self.data.model.is_cup:
-            return "cup"
-        elif self.data.model.is_travel_mug:
-            return "travel_mug"
-        return "mug"
 
     @property
     def device_info(self) -> DeviceInfo:

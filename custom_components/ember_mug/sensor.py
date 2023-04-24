@@ -58,6 +58,9 @@ SENSOR_TYPES = {
         state_class=SensorStateClass.MEASUREMENT,
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
+    "volume": SensorEntityDescription(
+        key="volume",
+    ),
 }
 
 
@@ -193,6 +196,8 @@ async def async_setup_entry(
         EmberMugTemperatureSensor(data.coordinator, "current_temp"),
         EmberMugBatterySensor(data.coordinator, "battery.percent"),
     ]
-    if data.mug.data.model.is_travel_mug is False:
+    if data.mug.data.model.is_travel_mug:
+        entities.append(EmberMugSensor(data.coordinator, "volume"))
+    else:
         entities.insert(1, EmberMugLiquidLevelSensor(data.coordinator, "liquid_level"))
     async_add_entities(entities)
