@@ -10,8 +10,9 @@
 ![Device View](./examples/device_example.png)
 
 A custom integration for the Ember Mug for Home Assistant.
-It should work with both the Ember Mug (1 & 2) and the Ember Cup, but I have not tested with the Travel Mug.
-Please let me know if you have another one and are willing to help test it.
+
+Confirmed working with the standard Ember Mug (1 and 2), Ember Cup (2) and Travel Mug (1).
+If you have another device, and it works or doesn't, please let me know.
 
 The actual Mug logic has been moved to [an external library](https://github.com/sopelj/python-ember-mug) as per the guidelines in Home Assistant.
 So if you have issues with the mug's internals and not the integration with home assistant please [raise issues there](https://github.com/sopelj/python-ember-mug/issues) :)
@@ -44,9 +45,9 @@ In order to function properly please, set up your mug using the app before tryin
 This is not required, but if you don't, changing values such as the name, colour, temp, etc. via home assistant will not work.
 Once you set it up, then please forget the mug on your phone or at least disable Bluetooth, so they don't fight over the mug.
 
-1. Set up the mug in the Ember mobile app
-2. Forget the mug from your Bluetooth Devices on your phone (or at least disable Bluetooth on it).
-3. Home Assistant should auto-detect the mug and you should get a notification to set it up<br/>
+1. Set your device in the Ember mobile app
+2. Forget your device from your Bluetooth Devices on your phone (or at least disable Bluetooth on it).
+3. Home Assistant should auto-detect your device, and you should get a notification to set it up<br/>
    ![Auto discovery Notification](./examples/discovery_setup_1_notification.png)
    Choose "Check it out" or go to "Settings" -> "Devices"
 4. In your devices you should see an option for the mug<br/>
@@ -56,10 +57,12 @@ Once you set it up, then please forget the mug on your phone or at least disable
    ![Configuration](./examples/discovery_setup_3_prompt.png)
    **You probably don't want extra attributes, they are for debugging and development only**
    Then hit "Next"
-6. It will then try and connect to the mug. On success, you be prompted to choose a location.<br/>
+6. It will then try and connect to the device. On success, you be prompted to choose a location.<br/>
    ![Configuration](./examples/discovery_setup_4_location.png )
-7. Once it has been added, then put your mug into pairing mode (Hold down the button on the bottom until it flashes blue)
-8. Your mug will exit paring mode automatically and go back to the default colour when it's setup.
+7. Once it has been added, then put your device into pairing mode
+   - For the Mug/Cup; hold down the button on the bottom until it flashes blue
+   - For the Travel Mug; press and hold the Ember logo until the display shows 'PAIR'
+8. Your device will exit paring mode automatically and go back to the default colour when it's setup.
 
 > **Note**
 > If using Bluetooth Proxies please ensure you are using Home Assistant 2023.4 and ESPHome 2023.2 or later for best experience

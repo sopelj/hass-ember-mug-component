@@ -7,7 +7,7 @@ from typing import Any
 
 from bleak_retry_connector import close_stale_connections
 from ember_mug import EmberMug
-from ember_mug.data import Model, MugData
+from ember_mug.data import MugData
 from home_assistant_bluetooth import BluetoothServiceInfoBleak
 from homeassistant.components.bluetooth import BluetoothChange
 from homeassistant.core import HomeAssistant, callback
@@ -18,15 +18,6 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 from .const import MANUFACTURER
 
 _LOGGER = logging.getLogger(__name__)
-
-
-def device_name_from_model(model: Model) -> str:
-    """Centralize device type for unique_id."""
-    if model.is_cup:
-        return "cup"
-    elif model.is_travel_mug:
-        return "travel_mug"
-    return "mug"
 
 
 class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
@@ -41,7 +32,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
         device_name: str,
     ) -> None:
         """Initialize global Mug data updater."""
-        device_type = device_name_from_model(mug.data.model)
+        device_type = mug.data.model.type
         super().__init__(
             hass=hass,
             logger=logger,

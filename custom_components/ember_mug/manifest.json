@@ -18,6 +18,9 @@
       "local_name": "Ember Travel Mug"
     },
     {
+      "service_uuid": "fc543621-236c-4c94-8fa9-944a3e5353fa"
+    },
+    {
       "service_uuid": "fc543622-236c-4c94-8fa9-944a3e5353fa"
     }
   ],
@@ -28,6 +31,6 @@
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/sopelj/hass_ember_mug/issues",
   "loggers": ["bleak", "bleak_retry_connector", "ember_mug"],
-  "requirements": ["python-ember-mug==0.7.0b2"],
-  "version": "0.6.1"
+  "requirements": ["python-ember-mug==0.7.0b3"],
+  "version": "0.7.0"
 }
