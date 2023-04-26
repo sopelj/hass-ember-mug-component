@@ -1,10 +1,15 @@
 """Add Config Flow for Ember Mug."""
 from __future__ import annotations
 
+import contextlib
 from typing import Any
 
 from bleak import BleakClient, BleakError
-from ember_mug.consts import EMBER_BLUETOOTH_NAMES
+from ember_mug.consts import (
+    EMBER_BLUETOOTH_NAMES,
+    EMBER_TRAVEL_MUG,
+    EMBER_TRAVEL_MUG_SHORT,
+)
 from homeassistant import config_entries
 from homeassistant.components.bluetooth import (
     BluetoothServiceInfoBleak,
@@ -76,17 +81,9 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 try:
                     async with BleakClient(discovery_info.device) as client:
                         await client.connect()
-                        try:
+                        with contextlib.suppress(BleakError, EOFError):
+                            # An error will be raised if already paired
                             await client.pair()
-                        except (BleakError, EOFError):
-                            pass
-                        except NotImplementedError:
-                            # workaround for Home Assistant ESPHome Proxy backend which does not allow pairing.
-                            _LOGGER.warning(
-                                "Pairing not implemented. "
-                                "If your mug is still in pairing mode (blinking blue) "
-                                "tap the button on the bottom to exit.",
-                            )
                 except BleakError:
                     self.async_abort(reason="cannot_connect")
                 self._discovery_info = discovery_info
@@ -94,14 +91,17 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             else:
                 return self.async_abort(reason="no_new_devices")
 
+        name = self._discovery_info.name
+        if name == EMBER_TRAVEL_MUG_SHORT:
+            name = EMBER_TRAVEL_MUG
         data_schema = vol.Schema(
             {
                 vol.Required(CONF_ADDRESS): vol.In(
                     {
-                        self._discovery_info.address: f"{self._discovery_info.name} ({self._discovery_info.address})",
+                        self._discovery_info.address: f"{name} ({self._discovery_info.address})",
                     },
                 ),
-                vol.Required(CONF_NAME, default=self._discovery_info.name): str,
+                vol.Required(CONF_NAME, default=name): str,
                 vol.Required(
                     CONF_TEMPERATURE_UNIT,
                     default=UnitOfTemperature.CELSIUS,

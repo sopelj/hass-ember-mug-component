@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import logging
 
-from ember_mug.consts import MUG_NAME_REGEX
 from homeassistant.components.text import TextEntity, TextEntityDescription
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -11,7 +10,7 @@ from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from . import HassMugData
-from .const import DOMAIN
+from .const import DOMAIN, MUG_NAME_PATTERN
 from .coordinator import MugDataUpdateCoordinator
 from .entity import BaseMugValueEntity
 
@@ -22,7 +21,7 @@ TEXT_TYPES = {
         key="name",
         native_min=1,
         native_max=16,
-        pattern=MUG_NAME_REGEX,
+        pattern=MUG_NAME_PATTERN,
         entity_category=EntityCategory.CONFIG,
     ),
 }

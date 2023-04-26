@@ -48,3 +48,6 @@ LIQUID_STATE_MAPPING = {
     LiquidState.TARGET_TEMPERATURE: LiquidStateValue.PERFECT,
     LiquidState.WARM_NO_TEMP_CONTROL: LiquidStateValue.WARM_NO_CONTROL,
 }
+
+# Validation
+MUG_NAME_PATTERN = r"[A-Za-z0-9,.\[\]#()!\"\';:|\-_+<>%= ]{1,16}"
