@@ -1,6 +1,7 @@
 """Sensor Entity for Ember Mug."""
 from __future__ import annotations
 
+from functools import cached_property
 from typing import Any
 
 from homeassistant.components.sensor import (
@@ -122,6 +123,13 @@ class EmberMugStateSensor(EmberMugSensor):
 class EmberMugLiquidLevelSensor(EmberMugSensor):
     """Liquid Level Sensor."""
 
+    @cached_property
+    def max_level(self) -> int:
+        """Max level is different for travel mug."""
+        if self.coordinator.data.model.is_travel_mug:
+            return 100
+        return 30
+
     @property
     def native_value(self) -> float | int:
         """Return information about the liquid level."""
@@ -130,7 +138,7 @@ class EmberMugLiquidLevelSensor(EmberMugSensor):
             # 30 -> Full
             # 5, 6 -> Low
             # 0 -> Empty
-            return liquid_level / 30 * 100
+            return liquid_level / self.max_level * 100
         return 0
 
     @property
