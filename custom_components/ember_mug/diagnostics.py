@@ -28,10 +28,22 @@ async def async_get_config_entry_diagnostics(
         "address": coordinator.mug.device.address,
     }
     if coordinator.mug.debug is True:
+        services = None
         try:
             async with coordinator.mug._operation_lock:
                 await coordinator.mug._ensure_connection()
-                data["services"] = await discover_services(coordinator.mug._client)
+                services = await discover_services(coordinator.mug._client)
         except BleakError as e:
             logger.error("Failed to log services, %e", e)
+
+        if services is not None:
+            # Ensure bytes are converted into strings for serialization
+            for service in services.values():
+                for char in service["characteristics"].values():
+                    if (value := char["value"]) is not None:
+                        char["value"] = str(value)
+                    for desc in char["descriptors"]:
+                        if (value := desc["value"]) is not None:
+                            desc["value"] = str(value)
+            data["services"] = services
     return data
