@@ -2,9 +2,9 @@
   "config": {
     "step": {
       "user": {
-        "title": "Añadir una taza Ember",
+        "title": "Agregue una taza, copa o taza de viaje Ember",
         "data": {
-          "address": "Taza (Dirección MAC)",
+          "address": "Dispositivo (Dirección MAC)",
           "name": "Nombre",
           "temperature_unit": "Unidad de temperatura",
           "include_extra": "Incluir atributos adicionales para el desarrollo",
@@ -14,8 +14,8 @@
     },
     "abort": {
       "unknown": "Un error desconocido ocurrió",
-      "cannot_connect": "No se puede conectar a la taza",
-      "no_new_devices": "No se encontraron tazas nuevas. Asegúrese de que esté en modo de emparejamiento."
+      "cannot_connect": "No se puede conectar a el dispositivo",
+      "no_new_devices": "No se encontraron dispositivo Ember nuevos. Asegúrese de que esté en modo de emparejamiento."
     }
   },
   "entity": {
@@ -30,7 +30,15 @@
       "target_temp": { "name": "Temperatura deseada" }
     },
     "select": {
-      "temperature_unit": { "name": "Unidad de temperatura" }
+      "temperature_unit": { "name": "Unidad de temperatura" },
+      "volume_level": {
+        "name": "Nivel de volumen",
+        "state": {
+          "low": "Bajo",
+          "medium": "Medio",
+          "high": "Alto"
+        }
+      }
     },
     "sensor": {
       "battery_percent": {

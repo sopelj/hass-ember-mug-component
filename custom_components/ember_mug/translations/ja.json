@@ -2,9 +2,9 @@
   "config": {
     "step": {
       "user": {
-        "title": "エンバー・マグカップを追加",
+        "title": "Ember マグ、カップ、トラベル マグを追加します",
         "data": {
-          "address": "マグカップ（MACアドレス）",
+          "address": "デバイス（MACアドレス）",
           "name": "名",
           "temperature_unit": "温度単位",
           "include_extra": "開発用に追加の属性を含めます",
@@ -14,8 +14,8 @@
     },
     "abort": {
       "unknown": "未知数エラーが発生した。",
-      "cannot_connect": "マグカップに接続できません。",
-      "no_new_devices": "新しいマグカップは見つかりませんでした。ペアリングモードにしてください。"
+      "cannot_connect": "デバイスに接続できません。",
+      "no_new_devices": "新しいEmberデバイスは見つかりませんでした。ペアリングモードにしてください。"
     }
   },
   "entity": {
@@ -28,6 +28,17 @@
     },
     "number": {
       "target_temp": { "name": "目標温度" }
+    },
+    "select": {
+      "temperature_unit": { "name": "温度単位" },
+      "volume_level": {
+        "name": "音量",
+        "state": {
+          "low": "小音量",
+          "medium": "中音量",
+          "high": "大音量"
+        }
+      }
     },
     "sensor": {
       "battery_percent": {
@@ -63,9 +74,6 @@
           "udsk": { "name": "UDSK" }
         }
       }
-    },
-    "select": {
-      "temperature_unit": { "name": "温度単位" }
     },
     "text": {
       "name": { "name": "名" }
