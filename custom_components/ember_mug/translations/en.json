@@ -2,7 +2,7 @@
   "config": {
     "step": {
       "user": {
-        "title": "Add an Ember Mug",
+        "title": "Add an Ember Mug, Cup or Travel Mug",
         "data": {
           "address": "Mug (MAC Address)",
           "name": "Name",

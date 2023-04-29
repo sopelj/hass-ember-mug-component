@@ -55,6 +55,6 @@ async def async_setup_entry(
     assert entry.entry_id is not None
     data: HassMugData = hass.data[DOMAIN][entry.entry_id]
     entities = []
-    if data.mug.data.model.is_cup is False:
+    if data.mug.is_cup is False:
         entities = [MugTextEntity(data.coordinator, attr) for attr in TEXT_TYPES]
     async_add_entities(entities)

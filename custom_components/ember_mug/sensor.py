@@ -126,7 +126,7 @@ class EmberMugLiquidLevelSensor(EmberMugSensor):
     @cached_property
     def max_level(self) -> int:
         """Max level is different for travel mug."""
-        if self.coordinator.data.model.is_travel_mug:
+        if self.coordinator.mug.is_travel_mug:
             return 100
         return 30
 
@@ -205,7 +205,7 @@ async def async_setup_entry(
         EmberMugTemperatureSensor(data.coordinator, "current_temp"),
         EmberMugBatterySensor(data.coordinator, "battery.percent"),
     ]
-    if data.mug.data.model.is_travel_mug:
+    if data.mug.is_travel_mug:
         entities += [
             EmberMugSensor(data.coordinator, "volume"),
         ]

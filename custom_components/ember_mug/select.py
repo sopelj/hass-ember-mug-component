@@ -111,7 +111,7 @@ async def async_setup_entry(
     entities = [
         MugTempUnitSelectEntity(data.coordinator, "temperature_unit"),
     ]
-    if data.mug.data.model.is_travel_mug:
+    if data.mug.is_travel_mug:
         entities.append(
             MugVolumeLevelSelectEntity(data.coordinator, "volume_level"),
         )

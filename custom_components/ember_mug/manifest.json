@@ -31,6 +31,6 @@
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/sopelj/hass_ember_mug/issues",
   "loggers": ["bleak", "bleak_retry_connector", "ember_mug"],
-  "requirements": ["python-ember-mug==0.7.0b4"],
+  "requirements": ["python-ember-mug==0.7.0b5"],
   "version": "0.7.0"
 }

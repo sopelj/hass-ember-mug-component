@@ -3,7 +3,9 @@
 ## [0.7.0]
 
 ### Added
-* Attempting to add support for Travel Mug
+* Added support for Travel Mug
+  * Added Volume Level attribute for Travel Mug
+* Added services/characteristic logging if debugging (only useful for devs)
 
 ### Changes
 * Entity ID prefix is changed for non "Mug" entities.

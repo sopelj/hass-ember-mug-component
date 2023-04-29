@@ -50,7 +50,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
         self._cancel_callback = self.mug.register_callback(
             self._async_handle_callback,
         )
-        _LOGGER.info(f"Ember Mug {self.name} Setup")
+        _LOGGER.info("%s %s Setup", self.mug.model_name, self.name)
 
     async def _async_update_data(self) -> MugData:
         """Poll the device."""
@@ -69,9 +69,15 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
             self._last_refresh_was_full = not self._last_refresh_was_full
             self.available = True
         except Exception as e:
-            _LOGGER.error("An error occurred whilst updating the mug: %s", e)
+            _LOGGER.error(
+                "An error occurred whilst updating the %s: %s",
+                self.mug.model_name,
+                e,
+            )
             self.available = False
-            raise UpdateFailed(f"An error occurred updating mug: {e=}")
+            raise UpdateFailed(
+                f"An error occurred updating {self.mug.model_name}: {e=}",
+            )
 
         _LOGGER.debug(
             "[%s Update] Changed: %s",
@@ -86,7 +92,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
         service_info: BluetoothServiceInfoBleak,
     ) -> None:
         """Handle the device going unavailable."""
-        _LOGGER.warning("Mug is unavailable")
+        _LOGGER.warning("%s is unavailable", self.mug.model_name)
         self.available = False
         self.async_update_listeners()
 

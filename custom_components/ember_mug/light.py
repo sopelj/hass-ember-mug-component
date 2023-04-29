@@ -58,7 +58,10 @@ class MugLightEntity(BaseMugEntity, LightEntity):
 
     def turn_off(self, **kwargs: Any) -> None:
         """Do nothing, since these lights can't be turned off."""
-        _LOGGER.warning("Mug LED cannot be turned off; doing nothing.")
+        _LOGGER.warning(
+            "%s LED cannot be turned off; doing nothing.",
+            self.coordinator.mug.model_name,
+        )
 
 
 async def async_setup_entry(
@@ -69,6 +72,6 @@ async def async_setup_entry(
     """Set up the mug light."""
     data: HassMugData = hass.data[DOMAIN][entry.entry_id]
     entities = []
-    if data.mug.data.model.is_travel_mug is False:
+    if data.mug.is_travel_mug is False:
         entities = [MugLightEntity(data.coordinator, "led_colour")]
     async_add_entities(entities)
