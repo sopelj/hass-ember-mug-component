@@ -29,6 +29,7 @@ class MugLightEntity(BaseMugEntity, LightEntity):
     _domain = "light"
     _attr_color_mode = ColorMode.RGB
     _attr_supported_color_modes = {ColorMode.RGB}
+    _attr_brightness = None
     entity_description = LightEntityDescription(
         key="led",
         entity_category=EntityCategory.CONFIG,
