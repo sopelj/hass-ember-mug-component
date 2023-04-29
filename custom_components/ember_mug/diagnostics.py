@@ -1,13 +1,18 @@
 """Diagnostics support for Mug."""
 from __future__ import annotations
 
+import logging
 from typing import Any
 
+from bleak import BleakError
+from ember_mug.utils import discover_services
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 
 from . import HassMugData
 from .const import DOMAIN
+
+logger = logging.getLogger(__name__)
 
 
 async def async_get_config_entry_diagnostics(
@@ -22,4 +27,10 @@ async def async_get_config_entry_diagnostics(
         "state": coordinator.data.liquid_state_display,
         "address": coordinator.mug.device.address,
     }
+    if coordinator.mug.debug is True:
+        try:
+            await coordinator.mug._ensure_connection()
+            data["services"] = await discover_services(coordinator.mug._client)
+        except BleakError as e:
+            logger.error("Failed to log services, %e", e)
     return data
