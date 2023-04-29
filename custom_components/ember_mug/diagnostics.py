@@ -29,8 +29,9 @@ async def async_get_config_entry_diagnostics(
     }
     if coordinator.mug.debug is True:
         try:
-            await coordinator.mug._ensure_connection()
-            data["services"] = await discover_services(coordinator.mug._client)
+            async with coordinator.mug._operation_lock:
+                await coordinator.mug._ensure_connection()
+                data["services"] = await discover_services(coordinator.mug._client)
         except BleakError as e:
             logger.error("Failed to log services, %e", e)
     return data
