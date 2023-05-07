@@ -6,6 +6,7 @@ from typing import Any
 
 from ember_mug.data import Colour
 from homeassistant.components.light import (
+    ATTR_BRIGHTNESS,
     ATTR_RGB_COLOR,
     ColorMode,
     LightEntity,
@@ -29,7 +30,7 @@ class MugLightEntity(BaseMugEntity, LightEntity):
     _domain = "light"
     _attr_color_mode = ColorMode.RGB
     _attr_supported_color_modes = {ColorMode.RGB}
-    _attr_brightness = None
+
     entity_description = LightEntityDescription(
         key="led",
         entity_category=EntityCategory.CONFIG,
@@ -44,18 +45,20 @@ class MugLightEntity(BaseMugEntity, LightEntity):
     def _async_update_attrs(self) -> None:
         """Handle updating _attr values."""
         colour = self.coordinator.data.led_colour
-        self._attr_brightness = 255
+        self._attr_brightness = colour.alpha
         self._attr_rgb_color = tuple(colour[:3]) if colour else (255, 255, 255)
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Change the LED colour if defined."""
         _LOGGER.debug(f"Received turn on with {kwargs}")
-        if ATTR_RGB_COLOR in kwargs:
-            rgb = kwargs[ATTR_RGB_COLOR]
-            await self.coordinator.mug.set_led_colour(Colour(*rgb))
-            self._attr_rgb_color = rgb
+        rgb, brightness = self.coordinator.mug.data.led_colour[:3], 255
+        if (rgb := kwargs.get(ATTR_RGB_COLOR)) or (
+            brightness := kwargs.get(ATTR_BRIGHTNESS)
+        ):
+            await self.coordinator.mug.set_led_colour(Colour(*rgb, brightness))
+            self._attr_rgb_color = tuple(rgb)
+            self._attr_brightness = brightness
             self.async_write_ha_state()
-        # Nothing else to do, the light is always on.
 
     def turn_off(self, **kwargs: Any) -> None:
         """Do nothing, since these lights can't be turned off."""
