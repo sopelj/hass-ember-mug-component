@@ -74,6 +74,7 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the mug light."""
+    assert entry.entry_id is not None
     data: HassMugData = hass.data[DOMAIN][entry.entry_id]
     entities = []
     if data.mug.is_travel_mug is False:

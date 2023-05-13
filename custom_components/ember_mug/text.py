@@ -1,4 +1,4 @@
-"""Binary Sensor Entity for Ember Mug."""
+"""Text Entity for Ember Mug."""
 from __future__ import annotations
 
 import logging
@@ -28,7 +28,7 @@ TEXT_TYPES = {
 
 
 class MugTextEntity(BaseMugValueEntity, TextEntity):
-    """Configurable TextEntity for text mug attribute."""
+    """Configurable Text Entity for text mug attribute."""
 
     _domain = "text"
 
@@ -51,10 +51,10 @@ async def async_setup_entry(
     entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    """Set up Binary Sensor Entities."""
+    """Set up Text Entities."""
     assert entry.entry_id is not None
     data: HassMugData = hass.data[DOMAIN][entry.entry_id]
     entities = []
-    if data.mug.is_cup is False:
+    if not data.mug.is_cup:
         entities = [MugTextEntity(data.coordinator, attr) for attr in TEXT_TYPES]
     async_add_entities(entities)

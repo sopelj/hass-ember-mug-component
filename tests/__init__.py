@@ -2,8 +2,16 @@
 from unittest.mock import patch
 
 from bleak.backends.scanner import AdvertisementData, BLEDevice
-from ember_mug.consts import EMBER_BLUETOOTH_NAMES
+from ember_mug.consts import EMBER_MUG
 from home_assistant_bluetooth.models import BluetoothServiceInfoBleak
+from homeassistant.const import (
+    CONF_ADDRESS,
+    CONF_NAME,
+    CONF_TEMPERATURE_UNIT,
+    UnitOfTemperature,
+)
+
+from custom_components.ember_mug import CONF_INCLUDE_EXTRA
 
 
 def patch_async_setup_entry(return_value=True):
@@ -14,10 +22,17 @@ def patch_async_setup_entry(return_value=True):
     )
 
 
-MUG_DEVICE_NAME = EMBER_BLUETOOTH_NAMES[0]
+MUG_DEVICE_NAME = EMBER_MUG
 TEST_MAC = "AA:BB:CC:DD:EE:FF"
+TEST_MAC_UNIQUE_ID = TEST_MAC.replace(":", "").lower()
 TEST_MUG_NAME = "Test Mug"
-
+TEST_BLE_DEVICE = BLEDevice(TEST_MAC, MUG_DEVICE_NAME, {}, 1)
+DEFAULT_CONFIG_DATA = {
+    CONF_ADDRESS: TEST_MAC,
+    CONF_NAME: TEST_MUG_NAME,
+    CONF_TEMPERATURE_UNIT: UnitOfTemperature.CELSIUS,
+    CONF_INCLUDE_EXTRA: False,
+}
 
 MUG_SERVICE_INFO = BluetoothServiceInfoBleak(
     name=MUG_DEVICE_NAME,
@@ -36,7 +51,7 @@ MUG_SERVICE_INFO = BluetoothServiceInfoBleak(
         platform_data=((),),
         tx_power=-127,
     ),
-    device=BLEDevice(TEST_MAC, MUG_DEVICE_NAME, {}, 1),
+    device=TEST_BLE_DEVICE,
     time=0,
     connectable=True,
 )

@@ -5,7 +5,6 @@ import logging
 from typing import Any
 
 from bleak import BleakError
-from ember_mug.utils import discover_services
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 
@@ -28,14 +27,11 @@ async def async_get_config_entry_diagnostics(
         "address": coordinator.mug.device.address,
     }
     if coordinator.mug.debug is True:
-        services = None
+        services: dict[str, Any] | None = None
         try:
-            async with coordinator.mug._operation_lock:
-                await coordinator.mug._ensure_connection()
-                services = await discover_services(coordinator.mug._client)
+            services = await coordinator.mug.discover_services()
         except BleakError as e:
-            logger.error("Failed to log services, %e", e)
-
+            logger.error("Failed to log services, %s", e)
         if services is not None:
             # Ensure bytes are converted into strings for serialization
             for service in services.values():
