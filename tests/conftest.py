@@ -36,6 +36,7 @@ def mock_mug():
     """Create a mocked Ember Mug instance."""
     mock_mug = EmberMug(TEST_BLE_DEVICE)
     mock_mug._client = AsyncMock()
+    mock_mug._ensure_connection = AsyncMock()
     mock_mug.update_initial = AsyncMock(return_value=[])
     mock_mug.update_all = AsyncMock(return_value=[])
     mock_mug.update_queued_attributes = AsyncMock(return_value=[])

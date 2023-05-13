@@ -15,6 +15,7 @@ from homeassistant.components.bluetooth import (
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
     CONF_ADDRESS,
+    CONF_MAC,
     CONF_NAME,
     CONF_TEMPERATURE_UNIT,
     EVENT_HOMEASSISTANT_STOP,
@@ -141,6 +142,31 @@ async def set_temperature_unit(
 async def async_update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """Handle options update."""
     await hass.config_entries.async_reload(entry.entry_id)
+
+
+async def async_migrate_entry(hass, config_entry: ConfigEntry):
+    """Migrate old entry."""
+    _LOGGER.debug("Migrating from version %s", config_entry.version)
+
+    if config_entry.version == 1:
+        config_entry.version = 2
+        old_data = {**config_entry.data}
+        unit = old_data.get(CONF_TEMPERATURE_UNIT, "°C")
+        hass.config_entries.async_update_entry(
+            config_entry,
+            data={
+                CONF_ADDRESS: old_data[CONF_MAC],
+                CONF_NAME: old_data[CONF_NAME],
+                CONF_TEMPERATURE_UNIT: UnitOfTemperature.FAHRENHEIT
+                if unit == "°F"
+                else UnitOfTemperature.CELSIUS,
+                CONF_INCLUDE_EXTRA: False,
+                CONF_DEBUG: False,
+            },
+        )
+
+    _LOGGER.info("Migration to version %s successful", config_entry.version)
+    return True
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:

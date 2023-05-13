@@ -1,11 +1,11 @@
 """Test Select entities."""
 from __future__ import annotations
 
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 from ember_mug import EmberMug
 from ember_mug.consts import VolumeLevel
-from homeassistant.const import UnitOfTemperature
+from homeassistant.const import ATTR_ENTITY_ID, UnitOfTemperature
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_registry as er
 
@@ -90,3 +90,54 @@ async def test_setup_select_cup(
     assert len(hass.states.async_all()) == 0
     await setup_platform(hass, mock_mug, "select")
     assert len(hass.states.async_all()) == 1
+
+
+async def test_setup_update_temp_unit(
+    hass: HomeAssistant,
+    mock_mug: EmberMug | Mock,
+) -> None:
+    """Test updating temperature unit."""
+    config = await setup_platform(hass, mock_mug, "select")
+
+    entity_registry = er.async_get(hass)
+    entity_id = f"select.ember_mug_{config.unique_id}_temperature_unit"
+    entity = entity_registry.async_get(entity_id)
+    assert entity
+    temp_unit_state = hass.states.get(entity_id)
+    assert temp_unit_state.state == UnitOfTemperature.CELSIUS
+
+    with patch.object(mock_mug, "set_temperature_unit") as mock_set:
+        await hass.services.async_call(
+            "select",
+            "select_option",
+            {ATTR_ENTITY_ID: entity_id, "option": UnitOfTemperature.FAHRENHEIT.value},
+            blocking=True,
+        )
+        mock_set.assert_called_once_with(UnitOfTemperature.FAHRENHEIT)
+
+
+async def test_update_volume_travel_mug(
+    hass: HomeAssistant,
+    mock_mug: EmberMug | Mock,
+) -> None:
+    """Test updating volume level."""
+    mock_mug.is_travel_mug = True
+    mock_mug.data.volume_level = VolumeLevel.LOW
+    config = await setup_platform(hass, mock_mug, "select")
+
+    entity_registry = er.async_get(hass)
+    entity_id = f"select.ember_mug_{config.unique_id}_volume_level"
+    entity = entity_registry.async_get(entity_id)
+    assert entity
+    assert not entity.disabled
+    volume_level_state = hass.states.get(entity_id)
+    assert volume_level_state.state == "low"
+
+    with patch.object(mock_mug, "set_volume_level") as mock_set:
+        await hass.services.async_call(
+            "select",
+            "select_option",
+            {ATTR_ENTITY_ID: entity_id, "option": "high"},
+            blocking=True,
+        )
+        mock_set.assert_called_once_with(VolumeLevel.HIGH)

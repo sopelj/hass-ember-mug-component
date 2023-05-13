@@ -6,6 +6,7 @@ from ember_mug.consts import EMBER_MUG
 from home_assistant_bluetooth.models import BluetoothServiceInfoBleak
 from homeassistant.const import (
     CONF_ADDRESS,
+    CONF_MAC,
     CONF_NAME,
     CONF_TEMPERATURE_UNIT,
     UnitOfTemperature,
@@ -32,6 +33,11 @@ DEFAULT_CONFIG_DATA = {
     CONF_NAME: TEST_MUG_NAME,
     CONF_TEMPERATURE_UNIT: UnitOfTemperature.CELSIUS,
     CONF_INCLUDE_EXTRA: False,
+}
+V1_CONFIG_DATA = {
+    CONF_MAC: TEST_MAC,
+    CONF_NAME: TEST_MUG_NAME,
+    CONF_TEMPERATURE_UNIT: "°C",
 }
 
 MUG_SERVICE_INFO = BluetoothServiceInfoBleak(
