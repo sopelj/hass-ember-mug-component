@@ -3,7 +3,7 @@
 ## [0.7.0]
 
 ### Added
-* Added support for Travel Mug
+* Added support for Travel Mug (Thanks @bmcclure)!
   * Added Volume Level attribute for Travel Mug
 * Added services/characteristic logging if debugging (only useful for devs)
 

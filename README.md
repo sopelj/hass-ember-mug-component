@@ -9,10 +9,17 @@
 
 ![Device View](./examples/device_example.png)
 
-A custom integration for the Ember Mug for Home Assistant.
+A custom integration for Ember Mugs, Cups and Travel Mugs for Home Assistant.
 
-Confirmed working with the standard Ember Mug (1 and 2), Ember Cup (2) and Travel Mug (1).
-If you have another device, and it works or doesn't, please let me know.
+| Device       | Tested  |
+|--------------|---------|
+| Mug          | ✓       |
+| Mug 2        | ✓       |
+| Cup          | ✓       |
+| Travel Mug   | ✓       |
+| Travel Mug 2 | ?       |
+
+**Note**: Untested devices should still work, if you have one, and it works or doesn't please let me know.
 
 The actual Mug logic has been moved to [an external library](https://github.com/sopelj/python-ember-mug) as per the guidelines in Home Assistant.
 So if you have issues with the mug's internals and not the integration with home assistant please [raise issues there](https://github.com/sopelj/python-ember-mug/issues) :)
@@ -41,9 +48,9 @@ You can also use [Bluetooth Proxies](https://www.home-assistant.io/integrations/
 
 ### Setting up your Mug
 
-In order to function properly please, set up your mug using the app before trying to use this integration.
-This is not required, but if you don't, changing values such as the name, colour, temp, etc. via home assistant will not work.
-Once you set it up, then please forget the mug on your phone or at least disable Bluetooth, so they don't fight over the mug.
+In order to function properly, you may need to set up your device using the app before trying to use this integration.
+This is not required, but if you don't, changing values such as the name, colour, temp, etc. via home assistant may not work.
+Once you set it up, please forget the mug on your phone or at least disable Bluetooth, so they don't fight over the device.
 
 1. Set your device in the Ember mobile app
 2. Forget your device from your Bluetooth Devices on your phone (or at least disable Bluetooth on it).
@@ -250,7 +257,7 @@ If your mug was initially setup with the mobile app, you can also change certain
 Either via the device page, lovelace or services in automations.
 
 > **Note**
-> Despite being a "light" the LED cannot be turned off and brightness cannot be adjusted. This was simply to provide an easy way to set the colour.
+> Despite being a "light" the LED cannot be turned off. This was simply to provide an easy way to set the colour.
 >
 > The "Temperature Unit" selected will be written to the mug, but does not change the value displayed in Home Assistant.
 
@@ -269,18 +276,20 @@ Simply tap on the entity you wish to configure and change the value as desired.
 #### Via Scripts/Lovelace/Automations
 
 - Rename your mug (`sensor.ember_mug_c90f59d633f9_name`)
-- Change the LED colour of the mug (`light.ember_mug_c90f59d633f9_led`)
-- Set the desired temperature of you mug (`number.ember_mug_c90f59d633f9_target_temp`)
-- Set the mug's internal temperature unit (`select.ember_mug_c90f59d633f9_temperature_unit`)
+- Change the LED colour of the mug/cup (`light.ember_mug_c90f59d633f9_led`)
+- Set the desired temperature of your device (`number.ember_mug_c90f59d633f9_target_temp`)
+- Set the device's internal temperature unit (`select.ember_mug_c90f59d633f9_temperature_unit`)
+- Set the Travel Mug's volume level (`select.ember_travel_mug_d70f69f623f8_volume_level`)
 
 You can also call these in services for your automations.
 
-| Property    | Service              | Params               |
-|-------------|----------------------|----------------------|
-| Mug Name    | text.set_value       | entity_id and value  |
-| LED Colour  | light.turn_on        | entity_id and rgb    |
-| Target Temp | number.set_value     | entity_id and value  |
-| Temp Unit   | select.select_option | entity_id and option |
+| Property     | Service              | Params               |
+|--------------|----------------------|----------------------|
+| Mug Name     | text.set_value       | entity_id and value  |
+| LED Colour   | light.turn_on        | entity_id and rgb    |
+| Target Temp  | number.set_value     | entity_id and value  |
+| Temp Unit    | select.select_option | entity_id and option |
+| Volume Level | select.select_option | entity_id and option |
 
 ## Notice of Non-Affiliation and Disclaimer
 
