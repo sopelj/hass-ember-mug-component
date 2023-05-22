@@ -2,7 +2,7 @@ default_language_version:
     python: python3.10
 repos:
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.3.1
+    rev: v3.4.0
     hooks:
       - id: pyupgrade
         args: [--py310-plus]
@@ -11,7 +11,7 @@ repos:
     hooks:
       - id: add-trailing-comma
   - repo: https://github.com/Lucas-C/pre-commit-hooks
-    rev: v1.4.2
+    rev: v1.5.1
     hooks:
       - id: forbid-crlf
       - id: remove-crlf
@@ -29,7 +29,7 @@ repos:
       - id: isort
         args: [ "--filter-files", "--profile", "black" ]
   - repo: https://github.com/ambv/black
-    rev: 23.1.0
+    rev: 23.3.0
     hooks:
       - id: black
   - repo: https://github.com/PyCQA/flake8
@@ -41,7 +41,7 @@ repos:
           - pydocstyle
           - flake8-typing-imports
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.2.2
+    rev: v2.2.4
     hooks:
       - id: codespell
         args:
@@ -50,7 +50,7 @@ repos:
           - --quiet-level=2
         exclude_types: [csv, json]
   - repo: https://github.com/PyCQA/bandit
-    rev: 1.7.4
+    rev: 1.7.5
     hooks:
       - id: bandit
         args:
@@ -59,7 +59,7 @@ repos:
           - --configfile=tests/bandit.yaml
         types: [ python ]
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.0.1
+    rev: v1.3.0
     hooks:
       - id: mypy
         args:
