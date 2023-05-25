@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.7.1]
+
+### Fixed
+* Attribute name error in Colour in light entity causing setup errors
+
 ## [0.7.0]
 
 ### Added

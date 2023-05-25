@@ -45,7 +45,7 @@ class MugLightEntity(BaseMugEntity, LightEntity):
     def _async_update_attrs(self) -> None:
         """Handle updating _attr values."""
         colour = self.coordinator.data.led_colour
-        self._attr_brightness = colour.alpha
+        self._attr_brightness = colour.brightness
         self._attr_rgb_color = tuple(colour[:3]) if colour else (255, 255, 255)
 
     async def async_turn_on(self, **kwargs: Any) -> None:

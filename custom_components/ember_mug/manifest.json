@@ -32,5 +32,5 @@
   "issue_tracker": "https://github.com/sopelj/hass_ember_mug/issues",
   "loggers": ["bleak", "bleak_retry_connector", "ember_mug"],
   "requirements": ["python-ember-mug==0.7.0"],
-  "version": "0.7.0"
+  "version": "0.7.1"
 }
