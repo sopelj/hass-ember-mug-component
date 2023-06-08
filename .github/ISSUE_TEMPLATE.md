@@ -1,5 +1,6 @@
 * Home Assistant Version (eg. 2023.2):
 * Ember Mug Component Version (eg. 0.5.0):
+* Which device(s) are you using for Bluetooth (e.g. Bluetooth Dongle / ESPHome Proxy):
 
 ### Description
 
