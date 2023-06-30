@@ -99,6 +99,11 @@ If you are running in docker or locally via python you can run it on the host.
 This indicates the Bluetooth Adapter is not currently available. Please ensure it is correctly plugged in and powered on.
 If you are running in HassOS it should automatically start, but sometimes in docker you might need to start it manually with `bluetoothctl power on`.
 
+##### Does not automatically reconnect to Home Assistant after restart
+
+In some cases people have had issues with built-in adapters not re-connecting automatically after restarting Home Assistant and requiring the device to be in pairing mode to reconnect.
+It seems to be sufficient to open blutoothctl and try connecting/pairing the device from there to avoid this issue in future.
+
 #### Connectivity or other issues with Bluetooth
 
 Many things can cause issues with connectivity, such as unsupported adapters and interference.
