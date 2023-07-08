@@ -9,7 +9,8 @@
 
 ![Device View](./examples/device_example.png)
 
-A custom integration for Ember Mugs, Cups and Travel Mugs for Home Assistant.
+A custom integration for Ember Mugs, Cups and Travel Mugs for Home Assistant. All known devices are tested and working.
+If I missed one, or you have new feature ideas/issues, please let me know.
 
 | Device       | Tested  |
 |--------------|---------|
@@ -17,9 +18,7 @@ A custom integration for Ember Mugs, Cups and Travel Mugs for Home Assistant.
 | Mug 2        | ✓       |
 | Cup          | ✓       |
 | Travel Mug   | ✓       |
-| Travel Mug 2 | ?       |
-
-**Note**: Untested devices should still work, if you have one, and it works or doesn't please let me know.
+| Travel Mug 2 | ✓       |
 
 The actual Mug logic has been moved to [an external library](https://github.com/sopelj/python-ember-mug) as per the guidelines in Home Assistant.
 So if you have issues with the mug's internals and not the integration with home assistant please [raise issues there](https://github.com/sopelj/python-ember-mug/issues) :)

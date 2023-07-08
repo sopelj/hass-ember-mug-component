@@ -55,7 +55,7 @@
         }
       },
       "state": {
-        "name": "État du liquide",
+        "name": "État",
         "state": {
           "unknown": "Inconnu",
           "empty": "Vide",

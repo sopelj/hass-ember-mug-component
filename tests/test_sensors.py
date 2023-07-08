@@ -33,7 +33,7 @@ async def test_setup_sensors(
     assert liquid_state_state.attributes == {
         "device_class": "enum",
         "firmware_info": None,
-        "friendly_name": "Test Mug",
+        "friendly_name": "Test Mug State",
         "icon": ICON_UNAVAILABLE,
         "options": LIQUID_STATE_OPTIONS,
         "raw_state": LiquidState.UNKNOWN,
@@ -41,7 +41,7 @@ async def test_setup_sensors(
     assert liquid_state_state.state == "unknown"
     liquid_state_sensor = entity_registry.async_get(f"{sensor_base_name}_state")
     assert liquid_state_sensor.translation_key == "state"
-    assert liquid_state_sensor.original_name is None
+    assert liquid_state_sensor.original_name == "State"
 
     # Liquid level sensor
     liquid_level_state = hass.states.get(f"{sensor_base_name}_liquid_level")

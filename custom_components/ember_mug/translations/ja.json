@@ -55,7 +55,7 @@
         }
       },
       "state": {
-        "name": "液体状態",
+        "name": "状態",
         "state": {
           "unknown": "未知数です",
           "empty": "空です",

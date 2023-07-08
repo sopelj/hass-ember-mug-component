@@ -55,7 +55,7 @@
         }
       },
       "state": {
-        "name": "Liquid state",
+        "name": "State",
         "state": {
           "unknown": "Unknown",
           "empty": "Empty",

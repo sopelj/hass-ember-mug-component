@@ -40,7 +40,6 @@ SENSOR_TYPES = {
     "liquid_level": SensorEntityDescription(
         key="liquid_level",
         icon="mdi:cup-water",
-        translation_key="liquid_level",
         suggested_display_precision=0,
         native_unit_of_measurement=PERCENTAGE,
     ),
@@ -80,8 +79,6 @@ class EmberMugSensor(BaseMugValueEntity, SensorEntity):
 class EmberMugStateSensor(EmberMugSensor):
     """Base Mug State Sensor."""
 
-    _attr_name = None
-
     @property
     def icon(self) -> str:
         """Change icon based on state."""
@@ -95,8 +92,7 @@ class EmberMugStateSensor(EmberMugSensor):
     @property
     def native_value(self) -> str | None:
         """Return liquid state key."""
-        state = super().native_value
-        if state:
+        if state := super().native_value:
             return LIQUID_STATE_MAPPING[state].value
         return None
 
