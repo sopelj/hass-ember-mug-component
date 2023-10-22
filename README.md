@@ -4,7 +4,7 @@
 ![Project Maintenance](https://img.shields.io/maintenance/yes/2023.svg?style=for-the-badge)
 [![Maintainer](https://img.shields.io/badge/maintainer-%40sopelj-blue.svg?style=for-the-badge)](https://github.com/sopelj)
 [![License](https://img.shields.io/github/license/sopelj/hass-ember-mug-component.svg?style=for-the-badge)](LICENSE.md)
-[![HACS](https://img.shields.io/badge/HACS-Custom-41BDF5.svg?style=for-the-badge)](https://github.com/hacs/integration)
+[![HACS](https://img.shields.io/badge/HACS-Default-41BDF5.svg?style=for-the-badge)](https://github.com/custom-components/hacs)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?style=for-the-badge)](https://github.com/pre-commit/pre-commit)
 
 ![Device View](./examples/device_example.png)
@@ -32,23 +32,21 @@ So if you have issues with the mug's internals and not the integration with home
 
 ### Install via HACS
 
-1. Setup [HACS](https://hacs.xyz/docs/basic/getting_started) if you haven't already.
-2. Then you can add this repository as a custom repository: `https://github.com/sopelj/hass-ember-mug-component`
-3. Install the integration in HACS and restart Home Assistant.
+You can click the button below to open this repository in HACS or you can manually search for "Ember Mug" in HACS.
 
-> **Note**
-> You do *not* need to manually add the integration in Home Assistant. Just installing it is enough for autodiscovery to work.
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=sopelj&repository=hass-ember-mug-component&category=integration)
 
 ### Prerequisite - Set up the Bluetooth Integration
 
 Ensure you have the [Home Assistant Bluetooth Integration](https://www.home-assistant.io/integrations/bluetooth/) enabled, and you also need to have Bluetooth Dongle setup or a Bluetooth Proxy.
-If you use a Bluetooth adapter it is recommended to use one of the [officially supported adapters](https://www.home-assistant.io/integrations/bluetooth/#known-working-adapters)
-You can also use [Bluetooth Proxies](https://www.home-assistant.io/integrations/bluetooth/#remote-adapters-bluetooth-proxies) as well, just be sure the proxy supports "active" connections and you use Home Assistant 2023.4 or later.
+If you use a Bluetooth adapter it is recommended to use one of the [officially supported adapters](https://www.home-assistant.io/integrations/bluetooth/#known-working-adapters).
+You can also use [Bluetooth Proxies](https://www.home-assistant.io/integrations/bluetooth/#remote-adapters-bluetooth-proxies) as well, just be sure the proxy supports "active" connections, and you use Home Assistant 2023.4 or later.
+If you have issues with your specific bluetooth adapter using Bluetooth proxies might be a good option.
 
 ### Setting up your Mug
 
 In order to function properly, you may need to set up your device using the app before trying to use this integration.
-This is not required, but if you don't, changing values such as the name, colour, temp, etc. via home assistant may not work.
+This is not required, but if you don't, changing values such as the name, colour, temp, etc. via home assistant **may** not work.
 Once you set it up, please forget the mug on your phone or at least disable Bluetooth, so they don't fight over the device.
 
 1. Set your device in the Ember mobile app
@@ -71,7 +69,7 @@ Once you set it up, please forget the mug on your phone or at least disable Blue
 8. Your device will exit paring mode automatically and go back to the default colour when it's setup.
 
 > **Note**
-> If using Bluetooth Proxies please ensure you are using Home Assistant 2023.4 and ESPHome 2023.2 or later for best experience
+> If using Bluetooth Proxies please ensure you are using Home Assistant 2023.4 and ESPHome 2023.2 or later for the best experience
 
 #### Troubleshooting
 
@@ -148,12 +146,10 @@ If that fails you can try reloading the integration.
 
 ## Caveats / known issues:
 
-- The services to change mug values only works if the mug has been set up in the Ember app initially.
-- If you have another device paired with it like your phone it will cause it to disconnect, so you need to remove it from that device.
-- This maintains a connection to your mug which:
-    - may affect battery
-    - may interfere with other local bluetooth integrations as it can only maintain one connection at a time.
-- With Bluetooth Proxies you may have to put it into pairing mode manually if it disconnects
+- The services to change mug values may only work if the mug has been set up in the Ember app initially.
+- If you have another device paired with it, like your phone, it will cause it to disconnect, so you need to remove it from that device.
+- This maintains a connection to your mug which may affect battery
+- With Bluetooth Proxies you may have to put it into pairing mode manually if the battery fully dies.
 
 ## Examples
 
@@ -162,7 +158,7 @@ If that fails you can try reloading the integration.
 If you want to have notifications similar to the app you can do something like:
 
 > **Note**
->  Replace `c90f59d633f9` with your mug's MAC address.
+>  Replace `c90f59d633f9` with your mug's MAC address and `mug` with your device type if different.
 
 ```yaml
 automation:
