@@ -1,10 +1,12 @@
 """Coordinator for all the sensors."""
 from __future__ import annotations
 
+import asyncio
 from datetime import timedelta
 import logging
 from typing import Any
 
+from bleak import BleakError
 from bleak_retry_connector import close_stale_connections
 from ember_mug import EmberMug
 from ember_mug.data import MugData
@@ -68,6 +70,14 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
                 changed += await self.mug.update_queued_attributes()
             self._last_refresh_was_full = not self._last_refresh_was_full
             self.available = True
+        except (asyncio.TimeoutError, BleakError) as e:
+            if self.available is True:
+                _LOGGER.debug("%s is not available: %s", e)
+                self.available = False
+            if self._initial_update is True:
+                raise UpdateFailed(
+                    f"An error occurred updating {self.mug.model_name}: {e=}",
+                )
         except Exception as e:
             _LOGGER.error(
                 "An error occurred whilst updating the %s: %s",
@@ -92,7 +102,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
         service_info: BluetoothServiceInfoBleak,
     ) -> None:
         """Handle the device going unavailable."""
-        _LOGGER.warning("%s is unavailable", self.mug.model_name)
+        _LOGGER.debug("%s is unavailable", self.mug.model_name)
         self.available = False
         self.async_update_listeners()
 
