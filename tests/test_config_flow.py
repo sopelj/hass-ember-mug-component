@@ -1,4 +1,5 @@
 """Test component setup."""
+import pytest
 from homeassistant.config_entries import SOURCE_BLUETOOTH
 from homeassistant.const import (
     CONF_ADDRESS,
@@ -8,11 +9,9 @@ from homeassistant.const import (
 )
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
-import pytest
 from voluptuous import MultipleInvalid
 
 from custom_components.ember_mug import CONF_DEBUG, CONF_INCLUDE_EXTRA
-
 from tests import MUG_SERVICE_INFO, TEST_MAC, TEST_MUG_NAME, patch_async_setup_entry
 
 

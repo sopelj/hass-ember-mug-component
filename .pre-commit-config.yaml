@@ -32,14 +32,11 @@ repos:
     rev: 23.3.0
     hooks:
       - id: black
-  - repo: https://github.com/PyCQA/flake8
-    rev: 6.0.0
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.0.270
     hooks:
-      - id: flake8
-        additional_dependencies:
-          - flake8-docstrings
-          - pydocstyle
-          - flake8-typing-imports
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
   - repo: https://github.com/codespell-project/codespell
     rev: v2.2.4
     hooks:
@@ -66,3 +63,6 @@ repos:
           - --pretty
           - --show-error-codes
           - --show-error-context
+        additional_dependencies:
+          - homeassistant
+          - python-ember-mug

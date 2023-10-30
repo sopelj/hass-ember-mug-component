@@ -2,22 +2,25 @@
 from __future__ import annotations
 
 import asyncio
-from datetime import timedelta
 import logging
-from typing import Any
+from datetime import timedelta
+from typing import TYPE_CHECKING, Any
 
 from bleak import BleakError
 from bleak_retry_connector import close_stale_connections
-from ember_mug import EmberMug
 from ember_mug.data import MugData
-from home_assistant_bluetooth import BluetoothServiceInfoBleak
-from homeassistant.components.bluetooth import BluetoothChange
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.device_registry import CONNECTION_BLUETOOTH
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .const import MANUFACTURER
+
+if TYPE_CHECKING:
+    from ember_mug import EmberMug
+    from home_assistant_bluetooth import BluetoothServiceInfoBleak
+    from homeassistant.components.bluetooth import BluetoothChange
+
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -77,7 +80,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
             if self._initial_update is True:
                 raise UpdateFailed(
                     f"An error occurred updating {self.mug.model_name}: {e=}",
-                )
+                ) from e
         except Exception as e:
             _LOGGER.error(
                 "An error occurred whilst updating the %s: %s",
@@ -87,7 +90,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
             self.available = False
             raise UpdateFailed(
                 f"An error occurred updating {self.mug.model_name}: {e=}",
-            )
+            ) from e
 
         _LOGGER.debug(
             "[%s Update] Changed: %s",
@@ -147,9 +150,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
         firmware = self.data.firmware
         return DeviceInfo(
             connections={(CONNECTION_BLUETOOTH, self.mug.device.address)},
-            name=name
-            if (name := self.data.name) and name != "EMBER"
-            else self.device_name,
+            name=name if (name := self.data.name) and name != "EMBER" else self.device_name,
             model=self.data.model.name,
             suggested_area="Kitchen",
             hw_version=str(firmware.hardware) if firmware else None,
