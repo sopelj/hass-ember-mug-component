@@ -291,6 +291,21 @@ You can also call these in services for your automations.
 | Temp Unit    | select.select_option | entity_id and option |
 | Volume Level | select.select_option | entity_id and option |
 
+## Development
+
+### Test
+
+```bash
+hatch run test:cov
+```
+
+### Linting
+
+```bash
+pre-commit run --all-files
+```
+
+
 ## Notice of Non-Affiliation and Disclaimer
 
 This project is not affiliated, associated, authorized, endorsed by, or in any way officially connected with Ember.

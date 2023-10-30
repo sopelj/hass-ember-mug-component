@@ -3,16 +3,17 @@
 ## [0.8.0]
 
 ### Added
+* Support for Python 3.12 for Home Assistant 2023.11+
 * Name and document support of Travel Mug 2 (Thanks @z-master42!)
 
 ### Changes
 * Updated minimal requirements to match latest Home Assistant
 
 ### Removed
-* Removed support for Python 3.9 as Home Assistant no longer supports it.
+* Removed support for Python 3.10 as Home Assistant no longer supports it.
 
 ### Notes
-* Requires Home Assistant 2023.7+
+* Requires Home Assistant 2023.8+
 
 ## [0.7.1]
 

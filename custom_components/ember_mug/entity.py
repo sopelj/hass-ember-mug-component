@@ -1,16 +1,20 @@
 """Generic Entity Logic for multiple platforms."""
 from __future__ import annotations
 
-from collections.abc import Mapping
 import logging
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-from ember_mug.consts import TemperatureUnit
 from homeassistant.core import callback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.util.unit_conversion import TemperatureConverter, UnitOfTemperature
 
-from .coordinator import MugDataUpdateCoordinator
+if TYPE_CHECKING:
+    from collections.abc import Mapping
+
+    from ember_mug.consts import TemperatureUnit
+
+    from .coordinator import MugDataUpdateCoordinator
+
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -51,9 +55,7 @@ class BaseMugEntity(CoordinatorEntity):
         self._address = coordinator.mug.device.address
         self._attr_translation_key = entity_key
         self._attr_device_info = coordinator.device_info
-        self._attr_unique_id = (
-            f"ember_{coordinator.device_type}_{coordinator.base_unique_id}_{entity_key}"
-        )
+        self._attr_unique_id = f"ember_{coordinator.device_type}_{coordinator.base_unique_id}_{entity_key}"
         self.entity_id = f"{self._domain}.{self._attr_unique_id}"
 
     @property

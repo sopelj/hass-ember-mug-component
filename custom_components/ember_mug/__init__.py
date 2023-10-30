@@ -3,8 +3,9 @@ from __future__ import annotations
 
 import asyncio
 import logging
+from sys import version_info
+from typing import TYPE_CHECKING
 
-import async_timeout
 from bleak import BleakError
 from ember_mug import EmberMug
 from homeassistant.components import bluetooth
@@ -12,7 +13,6 @@ from homeassistant.components.bluetooth import (
     BluetoothCallbackMatcher,
     BluetoothScanningMode,
 )
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
     CONF_ADDRESS,
     CONF_MAC,
@@ -22,12 +22,22 @@ from homeassistant.const import (
     Platform,
     UnitOfTemperature,
 )
-from homeassistant.core import Event, HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
 
 from .const import CONF_DEBUG, CONF_INCLUDE_EXTRA, DOMAIN
 from .coordinator import MugDataUpdateCoordinator
 from .models import HassMugData
+
+if version_info.minor < 12:
+    # library required before Python 3.12
+    import async_timeout
+else:
+    async_timeout = asyncio
+
+if TYPE_CHECKING:
+    from homeassistant.config_entries import ConfigEntry
+    from homeassistant.core import Event, HomeAssistant
+
 
 PLATFORMS = [
     Platform.BINARY_SENSOR,
@@ -157,9 +167,7 @@ async def async_migrate_entry(hass, config_entry: ConfigEntry):
             data={
                 CONF_ADDRESS: old_data[CONF_MAC],
                 CONF_NAME: old_data[CONF_NAME],
-                CONF_TEMPERATURE_UNIT: UnitOfTemperature.FAHRENHEIT
-                if unit == "°F"
-                else UnitOfTemperature.CELSIUS,
+                CONF_TEMPERATURE_UNIT: UnitOfTemperature.FAHRENHEIT if unit == "°F" else UnitOfTemperature.CELSIUS,
                 CONF_INCLUDE_EXTRA: False,
                 CONF_DEBUG: False,
             },

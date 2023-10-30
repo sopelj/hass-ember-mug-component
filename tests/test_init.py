@@ -6,7 +6,6 @@ from homeassistant.core import HomeAssistant
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.ember_mug import DOMAIN
-
 from tests import (
     DEFAULT_CONFIG_DATA,
     TEST_BLE_DEVICE,

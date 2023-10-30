@@ -31,7 +31,7 @@ async def test_config_entry_diagnostics(hass: HomeAssistant) -> None:
         options=None,
     )
     pink = Colour(244, 0, 161)
-    mock_mug = AsyncMock()
+    mock_mug = Mock()
     mock_mug.data = MugData(
         model=Model(MUG_DEVICE_NAME),
         name=TEST_MUG_NAME,
@@ -56,7 +56,7 @@ async def test_config_entry_diagnostics(hass: HomeAssistant) -> None:
             },
         },
     }
-    mock_mug.discover_services.return_value = expected_services
+    mock_mug.discover_services = AsyncMock(return_value=expected_services)
     mock_mug.debug = True
     mock_mug.device = TEST_BLE_DEVICE
     hass_data = HassMugData(

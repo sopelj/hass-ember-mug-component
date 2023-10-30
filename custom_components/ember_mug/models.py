@@ -2,10 +2,12 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
-from ember_mug import EmberMug
+if TYPE_CHECKING:
+    from ember_mug import EmberMug
 
-from .coordinator import MugDataUpdateCoordinator
+    from .coordinator import MugDataUpdateCoordinator
 
 
 @dataclass

@@ -29,7 +29,7 @@ class LiquidStateValue(StrEnum):
     WARM_NO_CONTROL = "warm_no_control"
 
 
-LIQUID_STATE_OPTIONS = [ls for ls in LiquidStateValue]
+LIQUID_STATE_OPTIONS = list(LiquidStateValue)
 LIQUID_STATE_TEMP_ICONS = {
     LiquidState.UNKNOWN: "thermometer-off",
     LiquidState.COLD_NO_TEMP_CONTROL: "thermometer-low",

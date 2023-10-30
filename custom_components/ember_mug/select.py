@@ -1,28 +1,30 @@
 """Select Entity for Ember Mug."""
 from __future__ import annotations
 
-from enum import Enum
 import logging
-from typing import Literal
+from enum import Enum
+from typing import TYPE_CHECKING, Literal
 
 from ember_mug.consts import VolumeLevel
 from homeassistant.components.select import SelectEntity, SelectEntityDescription
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import UnitOfTemperature
-from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import EntityCategory
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
-from .coordinator import MugDataUpdateCoordinator
 from .entity import BaseMugEntity
-from .models import HassMugData
+
+if TYPE_CHECKING:
+    from homeassistant.config_entries import ConfigEntry
+    from homeassistant.core import HomeAssistant
+    from homeassistant.helpers.entity_platform import AddEntitiesCallback
+
+    from . import HassMugData
+    from .coordinator import MugDataUpdateCoordinator
+
 
 _LOGGER = logging.getLogger(__name__)
 
-TEMPERATURE_UNITS = [
-    t.value for t in (UnitOfTemperature.CELSIUS, UnitOfTemperature.FAHRENHEIT)
-]
+TEMPERATURE_UNITS = [t.value for t in (UnitOfTemperature.CELSIUS, UnitOfTemperature.FAHRENHEIT)]
 VOLUME_LEVELS = [v.value for v in VolumeLevel]
 SELECT_TYPES = {
     "temperature_unit": SelectEntityDescription(
@@ -66,9 +68,7 @@ class MugTempUnitSelectEntity(MugSelectEntity):
     def icon(self) -> str:
         """Change icon based on current option."""
         if current := self.current_option:
-            unit = (
-                "fahrenheit" if current == UnitOfTemperature.FAHRENHEIT else "celsius"
-            )
+            unit = "fahrenheit" if current == UnitOfTemperature.FAHRENHEIT else "celsius"
             return f"mdi:temperature-{unit}"
         return "mdi:help-rhombus-outline"
 
@@ -106,7 +106,8 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up Select Entities."""
-    assert entry.entry_id is not None
+    if entry.entry_id is None:
+        raise ValueError("Missing config entry ID")
     data: HassMugData = hass.data[DOMAIN][entry.entry_id]
     entities = [
         MugTempUnitSelectEntity(data.coordinator, "temperature_unit"),

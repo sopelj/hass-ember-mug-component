@@ -2,8 +2,9 @@
 from __future__ import annotations
 
 import contextlib
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
+import voluptuous as vol
 from bleak import BleakClient, BleakError
 from ember_mug.consts import (
     EMBER_BLUETOOTH_NAMES,
@@ -11,22 +12,21 @@ from ember_mug.consts import (
     EMBER_TRAVEL_MUG_SHORT,
 )
 from homeassistant import config_entries
-from homeassistant.components.bluetooth import (
-    BluetoothServiceInfoBleak,
-    async_discovered_service_info,
-)
+from homeassistant.components.bluetooth import async_discovered_service_info
 from homeassistant.const import (
     CONF_ADDRESS,
     CONF_NAME,
     CONF_TEMPERATURE_UNIT,
     UnitOfTemperature,
 )
-from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers import config_validation as cv
-import voluptuous as vol
 
 from . import _LOGGER
 from .const import CONF_DEBUG, CONF_INCLUDE_EXTRA, DOMAIN
+
+if TYPE_CHECKING:
+    from homeassistant.components.bluetooth import BluetoothServiceInfoBleak
+    from homeassistant.data_entry_flow import FlowResult
 
 
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):

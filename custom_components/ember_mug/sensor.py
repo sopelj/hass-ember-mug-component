@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from functools import cached_property
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from homeassistant.components.sensor import (
     SensorDeviceClass,
@@ -10,11 +10,8 @@ from homeassistant.components.sensor import (
     SensorEntityDescription,
     SensorStateClass,
 )
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import ATTR_BATTERY_CHARGING, PERCENTAGE, UnitOfTemperature
-from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import EntityCategory
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import (
     ATTR_BATTERY_VOLTAGE,
@@ -27,9 +24,16 @@ from .const import (
     LIQUID_STATE_TEMP_ICONS,
     LiquidStateValue,
 )
-from .coordinator import MugDataUpdateCoordinator
 from .entity import BaseMugValueEntity
-from .models import HassMugData
+
+if TYPE_CHECKING:
+    from homeassistant.config_entries import ConfigEntry
+    from homeassistant.core import HomeAssistant
+    from homeassistant.helpers.entity_platform import AddEntitiesCallback
+
+    from . import HassMugData
+    from .coordinator import MugDataUpdateCoordinator
+
 
 SENSOR_TYPES = {
     "liquid_state": SensorEntityDescription(
@@ -174,9 +178,7 @@ class EmberMugBatterySensor(EmberMugSensor):
         """Return device specific state attributes."""
         data = self.coordinator.data
         attrs = {
-            ATTR_BATTERY_CHARGING: data.battery.on_charging_base
-            if data.battery
-            else None,
+            ATTR_BATTERY_CHARGING: data.battery.on_charging_base if data.battery else None,
         }
         if ATTR_BATTERY_VOLTAGE in data.model.attribute_labels:
             attrs[ATTR_BATTERY_VOLTAGE] = data.battery_voltage
@@ -190,8 +192,8 @@ async def async_setup_entry(
 ) -> None:
     """Set up Entities."""
     data: HassMugData = hass.data[DOMAIN][entry.entry_id]
-    entry_id = entry.entry_id
-    assert entry_id is not None
+    if entry.entry_id is None:
+        raise ValueError("Missing config entry ID")
     entities: list[EmberMugSensor] = [
         EmberMugStateSensor(data.coordinator, "liquid_state"),
         EmberMugLiquidLevelSensor(data.coordinator, "liquid_level"),

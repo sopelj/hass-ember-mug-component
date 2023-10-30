@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from ember_mug.data import Colour
 from homeassistant.components.light import (
@@ -12,14 +12,19 @@ from homeassistant.components.light import (
     LightEntity,
     LightEntityDescription,
 )
-from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant, callback
+from homeassistant.core import callback
 from homeassistant.helpers.entity import EntityCategory
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
 from .entity import BaseMugEntity
-from .models import HassMugData
+
+if TYPE_CHECKING:
+    from homeassistant.config_entries import ConfigEntry
+    from homeassistant.core import HomeAssistant
+    from homeassistant.helpers.entity_platform import AddEntitiesCallback
+
+    from .models import HassMugData
+
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -52,9 +57,7 @@ class MugLightEntity(BaseMugEntity, LightEntity):
         """Change the LED colour if defined."""
         _LOGGER.debug(f"Received turn on with {kwargs}")
         rgb, brightness = self.coordinator.mug.data.led_colour[:3], 255
-        if (rgb := kwargs.get(ATTR_RGB_COLOR)) or (
-            brightness := kwargs.get(ATTR_BRIGHTNESS)
-        ):
+        if (rgb := kwargs.get(ATTR_RGB_COLOR)) or (brightness := kwargs.get(ATTR_BRIGHTNESS)):
             await self.coordinator.mug.set_led_colour(Colour(*rgb, brightness))
             self._attr_rgb_color = tuple(rgb)
             self._attr_brightness = brightness
@@ -74,7 +77,8 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the mug light."""
-    assert entry.entry_id is not None
+    if entry.entry_id is None:
+        raise ValueError("Missing config entry ID")
     data: HassMugData = hass.data[DOMAIN][entry.entry_id]
     entities = []
     if data.mug.is_travel_mug is False:

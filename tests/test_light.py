@@ -31,6 +31,10 @@ async def test_setup_light_mug(
         "color_mode": ColorMode.RGB,
         "supported_color_modes": [ColorMode.RGB],
         "supported_features": 0,
+        "brightness": None,
+        "hs_color": None,
+        "rgb_color": None,
+        "xy_color": None,
     }
     assert led_state.state == "on"
 
