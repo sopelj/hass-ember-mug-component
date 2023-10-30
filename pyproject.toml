@@ -17,7 +17,7 @@ classifiers=[
     'Programming Language :: Python :: 3.12',
 ]
 dependencies = [
-    "bleak-retry-connector>=3.0.0",
+    "bleak-retry-connector>=3.1.1",
     "bleak>=0.20.2",
     "python-ember-mug==0.8.1",
 ]
@@ -31,10 +31,10 @@ test = [
   "home-assistant-bluetooth",
   "pytest-homeassistant-custom-component",
   # Requirements for HASS
-  "pyserial>=3.5",
-  "bluetooth-auto-recovery>=1.2.0",
-  "aiohttp_cors>=0.7.0",
-  "pyudev>=0.23.2",
+  "pyserial>=3.5",  # For HASS serial component
+  "bluetooth-auto-recovery>=1.2.1",  # For HASS Bluetooth component
+  "aiohttp-cors>=0.7.0", # For HASS http component
+  "pyudev==0.23.2",  # For HASS usb component
 ]
 
 [project.urls]
