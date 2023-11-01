@@ -6,7 +6,7 @@ authors = [
     { name = "Jesse Sopel", email = "jesse.sopel@gmail.com" },
 ]
 license = { file = "LICENSE.md" }
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dynamic = ["version"]
 classifiers=[
     'Intended Audience :: Developers',
@@ -19,7 +19,7 @@ classifiers=[
 dependencies = [
     "bleak-retry-connector>=3.1.1",
     "bleak>=0.20.2",
-    "python-ember-mug==0.8.1",
+    "python-ember-mug==0.8.3",
 ]
 
 [project.optional-dependencies]
