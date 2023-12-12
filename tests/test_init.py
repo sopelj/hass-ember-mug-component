@@ -20,10 +20,11 @@ from tests import (
     return_value=TEST_BLE_DEVICE,
 )
 @patch("custom_components.ember_mug.EmberMug._update_multiple", return_value=[])
-@patch("custom_components.ember_mug.asyncio.Event", new=AsyncMock)
+@patch("custom_components.ember_mug.asyncio.Event.wait", new_callable=AsyncMock)
 async def test_init(
     mock_setup: Mock,
     mock_update_multiple: Mock,
+    mock_async_event_wait: AsyncMock,
     hass: HomeAssistant,
 ) -> None:
     """Test initializing integration."""
