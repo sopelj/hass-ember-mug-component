@@ -20,6 +20,7 @@ dependencies = [
     "bleak-retry-connector>=3.1.1",
     "bleak>=0.20.2",
     "python-ember-mug==0.8.3",
+    "async-timeout; python_version < '3.12'",
 ]
 
 [project.optional-dependencies]
