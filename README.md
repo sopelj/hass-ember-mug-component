@@ -12,13 +12,14 @@
 A custom integration for Ember Mugs, Cups and Travel Mugs for Home Assistant. All known devices are tested and working.
 If I missed one, or you have new feature ideas/issues, please let me know.
 
-| Device       | Tested  |
-|--------------|---------|
-| Mug          | ✓       |
-| Mug 2        | ✓       |
-| Cup          | ✓       |
-| Travel Mug   | ✓       |
-| Travel Mug 2 | ✓       |
+| Device       | Tested                                                    |
+|--------------|-----------------------------------------------------------|
+| Mug          | ✓                                                         |
+| Mug 2        | ✓                                                         |
+| Cup          | ✓                                                         |
+| Travel Mug   | ✓                                                         |
+| Travel Mug 2 | ✓                                                         |
+| Tumbler      | [?](https://github.com/sopelj/python-ember-mug/issues/56) |
 
 The actual Mug logic has been moved to [an external library](https://github.com/sopelj/python-ember-mug) as per the guidelines in Home Assistant.
 So if you have issues with the mug's internals and not the integration with home assistant please [raise issues there](https://github.com/sopelj/python-ember-mug/issues) :)
@@ -36,40 +37,49 @@ You can click the button below to open this repository in HACS or you can manual
 
 [![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=sopelj&repository=hass-ember-mug-component&category=integration)
 
-### Prerequisite - Set up the Bluetooth Integration
+### Prerequisites
 
-Ensure you have the [Home Assistant Bluetooth Integration](https://www.home-assistant.io/integrations/bluetooth/) enabled, and you also need to have Bluetooth Dongle setup or a Bluetooth Proxy.
-If you use a Bluetooth adapter it is recommended to use one of the [officially supported adapters](https://www.home-assistant.io/integrations/bluetooth/#known-working-adapters).
-You can also use [Bluetooth Proxies](https://www.home-assistant.io/integrations/bluetooth/#remote-adapters-bluetooth-proxies) as well, just be sure the proxy supports "active" connections, and you use Home Assistant 2023.4 or later.
-If you have issues with your specific bluetooth adapter using Bluetooth proxies might be a good option.
+You need to have either a [Bluetooth Proxy](https://www.home-assistant.io/integrations/bluetooth/#remote-adapters-bluetooth-proxies) or a supported Bluetooth dongle that is configured with [Home Assistant's Bluetooth Integration](https://www.home-assistant.io/integrations/bluetooth/).
+Bluetooth Proxies seem to be far more reliable now, so, if you have that option you will be less likely to have issues with connectivity and errors unique to your specific setup.
+
+#### Option 1 - [Bluetooth Proxy](https://www.home-assistant.io/integrations/bluetooth/#remote-adapters-bluetooth-proxies) (Recommended)
+
+Ensure you have at least one [Bluetooth Proxy](https://www.home-assistant.io/integrations/bluetooth/#remote-adapters-bluetooth-proxies) setup with Home Assistant that supports **active connections**.
+Currently, that only includes ESPHome proxies with firmware 2022.9.3 or later. In theory, you can have multiple proxies setup throughout the house as well.
+
+### Option 2 - [Home Assistant's Bluetooth Integration](https://www.home-assistant.io/integrations/bluetooth/) with integrated adapter or dongle
+
+Ensure you have the [Home Assistant Bluetooth Integration](https://www.home-assistant.io/integrations/bluetooth/) enabled and have integrated Bluetooth or Bluetooth Dongle setup with it.
+It is recommended to use one of the [officially supported adapters](https://www.home-assistant.io/integrations/bluetooth/#known-working-adapters).
+There are many different adapters and support varies greatly. If you have issues with your specific Bluetooth adapter, it may be worth trying with a Bluetooth Proxy.
 
 ### Setting up your Mug
 
-In order to function properly, you may need to set up your device using the app before trying to use this integration.
+In order to function fully, you may need to set up your device using the app before trying to use this integration.
 This is not required, but if you don't, changing values such as the name, colour, temp, etc. via home assistant **may** not work.
 Once you set it up, please forget the mug on your phone or at least disable Bluetooth, so they don't fight over the device.
 
 1. Set your device in the Ember mobile app
 2. Forget your device from your Bluetooth Devices on your phone (or at least disable Bluetooth on it).
-3. Home Assistant should auto-detect your device, and you should get a notification to set it up<br/>
+3. Put your device into pairing mode:
+   - For the Mug/Cup; hold down the button on the bottom until it flashes blue
+   - For the Travel Mug; press and hold the Ember logo until the display shows 'PAIR'
+4. Home Assistant should auto-detect your device, and you should get a notification to set it up<br/>
    ![Auto discovery Notification](./examples/discovery_setup_1_notification.png)
    Choose "Check it out" or go to "Settings" -> "Devices"
-4. In your devices you should see an option for the mug<br/>
+5. In your devices you should see an option for the mug<br/>
    ![Discovered Device](./examples/discovery_setup_2_device.png)
    Then choose "Configure"
-5. In the prompt change any options you wish.<br/>
+6. In the prompt change any options you wish.<br/>
    ![Configuration](./examples/discovery_setup_3_prompt.png)
    **You probably don't want extra attributes, they are for debugging and development only**
    Then hit "Next"
-6. It will then try and connect to the device. On success, you be prompted to choose a location.<br/>
+7. It will then try and connect to the device. On success, you be prompted to choose a location.<br/>
    ![Configuration](./examples/discovery_setup_4_location.png )
-7. Once it has been added, then put your device into pairing mode
-   - For the Mug/Cup; hold down the button on the bottom until it flashes blue
-   - For the Travel Mug; press and hold the Ember logo until the display shows 'PAIR'
 8. Your device will exit paring mode automatically and go back to the default colour when it's setup.
 
 > **Note**
-> If using Bluetooth Proxies please ensure you are using Home Assistant 2023.4 and ESPHome 2023.2 or later for the best experience
+> If using the Bluetooth integration you may need to open `bluetoothctl` in order for the pairing to be allowed
 
 #### Troubleshooting
 
@@ -82,6 +92,13 @@ you can look at the "Quick Start Guide" that came with your mug, or consult the 
 
 If you mug stops updating and becomes unavailable, simply try putting it in pairing mode and waiting 15-60 seconds. It should reconnect automatically.
 This doesn't happen often unless using Bluetooth Proxies.
+
+##### Constant Timeouts or `le-connection-abort-by-local`
+
+If, following an upgrade or changing frm a Proxy to a Bluetooth adapter, your mug gets stuck in a state where it refuses to connect,
+you get constant reconnects, timeouts, and/or `le-connection-abort-by-local` messages in the debug logs, you may need to remove
+your mug via `bluetoothctl remove my-mac-address` and factory reset your device. It should reconnect correctly afterward.
+You may also need to re-add it to the app in order to make it writable again as well.
 
 ##### 'Operation failed with ATT error: 0x0e' or another connection error
 
@@ -99,7 +116,7 @@ If you are running in HassOS it should automatically start, but sometimes in doc
 ##### Does not automatically reconnect to Home Assistant after restart
 
 In some cases people have had issues with built-in adapters not re-connecting automatically after restarting Home Assistant and requiring the device to be in pairing mode to reconnect.
-It seems to be sufficient to open blutoothctl and try connecting/pairing the device from there to avoid this issue in future.
+It seems to be sufficient to open `bluetoothctl` and try connecting/pairing the device from there to avoid this issue in future.
 
 #### Connectivity or other issues with Bluetooth
 
