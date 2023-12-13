@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Any
 
 from bleak import BleakError
 from bleak_retry_connector import close_stale_connections
-from ember_mug.data import MugData
+from ember_mug.data import Change, MugData
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.device_registry import CONNECTION_BLUETOOTH
 from homeassistant.helpers.entity import DeviceInfo
@@ -61,8 +61,8 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
         """Poll the device."""
         _LOGGER.debug("Updating")
         full_update = not self._last_refresh_was_full
+        changed: list[Change] | None = []
         try:
-            changed = []
             if self._initial_update is True:
                 changed = await self.mug.update_initial()
                 self._initial_update = False
@@ -74,6 +74,8 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
             self._last_refresh_was_full = not self._last_refresh_was_full
             self.available = True
         except (asyncio.TimeoutError, BleakError) as e:
+            if isinstance(e, BleakError):
+                _LOGGER.debug("An error occurred trying to update the mug: %s", e)
             if self.available is True:
                 _LOGGER.debug("%s is not available: %s", e)
                 self.available = False
@@ -81,9 +83,10 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
                 raise UpdateFailed(
                     f"An error occurred updating {self.mug.model_name}: {e=}",
                 ) from e
+            changed = None
         except Exception as e:
             _LOGGER.error(
-                "An error occurred whilst updating the %s: %s",
+                "An unexpected error occurred whilst updating the %s: %s",
                 self.mug.model_name,
                 e,
             )
