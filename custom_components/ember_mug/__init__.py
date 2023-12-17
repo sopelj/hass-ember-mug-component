@@ -56,14 +56,19 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         hass.data[DOMAIN] = {}
 
     address: str = entry.data[CONF_ADDRESS].upper()
-    ble_device = bluetooth.async_ble_device_from_address(hass, address)
-    if not ble_device:
+    service_info = bluetooth.async_last_service_info(hass, address, connectable=True)
+    _LOGGER.debug(
+        "Integration setup. Last service info: Device: %s, Manufacturer Data: %s",
+        service_info.device,
+        service_info.manufacturer_data,
+    )
+    if not service_info:
         raise ConfigEntryNotReady(
             f"Could not find Ember Mug with address {entry.data[CONF_ADDRESS]}",
         )
 
     ember_mug = EmberMug(
-        ble_device,
+        service_info.device,
         include_extra=entry.data.get(CONF_INCLUDE_EXTRA, False),
         debug=entry.data.get(CONF_DEBUG, False),
     )

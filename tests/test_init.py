@@ -8,6 +8,7 @@ from pytest_homeassistant_custom_component.common import MockConfigEntry
 from custom_components.ember_mug import DOMAIN
 from tests import (
     DEFAULT_CONFIG_DATA,
+    MUG_SERVICE_INFO,
     TEST_BLE_DEVICE,
     TEST_MAC_UNIQUE_ID,
     TEST_MUG_NAME,
@@ -16,8 +17,8 @@ from tests import (
 
 
 @patch(
-    "custom_components.ember_mug.bluetooth.async_ble_device_from_address",
-    return_value=TEST_BLE_DEVICE,
+    "custom_components.ember_mug.bluetooth.async_last_service_info",
+    return_value=MUG_SERVICE_INFO,
 )
 @patch("custom_components.ember_mug.EmberMug._update_multiple", return_value=[])
 @patch("custom_components.ember_mug.asyncio.Event.wait", new_callable=AsyncMock)
@@ -50,8 +51,8 @@ async def test_init(
 
 
 @patch(
-    "custom_components.ember_mug.bluetooth.async_ble_device_from_address",
-    return_value=TEST_BLE_DEVICE,
+    "custom_components.ember_mug.bluetooth.async_last_service_info",
+    return_value=MUG_SERVICE_INFO,
 )
 @patch("custom_components.ember_mug.EmberMug._update_multiple", return_value=[])
 @patch("custom_components.ember_mug.asyncio.Event", new=AsyncMock)
