@@ -4,8 +4,21 @@ from __future__ import annotations
 from unittest.mock import AsyncMock, Mock
 
 from bleak import BleakError
-from ember_mug.consts import LiquidState, TemperatureUnit
-from ember_mug.data import BatteryInfo, Colour, Model, MugData, MugFirmwareInfo, MugMeta
+from ember_mug.consts import (
+    DeviceColour,
+    DeviceModel,
+    DeviceType,
+    LiquidState,
+    TemperatureUnit,
+)
+from ember_mug.data import (
+    BatteryInfo,
+    Colour,
+    ModelInfo,
+    MugData,
+    MugFirmwareInfo,
+    MugMeta,
+)
 from homeassistant.core import HomeAssistant
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
@@ -33,7 +46,7 @@ async def test_config_entry_diagnostics(hass: HomeAssistant) -> None:
     pink = Colour(244, 0, 161)
     mock_mug = Mock()
     mock_mug.data = MugData(
-        model=Model(MUG_DEVICE_NAME),
+        model_info=ModelInfo(DeviceModel.MUG_2_10_OZ, DeviceColour.BLACK),
         name=TEST_MUG_NAME,
         meta=MugMeta("test-id", "test-serial"),
         battery=BatteryInfo(33, False),
@@ -75,10 +88,16 @@ async def test_config_entry_diagnostics(hass: HomeAssistant) -> None:
     assert dump == {
         "info": {
             "meta_display": "Serial Number: test-serial",
-            "model": {"name": MUG_DEVICE_NAME, "include_extra": False},
+            "model_info": {
+                "capacity": 295,
+                "colour": DeviceColour.BLACK,
+                "device_type": DeviceType.MUG,
+                "model": DeviceModel.MUG_2_10_OZ,
+            },
             "use_metric": True,
             "name": TEST_MUG_NAME,
             "meta": {"mug_id": "test-id", "serial_number": "test-serial"},
+            "debug": False,
             "battery": {"on_charging_base": False, "percent": 33},
             "firmware": {"bootloader": 10, "hardware": 200, "version": 15},
             "led_colour": pink,

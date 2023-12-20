@@ -3,11 +3,11 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from sys import version_info
 from typing import TYPE_CHECKING
 
 from bleak import BleakError
 from ember_mug import EmberMug
+from ember_mug.utils import get_model_info_from_advertiser_data
 from homeassistant.components import bluetooth
 from homeassistant.components.bluetooth import (
     BluetoothCallbackMatcher,
@@ -27,12 +27,6 @@ from homeassistant.exceptions import ConfigEntryNotReady
 from .const import CONF_DEBUG, CONF_INCLUDE_EXTRA, DOMAIN
 from .coordinator import MugDataUpdateCoordinator
 from .models import HassMugData
-
-if version_info.minor < 12:
-    # library required before Python 3.12
-    import async_timeout
-else:
-    async_timeout = asyncio
 
 if TYPE_CHECKING:
     from homeassistant.config_entries import ConfigEntry
@@ -69,7 +63,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     ember_mug = EmberMug(
         service_info.device,
-        include_extra=entry.data.get(CONF_INCLUDE_EXTRA, False),
+        model_info=get_model_info_from_advertiser_data(service_info.advertisement),
         debug=entry.data.get(CONF_DEBUG, False),
     )
     mug_coordinator = MugDataUpdateCoordinator(
@@ -101,7 +95,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         raise
 
     try:
-        async with async_timeout.timeout(60):
+        async with asyncio.timeout(60):
             await startup_event.wait()
     except TimeoutError as ex:
         raise ConfigEntryNotReady(
@@ -148,7 +142,7 @@ async def set_temperature_unit(
         # No need
         return
     try:
-        async with async_timeout.timeout(10):
+        async with asyncio.timeout(10):
             await mug_coordinator.mug.set_temperature_unit(unit)
     except (BleakError, TimeoutError, EOFError) as e:
         _LOGGER.warning("Unable to set temperature unit to %s: %s.", unit, e)

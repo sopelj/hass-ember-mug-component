@@ -30,7 +30,7 @@ async def test_setup_text_mug(
     name_state = hass.states.get(entity_name)
     assert name_state is not None
     assert name_state.attributes == {
-        "friendly_name": "Test Mug Name",
+        "friendly_name": "EMBER Name",
         "max": 16,
         "min": 1,
         "mode": TextMode.TEXT,

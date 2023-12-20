@@ -14,7 +14,7 @@ from homeassistant.helpers.device_registry import CONNECTION_BLUETOOTH
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from .const import MANUFACTURER
+from .const import MANUFACTURER, SUGGESTED_AREA
 
 if TYPE_CHECKING:
     from ember_mug import EmberMug
@@ -37,7 +37,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
         device_name: str,
     ) -> None:
         """Initialize global Mug data updater."""
-        device_type = mug.data.model.type
+        device_type = mug.data.model_info.device_type.value
         super().__init__(
             hass=hass,
             logger=logger,
@@ -157,9 +157,10 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
         firmware = self.data.firmware
         return DeviceInfo(
             connections={(CONNECTION_BLUETOOTH, self.mug.device.address)},
-            name=name if (name := self.data.name) and name != "EMBER" else self.device_name,
-            model=self.data.model.name,
-            suggested_area="Kitchen",
+            name=name if (name := self.data.name) and name != "Ember Device" else self.device_name,
+            model=self.data.model_info.model.value if self.data.model_info.model else None,
+            serial_number=self.data.meta.serial_number if self.data.meta else None,
+            suggested_area=SUGGESTED_AREA,
             hw_version=str(firmware.hardware) if firmware else None,
             sw_version=str(firmware.version) if firmware else None,
             manufacturer=MANUFACTURER,

@@ -2,7 +2,7 @@
 from unittest.mock import patch
 
 from bleak.backends.scanner import AdvertisementData, BLEDevice
-from ember_mug.consts import EMBER_MUG
+from ember_mug.consts import DEFAULT_NAME
 from home_assistant_bluetooth.models import BluetoothServiceInfoBleak
 from homeassistant.const import (
     CONF_ADDRESS,
@@ -23,7 +23,7 @@ def patch_async_setup_entry(return_value=True):
     )
 
 
-MUG_DEVICE_NAME = EMBER_MUG
+MUG_DEVICE_NAME = DEFAULT_NAME
 TEST_MAC = "AA:BB:CC:DD:EE:FF"
 TEST_MAC_UNIQUE_ID = TEST_MAC.replace(":", "").lower()
 TEST_MUG_NAME = "Test Mug"

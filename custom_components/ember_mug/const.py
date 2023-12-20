@@ -6,6 +6,7 @@ from homeassistant.backports.enum import StrEnum
 
 DOMAIN: Final[str] = "ember_mug"
 MANUFACTURER: Final[str] = "Ember"
+SUGGESTED_AREA: Final[str] = "Kitchen"
 
 ICON_DEFAULT = "mdi:coffee"
 ICON_EMPTY = "mdi:coffee-outline"

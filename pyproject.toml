@@ -17,11 +17,10 @@ classifiers=[
     'Programming Language :: Python :: 3.12',
 ]
 dependencies = [
-    "homeassistant>=2023.8.0",
+    "homeassistant>=2023.9.0",
     "bleak-retry-connector>=3.1.1",
     "bleak>=0.20.2",
-    "python-ember-mug==0.8.3",
-    "async-timeout; python_version < '3.12'",
+    "python-ember-mug@git+https://github.com/sopelj/python-ember-mug@feature/model-detection#egg=ember_mug",
 ]
 
 [project.optional-dependencies]
@@ -54,11 +53,14 @@ features = ["test"]
 
 [[tool.hatch.envs.test.matrix]]
 python = ["3.11"]
-homeassistant = ["2023.8.4", "2023.10.5"]
+homeassistant = ["2023.9.3", "2023.10.5"]
 
 [[tool.hatch.envs.test.matrix]]
 python = ["3.11", "3.12"]
 homeassistant = ["2023.11.1"]
+
+[tool.hatch.metadata]
+allow-direct-references = true
 
 [tool.hatch.envs.test.scripts]
 cov = "pytest --asyncio-mode=auto --cov=custom_components --cov-branch --cov-report=xml --cov-report=term-missing tests"

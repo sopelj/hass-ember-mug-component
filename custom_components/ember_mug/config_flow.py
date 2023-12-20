@@ -6,11 +6,7 @@ from typing import TYPE_CHECKING, Any
 
 import voluptuous as vol
 from bleak import BleakClient, BleakError
-from ember_mug.consts import (
-    EMBER_BLUETOOTH_NAMES,
-    EMBER_TRAVEL_MUG,
-    EMBER_TRAVEL_MUG_SHORT,
-)
+from ember_mug.consts import DEVICE_SERVICE_UUIDS
 from homeassistant import config_entries
 from homeassistant.components.bluetooth import async_discovered_service_info
 from homeassistant.const import (
@@ -71,29 +67,27 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         if not self._discovery_info:
             current_addresses = self._async_current_ids()
-            for discovery_info in async_discovered_service_info(self.hass):
-                address = discovery_info.address
+            for service_info in async_discovered_service_info(self.hass):
+                address = service_info.address
                 unique_id = address.replace(":", "").lower()
                 if unique_id in current_addresses:
                     continue
-                if discovery_info.name not in EMBER_BLUETOOTH_NAMES:
+                if not set(service_info.service_uuids).intersection(DEVICE_SERVICE_UUIDS):
                     continue
                 try:
-                    async with BleakClient(discovery_info.device) as client:
+                    async with BleakClient(service_info.device) as client:
                         await client.connect()
                         with contextlib.suppress(BleakError, EOFError):
                             # An error will be raised if already paired
                             await client.pair()
                 except BleakError:
                     self.async_abort(reason="cannot_connect")
-                self._discovery_info = discovery_info
+                self._discovery_info = service_info
                 break
             else:
                 return self.async_abort(reason="no_new_devices")
 
         name = self._discovery_info.name
-        if name == EMBER_TRAVEL_MUG_SHORT:
-            name = EMBER_TRAVEL_MUG
         data_schema = vol.Schema(
             {
                 vol.Required(CONF_ADDRESS): vol.In(

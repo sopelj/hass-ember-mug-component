@@ -3,6 +3,7 @@ from unittest.mock import AsyncMock, Mock
 
 import pytest
 from ember_mug import EmberMug
+from ember_mug.data import ModelInfo
 from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant
 from homeassistant.setup import async_setup_component
@@ -40,7 +41,7 @@ def mock_dependencies(hass):
 @pytest.fixture
 def mock_mug():
     """Create a mocked Ember Mug instance."""
-    mock_mug = EmberMug(TEST_BLE_DEVICE)
+    mock_mug = EmberMug(TEST_BLE_DEVICE, ModelInfo())
     mock_mug._client = AsyncMock()
     mock_mug._ensure_connection = AsyncMock()
     mock_mug.update_initial = AsyncMock(return_value=[])

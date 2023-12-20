@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.9.0]
+
+### Added
+* Support for Tumbler
+* Model information, capacity, colour and number.
+
+### Notes
+* Requires Home Assistant 2023.9+
+
 ## [0.8.0]
 
 ### Added
