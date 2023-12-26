@@ -51,7 +51,8 @@
       "liquid_level": {
         "name": "液量",
         "state_attributes": {
-          "raw_liquid_level": { "name": "液量" }
+          "raw_liquid_level": { "name": "液量" },
+          "capacity": { "name": "容量 (ml)" }
         }
       },
       "state": {
@@ -67,6 +68,23 @@
           "warm_no_control": "暑い（管理ない）"
         },
         "state_attributes": {
+          "colour": {
+            "name": "色",
+            "state": {
+              "black": "黒色",
+              "blue": "青色",
+              "copper": "銅色",
+              "gold": "金色",
+              "grey": "灰色",
+              "red": "赤色",
+              "sage-green": "緑色",
+              "sandstone": "砂岩色",
+              "rose-gold": "ローズゴールド色",
+              "stainless-steel": "ステンレス鋼色",
+              "unknown": "未知色",
+              "white": "白色"
+            }
+          },
           "date_time_zone": { "name": "日付と時間帯" },
           "dsk": { "name": "DSK" },
           "firmware_info": { "name": "ファームウェア"},

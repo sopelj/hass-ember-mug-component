@@ -36,8 +36,7 @@ async def test_setup_sensors(
         "device_class": "enum",
         "firmware_info": None,
         "friendly_name": "Test Mug State",
-        "capacity": 295,
-        "colour": None,
+        "colour": "unknown",
         "icon": ICON_UNAVAILABLE,
         "options": LIQUID_STATE_OPTIONS,
         "raw_state": LiquidState.UNKNOWN,
@@ -51,6 +50,7 @@ async def test_setup_sensors(
     liquid_level_state = hass.states.get(f"{sensor_base_name}_liquid_level")
     assert liquid_level_state is not None
     assert liquid_level_state.attributes == {
+        "capacity": 295,
         "friendly_name": "Test Mug Liquid level",
         "icon": "mdi:cup-water",
         "raw_liquid_level": 0,

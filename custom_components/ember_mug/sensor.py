@@ -105,11 +105,11 @@ class EmberMugStateSensor(EmberMugSensor):
     def extra_state_attributes(self) -> dict[str, Any]:
         """Return device specific state attributes."""
         data = self.coordinator.data
+        colour = data.model_info.colour
         attrs = {
             "firmware_info": data.firmware,
             "raw_state": data.liquid_state,
-            "capacity": data.model_info.capacity,
-            "colour": data.model_info.colour,
+            "colour": colour.value.lower().replace(" ", "-") if colour else "unknown",
         }
         if data.debug:
             attrs |= {
@@ -146,6 +146,7 @@ class EmberMugLiquidLevelSensor(EmberMugSensor):
         """Return device specific state attributes."""
         return {
             "raw_liquid_level": self.coordinator.data.liquid_level,
+            "capacity": self.coordinator.data.model_info.capacity,
             **super().extra_state_attributes,
         }
 

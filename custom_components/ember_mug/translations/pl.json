@@ -51,7 +51,8 @@
       "liquid_level": {
         "name": "Poziom cieczy",
         "state_attributes": {
-          "raw_liquid_level": { "name": "Poziom surowej cieczy" }
+          "raw_liquid_level": { "name": "Poziom surowej cieczy" },
+          "capacity": { "name": "Pojemność (ml)" }
         }
       },
       "state": {
@@ -67,6 +68,23 @@
           "warm_no_control": "Ciepło (bez kontroli)"
         },
         "state_attributes": {
+          "colour": {
+            "name": "Kolor",
+            "state": {
+              "black": "Czarny",
+              "blue": "Niebieski",
+              "copper": "Miedź",
+              "gold": "Złoto",
+              "grey": "Szary",
+              "red": "Czerwony",
+              "sage-green": "Zielony",
+              "sandstone": "Piaskowiec",
+              "rose-gold": "Różowe złoto",
+              "stainless-steel": "Stal nierdzewna",
+              "unknown": "Nieznany",
+              "white": "Biały"
+            }
+          },
           "date_time_zone": { "name": "Data i strefa czasowa" },
           "dsk": { "name": "DSK" },
           "firmware_info": { "name": "Oprogramowanie układowe" },

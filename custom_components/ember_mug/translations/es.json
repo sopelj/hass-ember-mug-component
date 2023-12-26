@@ -51,7 +51,8 @@
       "liquid_level": {
         "name": "Nivel de liquido",
         "state_attributes": {
-          "raw_liquid_level": { "name": "Nivel de líquido bruto" }
+          "raw_liquid_level": { "name": "Nivel de líquido bruto" },
+          "capacity": { "name": "Capacidad (ml)" }
         }
       },
       "state": {
@@ -67,6 +68,23 @@
           "warm_no_control": "Cálido (sin control)"
         },
         "state_attributes": {
+          "colour": {
+            "name": "Color",
+            "state": {
+              "black": "Negro",
+              "blue": "Azul",
+              "copper": "Cobre",
+              "gold": "Oro",
+              "grey": "Gris",
+              "red": "Rojo",
+              "sage-green": "Verde",
+              "sandstone": "Arenisca",
+              "rose-gold": "Oro rosa",
+              "stainless-steel": "Acero-inoxidable",
+              "unknown": "Desconocido",
+              "white": "Blanco"
+            }
+          },
           "date_time_zone": { "name": "Fecha y Zona Horaria" },
           "dsk": { "name": "DSK" },
           "firmware_info": { "name": "Información de firmware"},
