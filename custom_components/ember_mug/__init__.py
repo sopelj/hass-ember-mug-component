@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 
 from bleak import BleakError
 from ember_mug import EmberMug
+from ember_mug.consts import EMBER_BLE_SIG
 from ember_mug.utils import get_model_info_from_advertiser_data
 from homeassistant.components import bluetooth
 from homeassistant.components.bluetooth import (
@@ -83,7 +84,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         bluetooth.async_register_callback(
             hass,
             mug_coordinator.handle_bluetooth_event,
-            BluetoothCallbackMatcher(address=address, connectable=True),
+            BluetoothCallbackMatcher(address=address, connectable=True, manufacturer_id=EMBER_BLE_SIG),
             BluetoothScanningMode.ACTIVE,
         ),
     )
