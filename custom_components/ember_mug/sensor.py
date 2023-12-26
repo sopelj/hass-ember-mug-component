@@ -126,7 +126,7 @@ class EmberMugLiquidLevelSensor(EmberMugSensor):
     @cached_property
     def max_level(self) -> int:
         """Max level is different for travel mug."""
-        if self.coordinator.mug.data.model_info.type == DeviceType.TRAVEL_MUG:
+        if self.coordinator.mug.data.model_info.device_type == DeviceType.TRAVEL_MUG:
             return 100
         return 30
 
