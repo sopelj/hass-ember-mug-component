@@ -93,6 +93,7 @@ async def test_config_entry_diagnostics(hass: HomeAssistant) -> None:
                 "colour": DeviceColour.BLACK,
                 "device_type": DeviceType.MUG,
                 "model": DeviceModel.MUG_2_10_OZ,
+                "name": "Ember Mug 2 (10oz)",
             },
             "use_metric": True,
             "name": TEST_MUG_NAME,

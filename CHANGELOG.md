@@ -6,6 +6,10 @@
 * Support for Tumbler
 * Model information, capacity, colour and number.
 
+### Changes
+* Device discovery method changed (internally)
+* Mug references changed to be device-agnostic as much as possible
+
 ### Notes
 * Requires Home Assistant 2023.9+
 

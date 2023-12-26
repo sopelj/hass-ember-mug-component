@@ -48,16 +48,16 @@ class MugSelectEntity(BaseMugEntity, SelectEntity):
     def __init__(
         self,
         coordinator: MugDataUpdateCoordinator,
-        mug_attr: str,
+        device_attr: str,
     ) -> None:
-        """Initialize the Mug select."""
-        self.entity_description = SELECT_TYPES[mug_attr]
-        super().__init__(coordinator, mug_attr)
+        """Initialize the Device select entity."""
+        self.entity_description = SELECT_TYPES[device_attr]
+        super().__init__(coordinator, device_attr)
 
     @property
     def current_option(self) -> str | None:
         """Return a mug attribute as the state for the current option."""
-        option = self.coordinator.get_mug_attr(self._mug_attr)
+        option = self.coordinator.get_device_attr(self._device_attr)
         return option.value if isinstance(option, Enum) else option
 
 

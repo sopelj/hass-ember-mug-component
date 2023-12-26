@@ -46,12 +46,12 @@ class BaseMugEntity(CoordinatorEntity):
     def __init__(
         self,
         coordinator: MugDataUpdateCoordinator,
-        mug_attr: str,
+        device_attr: str,
     ) -> None:
         """Initialize the entity."""
         super().__init__(coordinator)
         entity_key = self.entity_description.key
-        self._mug_attr = mug_attr
+        self._device_attr = device_attr
         self._address = coordinator.mug.device.address
         self._attr_translation_key = entity_key
         self._attr_device_info = coordinator.device_info
@@ -85,4 +85,4 @@ class BaseMugValueEntity(BaseMugEntity):
     @property
     def native_value(self) -> Any:
         """Return a mug attribute as the state for the sensor."""
-        return self.coordinator.get_mug_attr(self._mug_attr)
+        return self.coordinator.get_device_attr(self._device_attr)

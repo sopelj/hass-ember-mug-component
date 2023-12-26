@@ -41,11 +41,11 @@ class MugTextEntity(BaseMugValueEntity, TextEntity):
     def __init__(
         self,
         coordinator: MugDataUpdateCoordinator,
-        mug_attr: str,
+        device_attr: str,
     ) -> None:
         """Initialize the Mug sensor."""
-        self.entity_description = TEXT_TYPES[mug_attr]
-        super().__init__(coordinator, mug_attr)
+        self.entity_description = TEXT_TYPES[device_attr]
+        super().__init__(coordinator, device_attr)
 
     @property
     def native_value(self) -> str:

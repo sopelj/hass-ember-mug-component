@@ -148,10 +148,10 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
         _LOGGER.debug("Callback called in Home Assistant")
         self.async_set_updated_data(mug_data)
 
-    def get_mug_attr(self, mug_attr: str) -> Any:
-        """Get a mug attribute by name (recursively) or return None."""
+    def get_device_attr(self, device_attr: str) -> Any:
+        """Get a device attribute by name (recursively) or return None."""
         value = self.data
-        for attr in mug_attr.split("."):
+        for attr in device_attr.split("."):
             try:
                 value = getattr(value, attr)
             except AttributeError:
@@ -165,7 +165,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
         return DeviceInfo(
             connections={(CONNECTION_BLUETOOTH, self.mug.device.address)},
             name=name if (name := self.data.name) and name != "Ember Device" else self.device_name,
-            model=self.data.model_info.model.value if self.data.model_info.model else None,
+            model=self.data.model_info.name,
             serial_number=self.data.meta.serial_number if self.data.meta else None,
             suggested_area=SUGGESTED_AREA,
             hw_version=str(firmware.hardware) if firmware else None,

@@ -49,11 +49,11 @@ class MugNumberEntity(BaseMugValueEntity, NumberEntity):
     def __init__(
         self,
         coordinator: MugDataUpdateCoordinator,
-        mug_attr: str,
+        device_attr: str,
     ) -> None:
         """Initialize the Mug Number."""
-        self.entity_description = NUMBER_TYPES[mug_attr]
-        super().__init__(coordinator, mug_attr)
+        self.entity_description = NUMBER_TYPES[device_attr]
+        super().__init__(coordinator, device_attr)
 
 
 class MugTargetTempNumberEntity(MugNumberEntity):

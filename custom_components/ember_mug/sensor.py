@@ -74,11 +74,11 @@ class EmberMugSensor(BaseMugValueEntity, SensorEntity):
     def __init__(
         self,
         coordinator: MugDataUpdateCoordinator,
-        mug_attr: str,
+        device_attr: str,
     ) -> None:
         """Initialize the Mug sensor."""
-        self.entity_description = SENSOR_TYPES[mug_attr]
-        super().__init__(coordinator, mug_attr)
+        self.entity_description = SENSOR_TYPES[device_attr]
+        super().__init__(coordinator, device_attr)
 
 
 class EmberMugStateSensor(EmberMugSensor):
@@ -157,7 +157,7 @@ class EmberMugTemperatureSensor(EmberMugSensor):
     @property
     def icon(self) -> str | None:
         """Set icon based on temperature."""
-        if self._mug_attr != "current_temp":
+        if self._device_attr != "current_temp":
             return "mdi:thermometer"
         icon = LIQUID_STATE_TEMP_ICONS.get(
             self.coordinator.data.liquid_state,
