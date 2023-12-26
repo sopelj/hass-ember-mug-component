@@ -47,6 +47,11 @@ class MugTextEntity(BaseMugValueEntity, TextEntity):
         self.entity_description = TEXT_TYPES[mug_attr]
         super().__init__(coordinator, mug_attr)
 
+    @property
+    def native_value(self) -> str:
+        """Return a mug attribute as the state for the sensor."""
+        return super().native_value or "EMBER"
+
     async def async_set_value(self, value: str) -> None:
         """Set the mug name."""
         await self.coordinator.mug.set_name(value)
@@ -62,6 +67,6 @@ async def async_setup_entry(
         raise ValueError("Missing config entry ID")
     data: HassMugData = hass.data[DOMAIN][entry.entry_id]
     entities = []
-    if not data.mug.is_cup:
+    if data.mug.has_attribute("name"):
         entities = [MugTextEntity(data.coordinator, attr) for attr in TEXT_TYPES]
     async_add_entities(entities)

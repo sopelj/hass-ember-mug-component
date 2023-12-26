@@ -4,6 +4,8 @@ from __future__ import annotations
 from unittest.mock import Mock, patch
 
 from ember_mug import EmberMug
+from ember_mug.consts import DeviceModel
+from ember_mug.data import ModelInfo
 from homeassistant.components.number import NumberMode
 from homeassistant.const import ATTR_ENTITY_ID, UnitOfTemperature
 from homeassistant.core import HomeAssistant
@@ -47,8 +49,7 @@ async def test_setup_number_travel_mug(
     mock_mug: EmberMug | Mock,
 ) -> None:
     """Test travel mug also works."""
-    mock_mug.is_cup = False
-    mock_mug.is_travel_mug = True
+    mock_mug.data.model_info = ModelInfo(DeviceModel.TRAVEL_MUG_12_OZ)
     assert len(hass.states.async_all()) == 0
     await setup_platform(hass, mock_mug, "number")
     assert len(hass.states.async_all()) == 1

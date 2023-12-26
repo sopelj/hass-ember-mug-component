@@ -4,6 +4,7 @@ from __future__ import annotations
 from functools import cached_property
 from typing import TYPE_CHECKING, Any
 
+from ember_mug.consts import DeviceType
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntity,
@@ -107,6 +108,8 @@ class EmberMugStateSensor(EmberMugSensor):
         attrs = {
             "firmware_info": data.firmware,
             "raw_state": data.liquid_state,
+            "capacity": data.model_info.capacity,
+            "colour": data.model_info.colour,
         }
         if data.debug:
             attrs |= {
@@ -123,7 +126,7 @@ class EmberMugLiquidLevelSensor(EmberMugSensor):
     @cached_property
     def max_level(self) -> int:
         """Max level is different for travel mug."""
-        if self.coordinator.mug.is_travel_mug:
+        if self.coordinator.mug.data.model_info.type == DeviceType.TRAVEL_MUG:
             return 100
         return 30
 
@@ -180,7 +183,7 @@ class EmberMugBatterySensor(EmberMugSensor):
         attrs = {
             ATTR_BATTERY_CHARGING: data.battery.on_charging_base if data.battery else None,
         }
-        if ATTR_BATTERY_VOLTAGE in data.model_info.update_attributes:
+        if self.coordinator.mug.has_attribute("battery_voltage"):
             attrs[ATTR_BATTERY_VOLTAGE] = data.battery_voltage
         return attrs | super().extra_state_attributes
 

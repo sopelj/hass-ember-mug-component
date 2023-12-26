@@ -4,7 +4,8 @@ from __future__ import annotations
 from unittest.mock import Mock
 
 from ember_mug import EmberMug
-from ember_mug.consts import LiquidState
+from ember_mug.consts import DeviceModel, LiquidState
+from ember_mug.data import ModelInfo
 from homeassistant.components.sensor import SensorStateClass
 from homeassistant.const import PERCENTAGE, UnitOfTemperature
 from homeassistant.core import HomeAssistant
@@ -21,6 +22,7 @@ async def test_setup_sensors(
 ) -> None:
     """Initialize and test sensors."""
     assert len(hass.states.async_all()) == 0
+    mock_mug.data.model_info = ModelInfo(DeviceModel.MUG_2_10_OZ)
     config = await setup_platform(hass, mock_mug, "sensor")
     assert len(hass.states.async_all()) == 4
     entity_registry = er.async_get(hass)
@@ -34,6 +36,8 @@ async def test_setup_sensors(
         "device_class": "enum",
         "firmware_info": None,
         "friendly_name": "Test Mug State",
+        "capacity": 295,
+        "colour": None,
         "icon": ICON_UNAVAILABLE,
         "options": LIQUID_STATE_OPTIONS,
         "raw_state": LiquidState.UNKNOWN,

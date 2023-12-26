@@ -4,7 +4,8 @@ from __future__ import annotations
 from unittest.mock import Mock
 
 from ember_mug import EmberMug
-from ember_mug.consts import MUG_NAME_PATTERN
+from ember_mug.consts import MUG_NAME_PATTERN, DeviceModel
+from ember_mug.data import ModelInfo
 from homeassistant.components.text import TextMode
 from homeassistant.components.text.const import DOMAIN as TEXT_DOMAIN
 from homeassistant.core import HomeAssistant
@@ -18,9 +19,8 @@ async def test_setup_text_mug(
     mock_mug: EmberMug | Mock,
 ) -> None:
     """Initialize and test both text entities."""
+    mock_mug.data.model_info = ModelInfo(DeviceModel.MUG_2_10_OZ)
     assert len(hass.states.async_all()) == 0
-    mock_mug.is_cup = False
-    mock_mug.data.name = "EMBER"
     config = await setup_platform(hass, mock_mug, TEXT_DOMAIN)
     assert len(hass.states.async_all()) == 1
     entity_registry = er.async_get(hass)
@@ -30,7 +30,7 @@ async def test_setup_text_mug(
     name_state = hass.states.get(entity_name)
     assert name_state is not None
     assert name_state.attributes == {
-        "friendly_name": "EMBER Name",
+        "friendly_name": "Test Mug Name",
         "max": 16,
         "min": 1,
         "mode": TextMode.TEXT,
@@ -49,8 +49,7 @@ async def test_setup_text_travel_mug(
 ) -> None:
     """Test travel mug also works."""
     mock_mug.data.name = "EMBER"
-    mock_mug.is_cup = False
-    mock_mug.is_travel_mug = True
+    mock_mug.data.model_info = ModelInfo(DeviceModel.TRAVEL_MUG_12_OZ)
     assert len(hass.states.async_all()) == 0
     await setup_platform(hass, mock_mug, TEXT_DOMAIN)
     assert len(hass.states.async_all()) == 1

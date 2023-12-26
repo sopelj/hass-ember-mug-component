@@ -4,7 +4,8 @@ from __future__ import annotations
 from unittest.mock import Mock, patch
 
 from ember_mug import EmberMug
-from ember_mug.consts import VolumeLevel
+from ember_mug.consts import DeviceModel, VolumeLevel
+from ember_mug.data import ModelInfo
 from homeassistant.const import ATTR_ENTITY_ID, UnitOfTemperature
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_registry as er
@@ -20,7 +21,7 @@ async def test_setup_select_mug(
 ) -> None:
     """Initialize and test both Select entities."""
     assert len(hass.states.async_all()) == 0
-    mock_mug.is_travel_mug = False
+    mock_mug.data.model_info = ModelInfo(DeviceModel.MUG_2_10_OZ)
     config = await setup_platform(hass, mock_mug, "select")
     assert len(hass.states.async_all()) == 1
     entity_registry = er.async_get(hass)
@@ -47,12 +48,12 @@ async def test_setup_select_travel_mug(
 ) -> None:
     """Initialize and test both Select entities for Travel Mug."""
     assert len(hass.states.async_all()) == 0
-    mock_mug.is_travel_mug = True
+    mock_mug.data.model_info = ModelInfo(DeviceModel.TRAVEL_MUG_12_OZ)
     config = await setup_platform(hass, mock_mug, "select")
     assert len(hass.states.async_all()) == 2
     entity_registry = er.async_get(hass)
 
-    base_entity_name = f"select.ember_mug_{config.unique_id}"
+    base_entity_name = f"select.ember_travel_mug_{config.unique_id}"
 
     temperature_unit_state = hass.states.get(f"{base_entity_name}_temperature_unit")
     assert temperature_unit_state is not None
@@ -121,12 +122,12 @@ async def test_update_volume_travel_mug(
     mock_mug: EmberMug | Mock,
 ) -> None:
     """Test updating volume level."""
-    mock_mug.is_travel_mug = True
+    mock_mug.data.model_info = ModelInfo(DeviceModel.TRAVEL_MUG_12_OZ)
     mock_mug.data.volume_level = VolumeLevel.LOW
     config = await setup_platform(hass, mock_mug, "select")
 
     entity_registry = er.async_get(hass)
-    entity_id = f"select.ember_mug_{config.unique_id}_volume_level"
+    entity_id = f"select.ember_travel_mug_{config.unique_id}_volume_level"
     entity = entity_registry.async_get(entity_id)
     assert entity
     assert not entity.disabled

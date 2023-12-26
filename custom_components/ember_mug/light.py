@@ -81,6 +81,6 @@ async def async_setup_entry(
         raise ValueError("Missing config entry ID")
     data: HassMugData = hass.data[DOMAIN][entry.entry_id]
     entities = []
-    if data.mug.is_travel_mug is False:
+    if data.mug.has_attribute("led_colour"):
         entities = [MugLightEntity(data.coordinator, "led_colour")]
     async_add_entities(entities)

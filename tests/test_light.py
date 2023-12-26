@@ -4,6 +4,8 @@ from __future__ import annotations
 from unittest.mock import Mock
 
 from ember_mug import EmberMug
+from ember_mug.consts import DeviceModel
+from ember_mug.data import ModelInfo
 from homeassistant.components.light import ColorMode
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_registry as er
@@ -17,7 +19,7 @@ async def test_setup_light_mug(
 ) -> None:
     """Initialize and test Light entities."""
     assert len(hass.states.async_all()) == 0
-    mock_mug.is_travel_mug = False
+    mock_mug.data.model_info = ModelInfo(DeviceModel.MUG_2_10_OZ)
     config = await setup_platform(hass, mock_mug, "light")
     assert len(hass.states.async_all()) == 1
     entity_registry = er.async_get(hass)
@@ -49,7 +51,7 @@ async def test_setup_light_travel_mug(
 ) -> None:
     """Initialize and test both Binary sensors."""
     assert len(hass.states.async_all()) == 0
-    mock_mug.is_travel_mug = True
+    mock_mug.data.model_info = ModelInfo(DeviceModel.TRAVEL_MUG_12_OZ)
     await setup_platform(hass, mock_mug, "light")
     assert len(hass.states.async_all()) == 0
 
