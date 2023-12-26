@@ -61,6 +61,7 @@ class MugTargetTempNumberEntity(MugNumberEntity):
 
     async def async_set_native_value(self, value: float) -> None:
         """Set the mug target temp."""
+        self.coordinator.ensure_writable()
         await self.coordinator.mug.set_target_temp(value)
 
 

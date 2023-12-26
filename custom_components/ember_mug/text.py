@@ -54,6 +54,7 @@ class MugTextEntity(BaseMugValueEntity, TextEntity):
 
     async def async_set_value(self, value: str) -> None:
         """Set the mug name."""
+        self.coordinator.ensure_writable()
         await self.coordinator.mug.set_name(value)
 
 

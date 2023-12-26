@@ -56,6 +56,7 @@ class MugLightEntity(BaseMugEntity, LightEntity):
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Change the LED colour if defined."""
         _LOGGER.debug(f"Received turn on with {kwargs}")
+        self.coordinator.ensure_writable()
         rgb, brightness = self.coordinator.mug.data.led_colour[:3], 255
         if (rgb := kwargs.get(ATTR_RGB_COLOR)) or (brightness := kwargs.get(ATTR_BRIGHTNESS)):
             await self.coordinator.mug.set_led_colour(Colour(*rgb, brightness))

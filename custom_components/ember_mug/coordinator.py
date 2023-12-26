@@ -102,6 +102,13 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
         )
         return self.mug.data
 
+    def ensure_writable(self) -> None:
+        """Writable check for service methods."""
+        if self.mug.can_write is False:
+            raise ValueError(
+                f"Unable to write to {self.mug.data.model_info.device_type.value}",
+            )
+
     @callback
     def handle_unavailable(
         self,

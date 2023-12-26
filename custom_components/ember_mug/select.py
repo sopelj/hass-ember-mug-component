@@ -95,6 +95,7 @@ class MugVolumeLevelSelectEntity(MugSelectEntity):
         option: Literal["high", "medium", "low"] | VolumeLevel,
     ) -> None:
         """Change the selected option."""
+        self.coordinator.ensure_writable()
         if isinstance(option, str):
             option = VolumeLevel(option)
         await self.coordinator.mug.set_volume_level(option)
