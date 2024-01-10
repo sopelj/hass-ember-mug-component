@@ -3,31 +3,20 @@
   "name": "Ember Mug",
   "bluetooth": [
     {
-      "local_name": "Ember Ceramic Mug"
-    },
-    {
-      "local_name": "Ember Cup"
-    },
-    {
-      "local_name": "Ember Cup 2"
-    },
-    {
-      "local_name": "Ember Travel M"
-    },
-    {
-      "local_name": "Ember Travel Mug"
-    },
-    {
-      "local_name": "Ember Travel Mug 2"
-    },
-    {
+      "local_name": "Ember C*",
       "manufacturer_id": 961
     },
     {
-      "service_uuid": "fc543621-236c-4c94-8fa9-944a3e5353fa"
+      "local_name": "Ember T*",
+      "manufacturer_id": 961
     },
     {
-      "service_uuid": "fc543622-236c-4c94-8fa9-944a3e5353fa"
+      "service_uuid": "fc543621-236c-4c94-8fa9-944a3e5353fa",
+      "manufacturer_id": 961
+    },
+    {
+      "service_uuid": "fc543622-236c-4c94-8fa9-944a3e5353fa",
+      "manufacturer_id": 961
     }
   ],
   "codeowners": ["@sopelj"],
@@ -37,6 +26,6 @@
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/sopelj/hass_ember_mug/issues",
   "loggers": ["bleak", "bleak_retry_connector", "ember_mug"],
-  "requirements": ["python-ember-mug==0.9.0b4"],
+  "requirements": ["python-ember-mug==0.9.0b5"],
   "version": "0.8.1"
 }

@@ -3,7 +3,7 @@ from unittest.mock import patch
 
 from bleak.backends.scanner import AdvertisementData, BLEDevice
 from ember_mug.consts import DEFAULT_NAME
-from home_assistant_bluetooth.models import BluetoothServiceInfoBleak
+from home_assistant_bluetooth import BluetoothServiceInfoBleak
 from homeassistant.const import (
     CONF_ADDRESS,
     CONF_MAC,

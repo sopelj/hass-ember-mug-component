@@ -131,11 +131,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
             service_info,
             change,
         )
-        _LOGGER.debug(
-            "Bluetooth Manufacturer Data: %s",
-            service_info.manufacturer_data,
-        )
-        self.mug.set_device(service_info.device)
+        self.mug.ble_event_callback(service_info.device, service_info.advertisement)
         # Register or update callback
         self._cancel_callback = self.mug.register_callback(
             self._async_handle_callback,
