@@ -30,6 +30,7 @@ from .coordinator import MugDataUpdateCoordinator
 from .models import HassMugData
 
 if TYPE_CHECKING:
+    from home_assistant_bluetooth import BluetoothServiceInfoBleak
     from homeassistant.config_entries import ConfigEntry
     from homeassistant.core import Event, HomeAssistant
 
@@ -52,15 +53,33 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     address: str = entry.data[CONF_ADDRESS].upper()
     service_info = bluetooth.async_last_service_info(hass, address, connectable=True)
+
+    if service_info and not service_info.manufacturer_data:
+        _LOGGER.debug("Manufacturer data missing from latest advertisement, looking again.")
+        try:
+            service_info = await bluetooth.async_process_advertisements(
+                hass,
+                _process_more_advertisements,
+                {"address": address, "connectable": True},
+                BluetoothScanningMode.ACTIVE,
+                30,
+            )
+        except TimeoutError as e:
+            raise ConfigEntryNotReady(
+                f"Could not find device with manufacturer data and address {address}. "
+                "If you have issues connecting, try putting the device in pairing mode.",
+            ) from e
+
+    if not service_info:
+        raise ConfigEntryNotReady(
+            f"Could not find Ember device with address {entry.data[CONF_ADDRESS]}",
+        )
+
     _LOGGER.debug(
         "Integration setup. Last service info: Device: %s, Manufacturer Data: %s",
         service_info.device,
         service_info.manufacturer_data,
     )
-    if not service_info:
-        raise ConfigEntryNotReady(
-            f"Could not find Ember Mug with address {entry.data[CONF_ADDRESS]}",
-        )
 
     ember_mug = EmberMug(
         service_info.device,
@@ -136,6 +155,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     )
 
     return True
+
+
+def _process_more_advertisements(
+    service_info: BluetoothServiceInfoBleak,
+) -> bool:
+    """Wait for an advertisement with Ember SIG in the manufacturer_data."""
+    return EMBER_BLE_SIG in service_info.manufacturer_data
 
 
 async def set_temperature_unit(
