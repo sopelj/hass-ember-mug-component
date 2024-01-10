@@ -59,10 +59,10 @@ class MugLightEntity(BaseMugEntity, LightEntity):
         self.coordinator.ensure_writable()
         current_colour = self.coordinator.mug.data.led_colour
         rgb: tuple[int, int, int]
-        rgb, brightness = current_colour[:3], current_colour[4]
+        rgb, brightness = current_colour[:3], current_colour[3]
         if (rgb := kwargs.get(ATTR_RGB_COLOR, rgb)) or (brightness := kwargs.get(ATTR_BRIGHTNESS)):
             if brightness is None:
-                brightness = current_colour[4]
+                brightness = current_colour[3]
             if not rgb:
                 rgb = current_colour[:3]
             await self.coordinator.mug.set_led_colour(Colour(*rgb, brightness))
