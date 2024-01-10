@@ -57,13 +57,15 @@ class MugLightEntity(BaseMugEntity, LightEntity):
         """Change the LED colour if defined."""
         _LOGGER.debug(f"Received turn on with {kwargs}")
         self.coordinator.ensure_writable()
+        current_colour = self.coordinator.mug.data.led_colour
         rgb: tuple[int, int, int]
-        rgb, brightness = self.coordinator.mug.data.led_colour[:3], 255
-        if (rgb := kwargs.get(ATTR_RGB_COLOR)) or (brightness := kwargs.get(ATTR_BRIGHTNESS)):
+        rgb, brightness = current_colour[:3], current_colour[4]
+        if (rgb := kwargs.get(ATTR_RGB_COLOR, rgb)) or (brightness := kwargs.get(ATTR_BRIGHTNESS)):
             if brightness is None:
-                brightness = 255
-            colour = (*rgb, brightness)
-            await self.coordinator.mug.set_led_colour(Colour(*colour))
+                brightness = current_colour[4]
+            if not rgb:
+                rgb = current_colour[:3]
+            await self.coordinator.mug.set_led_colour(Colour(*rgb, brightness))
             self._attr_rgb_color = tuple(rgb)
             self._attr_brightness = brightness
             self.async_write_ha_state()
