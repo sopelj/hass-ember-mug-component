@@ -130,21 +130,14 @@ class EmberMugLiquidLevelSensor(EmberMugSensor):
         return 30
 
     @property
-    def min_level(self) -> int:
-        """Min level seems to be 15 on Tumbler..."""
-        if self.coordinator.mug.data.model_info.device_type == DeviceType.TUMBLER:
-            return 15
-        return 0
-
-    @property
     def native_value(self) -> float | int:
         """Return information about the liquid level."""
         liquid_level: float | None = super().native_value
         if liquid_level:
-            # 30 -> Full
+            # 30 -> Full (100 for Travel Mug)
             # 5, 6 -> Low
             # 0 -> Empty
-            return (liquid_level - self.min_level) / self.max_level * 100
+            return liquid_level / self.max_level * 100
         return 0
 
     @property
