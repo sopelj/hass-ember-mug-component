@@ -39,7 +39,7 @@ async def test_setup_sensors(
         "colour": "unknown",
         "icon": ICON_UNAVAILABLE,
         "options": LIQUID_STATE_OPTIONS,
-        "raw_state": LiquidState.UNKNOWN,
+        "raw_state": None,
     }
     assert liquid_state_state.state == "unknown"
     liquid_state_sensor = entity_registry.async_get(f"{sensor_base_name}_state")

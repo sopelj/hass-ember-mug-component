@@ -21,6 +21,7 @@ class LiquidStateValue(StrEnum):
     """Options for liquid state."""
 
     UNKNOWN = "unknown"
+    STANDBY = "standby"
     EMPTY = "empty"
     FILLING = "filling"
     COLD_NO_CONTROL = "cold_no_control"
@@ -32,7 +33,8 @@ class LiquidStateValue(StrEnum):
 
 LIQUID_STATE_OPTIONS = list(LiquidStateValue)
 LIQUID_STATE_TEMP_ICONS = {
-    LiquidState.UNKNOWN: "thermometer-off",
+    None: "thermometer-off",
+    LiquidState.STANDBY: "thermometer-off",
     LiquidState.COLD_NO_TEMP_CONTROL: "thermometer-low",
     LiquidState.COOLING: "thermometer-chevron-down",
     LiquidState.HEATING: "thermometer-chevron-up",
@@ -40,7 +42,7 @@ LIQUID_STATE_TEMP_ICONS = {
 }
 
 LIQUID_STATE_MAPPING = {
-    LiquidState.UNKNOWN: LiquidStateValue.UNKNOWN,
+    None: LiquidStateValue.UNKNOWN,
     LiquidState.EMPTY: LiquidStateValue.EMPTY,
     LiquidState.FILLING: LiquidStateValue.FILLING,
     LiquidState.COLD_NO_TEMP_CONTROL: LiquidStateValue.COLD_NO_CONTROL,

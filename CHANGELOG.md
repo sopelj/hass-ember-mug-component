@@ -8,6 +8,7 @@
 
 ### Changes
 * Device discovery method changed (internally)
+* "Unknown" state for newer models renamed to "Standby"
 * Mug references changed to be device-agnostic as much as possible
 
 ### Notes
