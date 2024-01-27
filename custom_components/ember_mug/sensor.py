@@ -96,8 +96,9 @@ class EmberMugStateSensor(EmberMugSensor):
     @property
     def native_value(self) -> str | None:
         """Return liquid state key."""
-        raw_value = super().native_value
-        return LIQUID_STATE_MAPPING[raw_value].value
+        if (state := super().native_value) is not None:
+            return LIQUID_STATE_MAPPING[state].value
+        return LiquidStateValue.UNKNOWN.value
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
