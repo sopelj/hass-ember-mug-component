@@ -25,7 +25,7 @@ from homeassistant.const import (
 )
 from homeassistant.exceptions import ConfigEntryNotReady
 
-from .const import CONF_DEBUG, CONF_INCLUDE_EXTRA, DOMAIN
+from .const import CONF_DEBUG, CONF_PRESETS, DEFAULT_PRESETS, DOMAIN
 from .coordinator import MugDataUpdateCoordinator
 from .models import HassMugData
 
@@ -188,8 +188,8 @@ async def async_migrate_entry(hass, config_entry: ConfigEntry):
     """Migrate old entry."""
     _LOGGER.debug("Migrating from version %s", config_entry.version)
 
-    if config_entry.version == 1:
-        config_entry.version = 2
+    if config_entry.version < 3:
+        config_entry.version = 3
         old_data = {**config_entry.data}
         unit = old_data.get(CONF_TEMPERATURE_UNIT, "°C")
         hass.config_entries.async_update_entry(
@@ -198,11 +198,12 @@ async def async_migrate_entry(hass, config_entry: ConfigEntry):
                 CONF_ADDRESS: old_data[CONF_MAC],
                 CONF_NAME: old_data[CONF_NAME],
                 CONF_TEMPERATURE_UNIT: UnitOfTemperature.FAHRENHEIT if unit == "°F" else UnitOfTemperature.CELSIUS,
-                CONF_INCLUDE_EXTRA: False,
-                CONF_DEBUG: False,
+            },
+            options={
+                CONF_DEBUG: old_data.get(CONF_DEBUG, False),
+                CONF_PRESETS: DEFAULT_PRESETS,
             },
         )
-
     _LOGGER.info("Migration to version %s successful", config_entry.version)
     return True
 

@@ -15,6 +15,15 @@ ICON_UNAVAILABLE = "mdi:coffee-off-outline"
 ATTR_BATTERY_VOLTAGE = "battery_voltage"
 CONF_INCLUDE_EXTRA = "include_extra"
 CONF_DEBUG = "debug"
+CONF_PRESETS = "presets"
+
+DEFAULT_PRESETS = {
+    "Latte": 55,
+    "Cappuccino": 56,
+    "Coffee": 57,
+    "Black tea": 58.5,
+    "Green tea": 59,
+}
 
 
 class LiquidStateValue(StrEnum):

@@ -30,8 +30,8 @@ _LOGGER = logging.getLogger(__name__)
 NUMBER_TYPES = {
     "target_temp": NumberEntityDescription(
         key="target_temp",
-        native_max_value=100,
-        native_min_value=0,
+        native_max_value=63,
+        native_min_value=48.8,
         native_step=1,
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         device_class=NumberDeviceClass.TEMPERATURE,

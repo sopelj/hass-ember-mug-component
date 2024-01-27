@@ -15,10 +15,12 @@ from homeassistant.const import (
     CONF_TEMPERATURE_UNIT,
     UnitOfTemperature,
 )
+from homeassistant.core import callback
 from homeassistant.helpers import config_validation as cv
+from homeassistant.helpers import selector
 
 from . import _LOGGER
-from .const import CONF_DEBUG, CONF_INCLUDE_EXTRA, DOMAIN
+from .const import CONF_DEBUG, CONF_PRESETS, DEFAULT_PRESETS, DOMAIN
 
 if TYPE_CHECKING:
     from homeassistant.components.bluetooth import BluetoothServiceInfoBleak
@@ -28,7 +30,7 @@ if TYPE_CHECKING:
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Config Flow for Ember Mug."""
 
-    VERSION = 2
+    VERSION = 3
 
     def __init__(self) -> None:
         """Initialize the config flow."""
@@ -102,12 +104,48 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 ): vol.In(
                     [UnitOfTemperature.CELSIUS, UnitOfTemperature.FAHRENHEIT],
                 ),
-                vol.Optional(CONF_INCLUDE_EXTRA, default=False): cv.boolean,
-                vol.Optional(CONF_DEBUG, default=False): cv.boolean,
             },
         )
         return self.async_show_form(
             step_id="user",
             data_schema=data_schema,
             errors=errors,
+        )
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(
+        config_entry: config_entries.ConfigEntry,
+    ) -> config_entries.OptionsFlow:
+        """Create the options flow."""
+        return OptionsFlowHandler(config_entry)
+
+
+class OptionsFlowHandler(config_entries.OptionsFlow):
+    """Allows users to configure integration after setup."""
+
+    def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
+        """Initialize options flow."""
+        self.config_entry = config_entry
+
+    async def async_step_init(
+        self,
+        user_input: dict[str, Any] | None = None,
+    ) -> FlowResult:
+        """Manage the options."""
+        if user_input is not None:
+            _LOGGER.debug("Got updated options: %s", user_input)
+            return self.async_create_entry(title="", data=user_input)
+
+        return self.async_show_form(
+            step_id="init",
+            data_schema=vol.Schema(
+                {
+                    vol.Required(
+                        CONF_PRESETS,
+                        default=self.config_entry.options.get(CONF_PRESETS, DEFAULT_PRESETS),
+                    ): selector.TemplateSelector(),
+                    vol.Required(CONF_DEBUG, default=self.config_entry.options.get(CONF_DEBUG, False)): cv.boolean,
+                },
+            ),
         )

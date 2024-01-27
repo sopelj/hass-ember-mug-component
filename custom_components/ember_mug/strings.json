@@ -7,8 +7,6 @@
           "address": "Device (MAC Address)",
           "name": "Name",
           "temperature_unit": "Temperature Unit",
-          "include_extra": "Include extra attributes for development",
-          "debug": "Log services and characteristics for development upon connection"
         }
       }
     },
@@ -16,6 +14,20 @@
       "unknown": "Unknown error occurred",
       "cannot_connect": "Unable to connect to the device.",
       "no_new_devices": "No new Ember devices were found. Please ensure it is in pairing mode."
+    }
+  },
+  "options": {
+    "error": {
+      "invalid_presets": "Presets must be a JSON dictionary with temperature in Celsius as key and name as value."
+    },
+    "step": {
+      "init": {
+        "title": "Manage Options",
+        "data": {
+          "debug": "Enable debug mode to log extra attributes and values for debugging.",
+          "presets": "A dictionary of preset temperatures (in celsius)"
+        }
+      }
     }
   },
   "entity": {
@@ -31,6 +43,9 @@
     },
     "select": {
       "temperature_unit": { "name": "Temperature unit" },
+      "temperature_preset": {
+        "name": "Temperature preset"
+      },
       "volume_level": {
         "name": "Volume Level",
         "state": {
