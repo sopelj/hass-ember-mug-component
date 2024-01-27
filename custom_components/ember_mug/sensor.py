@@ -87,7 +87,7 @@ class EmberMugStateSensor(EmberMugSensor):
     def icon(self) -> str:
         """Change icon based on state."""
         state = self.state
-        if state is None or self.coordinator.available is False:
+        if not state or state == LiquidStateValue.UNKNOWN or self.coordinator.available is False:
             return ICON_UNAVAILABLE
         if state == LiquidStateValue.EMPTY:
             return ICON_EMPTY
@@ -96,9 +96,8 @@ class EmberMugStateSensor(EmberMugSensor):
     @property
     def native_value(self) -> str | None:
         """Return liquid state key."""
-        if state := super().native_value:
-            return LIQUID_STATE_MAPPING[state].value
-        return None
+        raw_value = super().native_value
+        return LIQUID_STATE_MAPPING[raw_value].value
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:

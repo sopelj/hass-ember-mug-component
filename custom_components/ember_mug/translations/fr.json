@@ -58,13 +58,14 @@
       "state": {
         "name": "État",
         "state": {
-          "unknown": "Inconnu",
           "empty": "Vide",
           "filling": "Remplissage",
           "cold_no_control":  "Froid (sans contrôle)",
           "cooling": "Refroidissement",
           "heating": "Chauffage",
           "perfect": "Parfait",
+          "standby": "En veille",
+          "unknown": "Inconnu",
           "warm_no_control": "Chaud (sans contrôle)"
         },
         "state_attributes": {
