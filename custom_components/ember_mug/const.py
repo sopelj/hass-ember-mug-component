@@ -43,6 +43,7 @@ LIQUID_STATE_TEMP_ICONS = {
 
 LIQUID_STATE_MAPPING = {
     None: LiquidStateValue.UNKNOWN,
+    LiquidState.STANDBY: LiquidStateValue.STANDBY,
     LiquidState.EMPTY: LiquidStateValue.EMPTY,
     LiquidState.FILLING: LiquidStateValue.FILLING,
     LiquidState.COLD_NO_TEMP_CONTROL: LiquidStateValue.COLD_NO_CONTROL,
