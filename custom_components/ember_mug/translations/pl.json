@@ -65,7 +65,6 @@
           "heating": "Ogrzać",
           "perfect": "Idealny",
           "standby": "Czuwania",
-          "unknown": "Nieznany",
           "warm_no_control": "Ciepło (bez kontroli)"
         },
         "state_attributes": {

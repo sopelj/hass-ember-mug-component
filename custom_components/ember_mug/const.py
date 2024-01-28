@@ -1,8 +1,8 @@
 """Constants used for mug."""
+from enum import StrEnum
 from typing import Final
 
 from ember_mug.consts import LiquidState
-from homeassistant.backports.enum import StrEnum
 
 DOMAIN: Final[str] = "ember_mug"
 MANUFACTURER: Final[str] = "Ember"
@@ -20,7 +20,6 @@ CONF_DEBUG = "debug"
 class LiquidStateValue(StrEnum):
     """Options for liquid state."""
 
-    UNKNOWN = "unknown"
     STANDBY = "standby"
     EMPTY = "empty"
     FILLING = "filling"
@@ -42,13 +41,12 @@ LIQUID_STATE_TEMP_ICONS = {
 }
 
 LIQUID_STATE_MAPPING = {
-    None: LiquidStateValue.UNKNOWN,
-    LiquidState.STANDBY: LiquidStateValue.STANDBY,
     LiquidState.EMPTY: LiquidStateValue.EMPTY,
     LiquidState.FILLING: LiquidStateValue.FILLING,
     LiquidState.COLD_NO_TEMP_CONTROL: LiquidStateValue.COLD_NO_CONTROL,
     LiquidState.COOLING: LiquidStateValue.COOLING,
     LiquidState.HEATING: LiquidStateValue.HEATING,
+    LiquidState.STANDBY: LiquidStateValue.STANDBY,
     LiquidState.TARGET_TEMPERATURE: LiquidStateValue.PERFECT,
     LiquidState.WARM_NO_TEMP_CONTROL: LiquidStateValue.WARM_NO_CONTROL,
 }

@@ -65,7 +65,6 @@
           "heating": "Calentamiento",
           "perfect": "Perfecto",
           "standby": "De espera",
-          "unknown": "Desconocido",
           "warm_no_control": "Cálido (sin control)"
         },
         "state_attributes": {

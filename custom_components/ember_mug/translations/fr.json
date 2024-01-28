@@ -65,7 +65,6 @@
           "heating": "Chauffage",
           "perfect": "Parfait",
           "standby": "En veille",
-          "unknown": "Inconnu",
           "warm_no_control": "Chaud (sans contrôle)"
         },
         "state_attributes": {

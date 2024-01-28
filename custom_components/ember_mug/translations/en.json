@@ -65,7 +65,6 @@
           "heating": "Heating",
           "perfect": "Perfect",
           "standby": "Standby",
-          "unknown": "Unknown",
           "warm_no_control": "Warm (No control)"
         },
         "state_attributes": {

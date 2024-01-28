@@ -11,7 +11,11 @@ from homeassistant.const import PERCENTAGE, UnitOfTemperature
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_registry as er
 
-from custom_components.ember_mug.const import ICON_UNAVAILABLE, LIQUID_STATE_OPTIONS
+from custom_components.ember_mug.const import (
+    ICON_DEFAULT,
+    ICON_UNAVAILABLE,
+    LIQUID_STATE_OPTIONS,
+)
 
 from .conftest import setup_platform
 
@@ -23,6 +27,7 @@ async def test_setup_sensors(
     """Initialize and test sensors."""
     assert len(hass.states.async_all()) == 0
     mock_mug.data.model_info = ModelInfo(DeviceModel.MUG_2_10_OZ)
+    mock_mug.data.liquid_state = LiquidState.STANDBY
     config = await setup_platform(hass, mock_mug, "sensor")
     assert len(hass.states.async_all()) == 4
     entity_registry = er.async_get(hass)
@@ -37,11 +42,11 @@ async def test_setup_sensors(
         "firmware_info": None,
         "friendly_name": "Test Mug State",
         "colour": "unknown",
-        "icon": ICON_UNAVAILABLE,
+        "icon": ICON_DEFAULT,
         "options": LIQUID_STATE_OPTIONS,
-        "raw_state": None,
+        "raw_state": 0,
     }
-    assert liquid_state_state.state == "unknown"
+    assert liquid_state_state.state == "standby"
     liquid_state_sensor = entity_registry.async_get(f"{sensor_base_name}_state")
     assert liquid_state_sensor.translation_key == "state"
     assert liquid_state_sensor.original_name == "State"

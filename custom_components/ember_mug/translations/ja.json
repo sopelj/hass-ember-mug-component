@@ -65,7 +65,6 @@
           "heating": "加熱している",
           "perfect": "うってつけです",
           "standby": "スタンバイ",
-          "unknown": "未知数です",
           "warm_no_control": "暑い（管理ない）"
         },
         "state_attributes": {
