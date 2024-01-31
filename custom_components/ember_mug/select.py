@@ -114,7 +114,7 @@ class MugTemperaturePresetSelectEntity(MugSelectEntity):
     def __init__(self, presets: dict[str, float], coordinator: MugDataUpdateCoordinator, device_attr: str) -> None:
         """Set temperature presets and select options base on configs."""
         super().__init__(coordinator, device_attr)
-        self._unit = self.hass.config.units.temperature_unit
+        self._unit = UnitOfTemperature.CELSIUS
         self._attr_translation_placeholders = {"temp_unit": str(self._unit)}
         self._presets: dict[float, tuple[float, str]] = {
             native_temp: (
@@ -124,7 +124,7 @@ class MugTemperaturePresetSelectEntity(MugSelectEntity):
             for name, native_temp in presets.items()
         }
         self._labels_to_temps: dict[str, float] = {
-            self._format_option(temp, label): native_temp for native_temp, (label, temp) in presets.items()
+            self._format_option(temp, label): native_temp for native_temp, (temp, label) in self._presets.items()
         }
         self._attr_options = list(self._labels_to_temps)
 
@@ -158,7 +158,7 @@ async def async_setup_entry(
     data: HassMugData = hass.data[DOMAIN][entry.entry_id]
     temp_presets = entry.options.get(CONF_PRESETS, DEFAULT_PRESETS)
     entities = [
-        MugTemperaturePresetSelectEntity(temp_presets, data.coordinator, "target_temp"),
+        MugTemperaturePresetSelectEntity(temp_presets, data.coordinator, "temperature_preset"),
         MugTempUnitSelectEntity(data.coordinator, "temperature_unit"),
     ]
     if data.mug.has_attribute("volume_level"):

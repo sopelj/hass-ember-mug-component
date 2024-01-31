@@ -9,9 +9,9 @@ from homeassistant.const import (
 )
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
+from pytest_homeassistant_custom_component.common import MockConfigEntry
 from voluptuous import MultipleInvalid
 
-from custom_components.ember_mug import CONF_DEBUG, CONF_INCLUDE_EXTRA
 from tests import MUG_SERVICE_INFO, TEST_MAC, TEST_MUG_NAME, patch_async_setup_entry
 
 
@@ -49,8 +49,5 @@ async def test_bluetooth_discovery(hass: HomeAssistant) -> None:
         CONF_ADDRESS: TEST_MAC,
         CONF_NAME: TEST_MUG_NAME,
         CONF_TEMPERATURE_UNIT: UnitOfTemperature.CELSIUS,
-        CONF_INCLUDE_EXTRA: False,
-        CONF_DEBUG: False,
     }
-
     assert len(mock_setup_entry.mock_calls) == 1

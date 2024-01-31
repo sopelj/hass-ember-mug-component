@@ -12,8 +12,6 @@ from homeassistant.const import (
     UnitOfTemperature,
 )
 
-from custom_components.ember_mug import CONF_INCLUDE_EXTRA
-
 
 def patch_async_setup_entry(return_value=True):
     """Patch async setup entry to return True."""
@@ -32,7 +30,6 @@ DEFAULT_CONFIG_DATA = {
     CONF_ADDRESS: TEST_MAC,
     CONF_NAME: TEST_MUG_NAME,
     CONF_TEMPERATURE_UNIT: UnitOfTemperature.CELSIUS,
-    CONF_INCLUDE_EXTRA: False,
 }
 V1_CONFIG_DATA = {
     CONF_MAC: TEST_MAC,

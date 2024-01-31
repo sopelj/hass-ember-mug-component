@@ -31,8 +31,8 @@ async def test_setup_number_mug(
     assert target_temp_state.attributes == {
         "friendly_name": "Test Mug Target temperature",
         "device_class": "temperature",
-        "max": 100,
-        "min": 0,
+        "max": 63,
+        "min": 48.8,
         "mode": NumberMode.BOX,
         "step": 1,
         "unit_of_measurement": UnitOfTemperature.CELSIUS,

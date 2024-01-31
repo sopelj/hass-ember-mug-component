@@ -23,7 +23,7 @@ async def test_setup_select_mug(
     assert len(hass.states.async_all()) == 0
     mock_mug.data.model_info = ModelInfo(DeviceModel.MUG_2_10_OZ)
     config = await setup_platform(hass, mock_mug, "select")
-    assert len(hass.states.async_all()) == 1
+    assert len(hass.states.async_all()) == 2
     entity_registry = er.async_get(hass)
 
     entity_name = f"select.ember_mug_{config.unique_id}_temperature_unit"
@@ -50,7 +50,7 @@ async def test_setup_select_travel_mug(
     assert len(hass.states.async_all()) == 0
     mock_mug.data.model_info = ModelInfo(DeviceModel.TRAVEL_MUG_12_OZ)
     config = await setup_platform(hass, mock_mug, "select")
-    assert len(hass.states.async_all()) == 2
+    assert len(hass.states.async_all()) == 3
     entity_registry = er.async_get(hass)
 
     base_entity_name = f"select.ember_travel_mug_{config.unique_id}"
@@ -90,7 +90,7 @@ async def test_setup_select_cup(
     mock_mug.is_cup = True
     assert len(hass.states.async_all()) == 0
     await setup_platform(hass, mock_mug, "select")
-    assert len(hass.states.async_all()) == 1
+    assert len(hass.states.async_all()) == 2
 
 
 async def test_setup_update_temp_unit(

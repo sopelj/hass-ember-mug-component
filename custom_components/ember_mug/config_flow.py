@@ -30,7 +30,7 @@ if TYPE_CHECKING:
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Config Flow for Ember Mug."""
 
-    VERSION = 3
+    VERSION = 2
 
     def __init__(self) -> None:
         """Initialize the config flow."""
@@ -133,6 +133,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         user_input: dict[str, Any] | None = None,
     ) -> FlowResult:
         """Manage the options."""
+        errors: dict[str, str] = {}
         if user_input is not None:
             _LOGGER.debug("Got updated options: %s", user_input)
             return self.async_create_entry(title="", data=user_input)
@@ -148,4 +149,5 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                     vol.Required(CONF_DEBUG, default=self.config_entry.options.get(CONF_DEBUG, False)): cv.boolean,
                 },
             ),
+            errors=errors,
         )

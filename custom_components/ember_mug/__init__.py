@@ -184,12 +184,12 @@ async def async_update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None
     await hass.config_entries.async_reload(entry.entry_id)
 
 
-async def async_migrate_entry(hass, config_entry: ConfigEntry):
+async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry):
     """Migrate old entry."""
     _LOGGER.debug("Migrating from version %s", config_entry.version)
 
-    if config_entry.version < 3:
-        config_entry.version = 3
+    if config_entry.version == 1:
+        config_entry.version = 2
         old_data = {**config_entry.data}
         unit = old_data.get(CONF_TEMPERATURE_UNIT, "°C")
         hass.config_entries.async_update_entry(
