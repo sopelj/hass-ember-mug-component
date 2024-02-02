@@ -151,7 +151,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                     TemperatureConverter.convert(t, UnitOfTemperature.CELSIUS, UnitOfTemperature.FAHRENHEIT)
                     for t in [MIN_TEMP_CELSIUS, MAX_TEMP_CELSIUS]
                 )
-            if presets := user_input[CONF_PRESETS_UNIT]:
+            if presets := user_input[CONF_PRESETS]:
                 schema = vol.Schema(
                     {
                         str: vol.All(
@@ -173,8 +173,8 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             data_schema=vol.Schema(
                 {
                     vol.Required(
-                        CONF_TEMPERATURE_UNIT,
-                        default=self.config_entry.options.get(CONF_TEMPERATURE_UNIT, UnitOfTemperature.CELSIUS),
+                        CONF_PRESETS_UNIT,
+                        default=self.config_entry.options.get(CONF_PRESETS_UNIT, UnitOfTemperature.CELSIUS),
                     ): vol.In(
                         [UnitOfTemperature.CELSIUS, UnitOfTemperature.FAHRENHEIT],
                     ),
