@@ -6,7 +6,7 @@
         "data": {
           "address": "Device (MAC Address)",
           "name": "Name",
-          "temperature_unit": "Temperature Unit",
+          "temperature_unit": "Temperature Unit"
         }
       }
     },
@@ -25,7 +25,8 @@
         "title": "Manage Options",
         "data": {
           "debug": "Enable debug mode to log extra attributes and values for debugging.",
-          "presets": "An object mapping of preset name to temperatures (in celsius)"
+          "presets": "An object mapping of preset name to temperatures (in above unit)",
+          "presets_unit": "Temperature unit used in config for the below presets (*important*: if you change this you need to update the numbers in the presets accordingly)"
         }
       }
     }

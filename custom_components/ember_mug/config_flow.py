@@ -30,7 +30,7 @@ if TYPE_CHECKING:
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Config Flow for Ember Mug."""
 
-    VERSION = 2
+    VERSION = 3
 
     def __init__(self) -> None:
         """Initialize the config flow."""
@@ -143,10 +143,16 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             data_schema=vol.Schema(
                 {
                     vol.Required(
+                        CONF_TEMPERATURE_UNIT,
+                        default=self.config_entry.options.get(CONF_TEMPERATURE_UNIT, UnitOfTemperature.CELSIUS),
+                    ): vol.In(
+                        [UnitOfTemperature.CELSIUS, UnitOfTemperature.FAHRENHEIT],
+                    ),
+                    vol.Required(
                         CONF_PRESETS,
                         default=self.config_entry.options.get(CONF_PRESETS, DEFAULT_PRESETS),
                     ): selector.ObjectSelector(),
-                    vol.Required(CONF_DEBUG, default=self.config_entry.options.get(CONF_DEBUG, False)): cv.boolean,
+                    vol.Optional(CONF_DEBUG, default=self.config_entry.options.get(CONF_DEBUG, False)): cv.boolean,
                 },
             ),
             errors=errors,

@@ -25,7 +25,7 @@ from homeassistant.const import (
 )
 from homeassistant.exceptions import ConfigEntryNotReady
 
-from .const import CONF_DEBUG, CONF_PRESETS, DEFAULT_PRESETS, DOMAIN
+from .const import CONF_DEBUG, DOMAIN
 from .coordinator import MugDataUpdateCoordinator
 from .models import HassMugData
 
@@ -201,7 +201,6 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry):
             },
             options={
                 CONF_DEBUG: old_data.get(CONF_DEBUG, False),
-                CONF_PRESETS: DEFAULT_PRESETS,
             },
         )
     _LOGGER.info("Migration to version %s successful", config_entry.version)

@@ -15,6 +15,7 @@ ICON_UNAVAILABLE = "mdi:coffee-off-outline"
 ATTR_BATTERY_VOLTAGE = "battery_voltage"
 CONF_DEBUG = "debug"
 CONF_PRESETS = "presets"
+CONF_PRESETS_UNIT = "presets_unit"
 
 DEFAULT_PRESETS = {
     "Latte": 55,
