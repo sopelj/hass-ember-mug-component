@@ -144,19 +144,29 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         """Manage the options."""
         errors: dict[str, str] = {}
 
-        if not user_input or not (temp_unit := user_input.get(CONF_PRESETS_UNIT)):
-            temp_unit = self.config_entry.options.get(CONF_PRESETS_UNIT, UnitOfTemperature.CELSIUS)
-
-        min_temp, max_temp = MIN_TEMP_CELSIUS, MAX_TEMP_CELSIUS
-        if temp_unit == UnitOfTemperature.FAHRENHEIT:
-            min_temp, max_temp = (
-                TemperatureConverter.convert(t, UnitOfTemperature.CELSIUS, UnitOfTemperature.FAHRENHEIT)
-                for t in [MIN_TEMP_CELSIUS, MAX_TEMP_CELSIUS]
-            )
-
         if user_input is not None:
-            _LOGGER.debug("Got updated options: %s", user_input)
-            return self.async_create_entry(title="", data=user_input)
+            min_temp, max_temp = MIN_TEMP_CELSIUS, MAX_TEMP_CELSIUS
+            if user_input[CONF_PRESETS_UNIT] == UnitOfTemperature.FAHRENHEIT:
+                min_temp, max_temp = (
+                    TemperatureConverter.convert(t, UnitOfTemperature.CELSIUS, UnitOfTemperature.FAHRENHEIT)
+                    for t in [MIN_TEMP_CELSIUS, MAX_TEMP_CELSIUS]
+                )
+            if presets := user_input[CONF_PRESETS_UNIT]:
+                schema = vol.Schema(
+                    {
+                        str: vol.All(
+                            vol.Union(float, int),
+                            vol.Range(min=min_temp, max=max_temp),
+                        ),
+                    },
+                )
+                try:
+                    schema(presets)
+                except (vol.Invalid, vol.MultipleInvalid) as e:
+                    errors[CONF_PRESETS] = str(e)
+                else:
+                    _LOGGER.debug("Got updated options: %s", user_input)
+                    return self.async_create_entry(title="", data=user_input)
 
         return self.async_show_form(
             step_id="init",
@@ -171,11 +181,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                     vol.Required(
                         CONF_PRESETS,
                         default=self.config_entry.options.get(CONF_PRESETS, DEFAULT_PRESETS),
-                    ): selector.ObjectSelector(
-                        {
-                            str: vol.All(float, vol.Range(min=min_temp, max=max_temp)),
-                        },
-                    ),
+                    ): selector.ObjectSelector(),
                     vol.Optional(CONF_DEBUG, default=self.config_entry.options.get(CONF_DEBUG, False)): cv.boolean,
                 },
             ),
