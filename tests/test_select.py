@@ -3,11 +3,13 @@ from __future__ import annotations
 
 from unittest.mock import Mock, patch
 
+import pytest
 from ember_mug import EmberMug
 from ember_mug.consts import DeviceModel, VolumeLevel
 from ember_mug.data import ModelInfo
 from homeassistant.const import ATTR_ENTITY_ID, UnitOfTemperature
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers import entity_registry as er
 
 from .conftest import setup_platform
@@ -115,6 +117,39 @@ async def test_setup_update_temp_unit(
             blocking=True,
         )
         mock_set.assert_called_once_with(UnitOfTemperature.FAHRENHEIT)
+
+
+async def test_setup_update_temp_preset(
+    hass: HomeAssistant,
+    mock_mug: EmberMug | Mock,
+) -> None:
+    """Test updating temperature preset."""
+    mock_mug.data.target_temp = 55
+    config = await setup_platform(hass, mock_mug, "select")
+
+    entity_registry = er.async_get(hass)
+    entity_id = f"select.ember_mug_{config.unique_id}_temperature_preset"
+    entity = entity_registry.async_get(entity_id)
+    assert entity
+    temp_unit_state = hass.states.get(entity_id)
+    assert temp_unit_state.state == "Latte"
+
+    with patch.object(mock_mug, "set_target_temp") as mock_set:
+        await hass.services.async_call(
+            "select",
+            "select_option",
+            {ATTR_ENTITY_ID: entity_id, "option": "Cappuccino"},
+            blocking=True,
+        )
+        mock_set.assert_called_once_with(56)
+
+    with pytest.raises(ServiceValidationError):
+        await hass.services.async_call(
+            "select",
+            "select_option",
+            {ATTR_ENTITY_ID: entity_id, "option": "Invalid"},
+            blocking=True,
+        )
 
 
 async def test_update_volume_travel_mug(

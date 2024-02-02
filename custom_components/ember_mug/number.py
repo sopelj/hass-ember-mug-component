@@ -13,7 +13,7 @@ from homeassistant.components.number import (
 from homeassistant.const import UnitOfTemperature
 from homeassistant.helpers.entity import EntityCategory
 
-from .const import DOMAIN
+from .const import DOMAIN, MAX_TEMP_CELSIUS, MIN_TEMP_CELSIUS
 from .entity import BaseMugValueEntity
 
 if TYPE_CHECKING:
@@ -30,9 +30,9 @@ _LOGGER = logging.getLogger(__name__)
 NUMBER_TYPES = {
     "target_temp": NumberEntityDescription(
         key="target_temp",
-        native_max_value=63,
-        native_min_value=48.8,
-        native_step=1,
+        native_min_value=MIN_TEMP_CELSIUS,
+        native_max_value=MAX_TEMP_CELSIUS,
+        native_step=0.1,
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         device_class=NumberDeviceClass.TEMPERATURE,
         entity_category=EntityCategory.CONFIG,

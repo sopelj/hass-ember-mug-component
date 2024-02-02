@@ -34,7 +34,7 @@ async def test_setup_number_mug(
         "max": 63,
         "min": 48.8,
         "mode": NumberMode.BOX,
-        "step": 1,
+        "step": 0.1,
         "unit_of_measurement": UnitOfTemperature.CELSIUS,
     }
     assert target_temp_state.state == "0.0"

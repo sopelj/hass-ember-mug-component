@@ -18,9 +18,18 @@ from homeassistant.const import (
 from homeassistant.core import callback
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers import selector
+from homeassistant.util.unit_conversion import TemperatureConverter
 
 from . import _LOGGER
-from .const import CONF_DEBUG, CONF_PRESETS, DEFAULT_PRESETS, DOMAIN
+from .const import (
+    CONF_DEBUG,
+    CONF_PRESETS,
+    CONF_PRESETS_UNIT,
+    DEFAULT_PRESETS,
+    DOMAIN,
+    MAX_TEMP_CELSIUS,
+    MIN_TEMP_CELSIUS,
+)
 
 if TYPE_CHECKING:
     from homeassistant.components.bluetooth import BluetoothServiceInfoBleak
@@ -134,6 +143,17 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
     ) -> FlowResult:
         """Manage the options."""
         errors: dict[str, str] = {}
+
+        if not user_input or not (temp_unit := user_input.get(CONF_PRESETS_UNIT)):
+            temp_unit = self.config_entry.options.get(CONF_PRESETS_UNIT, UnitOfTemperature.CELSIUS)
+
+        min_temp, max_temp = MIN_TEMP_CELSIUS, MAX_TEMP_CELSIUS
+        if temp_unit == UnitOfTemperature.FAHRENHEIT:
+            min_temp, max_temp = (
+                TemperatureConverter.convert(t, UnitOfTemperature.CELSIUS, UnitOfTemperature.FAHRENHEIT)
+                for t in [MIN_TEMP_CELSIUS, MAX_TEMP_CELSIUS]
+            )
+
         if user_input is not None:
             _LOGGER.debug("Got updated options: %s", user_input)
             return self.async_create_entry(title="", data=user_input)
@@ -151,7 +171,11 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                     vol.Required(
                         CONF_PRESETS,
                         default=self.config_entry.options.get(CONF_PRESETS, DEFAULT_PRESETS),
-                    ): selector.ObjectSelector(),
+                    ): selector.ObjectSelector(
+                        {
+                            str: vol.All(float, vol.Range(min=min_temp, max=max_temp)),
+                        },
+                    ),
                     vol.Optional(CONF_DEBUG, default=self.config_entry.options.get(CONF_DEBUG, False)): cv.boolean,
                 },
             ),

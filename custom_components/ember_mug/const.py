@@ -17,6 +17,9 @@ CONF_DEBUG = "debug"
 CONF_PRESETS = "presets"
 CONF_PRESETS_UNIT = "presets_unit"
 
+MIN_TEMP_CELSIUS: Final[float] = 48.8
+MAX_TEMP_CELSIUS: Final[float] = 63
+
 DEFAULT_PRESETS = {
     "Latte": 55,
     "Cappuccino": 56,
