@@ -130,7 +130,7 @@ class MugTemperaturePresetSelectEntity(MugSelectEntity):
 
     def _format_option(self, temp: float, label: str) -> str:
         """Format option with temp and units."""
-        return f"{label} ({temp}{self._unit})"
+        return f"{label}"
 
     @property
     def current_option(self) -> str | None:

@@ -18,6 +18,20 @@
       "no_new_devices": "No new Ember devices were found. Please ensure it is in pairing mode."
     }
   },
+  "options": {
+    "error": {
+      "invalid_presets": "Presets must be an object mapping between name and temperature. eg. \"latte\": 55.6"
+    },
+    "step": {
+      "init": {
+        "title": "Manage Options",
+        "data": {
+          "debug": "Enable debug mode to log extra attributes and values for debugging.",
+          "presets": "A dictionary of preset temperatures (in celsius)"
+        }
+      }
+    }
+  },
   "entity": {
     "binary_sensor": {
       "low_battery": { "name": "Low battery" },
@@ -30,6 +44,16 @@
       "target_temp": { "name": "Target temperature" }
     },
     "select": {
+      "temperature_preset": {
+        "name": "Temperature preset",
+        "state": {
+          "Latte": "Latte",
+          "Cappuccino": "Cappuccino",
+          "Coffee": "Coffee",
+          "Black tea": "Black Tea",
+          "Green tea": "Green Tea"
+        }
+      },
       "temperature_unit": { "name": "Temperature unit" },
       "volume_level": {
         "name": "Volume Level",

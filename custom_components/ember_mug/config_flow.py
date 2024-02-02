@@ -145,7 +145,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                     vol.Required(
                         CONF_PRESETS,
                         default=self.config_entry.options.get(CONF_PRESETS, DEFAULT_PRESETS),
-                    ): selector.TemplateSelector(),
+                    ): selector.ObjectSelector(),
                     vol.Required(CONF_DEBUG, default=self.config_entry.options.get(CONF_DEBUG, False)): cv.boolean,
                 },
             ),
