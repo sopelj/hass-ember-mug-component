@@ -43,11 +43,11 @@
       "temperature_preset": {
         "name": "Temperature preset",
         "state": {
-          "Latte": "Latte",
-          "Cappuccino": "Cappuccino",
-          "Coffee": "Coffee",
-          "Black tea": "Black Tea",
-          "Green tea": "Green Tea"
+          "latte": "Latte",
+          "cappuccino": "Cappuccino",
+          "coffee": "Coffee",
+          "black-tea": "Black Tea",
+          "green-tea": "Green Tea"
         }
       },
       "temperature_unit": { "name": "Temperature unit" },

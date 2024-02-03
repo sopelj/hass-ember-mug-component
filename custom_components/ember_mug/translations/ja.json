@@ -44,11 +44,11 @@
       "temperature_preset": {
         "name": "温度プリセット",
         "state": {
-          "Latte": "ラテ",
-          "Cappuccino": "カプチーノ",
-          "Coffee": "コーヒー",
-          "Black tea": "紅茶",
-          "Green tea": "緑茶"
+          "latte": "ラテ",
+          "cappuccino": "カプチーノ",
+          "coffee": "コーヒー",
+          "black-tea": "紅茶",
+          "green-tea": "緑茶"
         }
       },
       "temperature_unit": { "name": "温度単位" },

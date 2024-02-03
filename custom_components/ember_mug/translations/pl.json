@@ -43,11 +43,11 @@
       "temperature_preset": {
         "name": "Zadana temperatura",
         "state": {
-          "Latte": "Latte",
-          "Cappuccino": "Cappuccino",
-          "Coffee": "Kawa",
-          "Black tea": "Czarna herbata",
-          "Green tea": "Zielona herbata"
+          "latte": "Latte",
+          "cappuccino": "Cappuccino",
+          "coffee": "Kawa",
+          "black-tea": "Czarna herbata",
+          "green-tea": "Zielona herbata"
         }
       },
       "temperature_unit": { "name": "Jednostka temperatury" },

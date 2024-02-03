@@ -21,11 +21,11 @@ MIN_TEMP_CELSIUS: Final[float] = 48.8
 MAX_TEMP_CELSIUS: Final[float] = 63
 
 DEFAULT_PRESETS = {
-    "Latte": 55,
-    "Cappuccino": 56,
-    "Coffee": 57,
-    "Black tea": 58.5,
-    "Green tea": 59,
+    "latte": 55,
+    "cappuccino": 56,
+    "coffee": 57,
+    "black-tea": 58.5,
+    "green-tea": 59,
 }
 
 
