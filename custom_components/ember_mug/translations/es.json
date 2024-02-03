@@ -6,9 +6,7 @@
         "data": {
           "address": "Dispositivo (Dirección MAC)",
           "name": "Nombre",
-          "temperature_unit": "Unidad de temperatura",
-          "include_extra": "Incluir atributos adicionales para el desarrollo",
-          "debug": "Registro de servicios y características para el desarrollo al conectarse"
+          "temperature_unit": "Unidad de temperatura"
         }
       }
     },
@@ -16,6 +14,18 @@
       "unknown": "Un error desconocido ocurrió",
       "cannot_connect": "No se puede conectar a el dispositivo",
       "no_new_devices": "No se encontraron dispositivo Ember nuevos. Asegúrese de que esté en modo de emparejamiento."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Administrar opciones",
+        "data": {
+          "debug": "Registro de servicios y características para el desarrollo al conectarse",
+          "presets": "Una asignación de clave/valor de nombres preestablecidos a temperaturas objetivo (en la unidad anterior)",
+          "presets_unit": "Unidades de temperatura utilizadas para los siguientes ajustes preestablecidos (!Importante: si cambia esto, deberá actualizar los números en los ajustes preestablecidos en consecuencia)"
+        }
+      }
     }
   },
   "entity": {
@@ -30,6 +40,16 @@
       "target_temp": { "name": "Temperatura deseada" }
     },
     "select": {
+      "temperature_preset": {
+        "name": "Temperature preset",
+        "state": {
+          "Latte": "Latté",
+          "Cappuccino": "Capuchino",
+          "Coffee": "Café",
+          "Black tea": "Té negro",
+          "Green tea": "Té negro"
+        }
+      },
       "temperature_unit": { "name": "Unidad de temperatura" },
       "volume_level": {
         "name": "Nivel de volumen",

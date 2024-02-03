@@ -6,9 +6,7 @@
         "data": {
           "address": "Device (MAC Address)",
           "name": "Name",
-          "temperature_unit": "Temperature Unit",
-          "include_extra": "Include extra attributes for development",
-          "debug": "Log services and characteristics for development upon connection"
+          "temperature_unit": "Temperature Unit"
         }
       }
     },
@@ -19,16 +17,13 @@
     }
   },
   "options": {
-    "error": {
-      "invalid_presets": "Presets must be an object mapping between name and temperature. eg. \"latte\": 55.6"
-    },
     "step": {
       "init": {
         "title": "Manage Options",
         "data": {
           "debug": "Enable debug mode to log extra attributes and values for debugging.",
-          "presets": "An object mapping of preset name to temperatures (in above unit)",
-          "presets_unit": "Temperature unit used in config for the below presets (*important*: if you change this you need to update the numbers in the presets accordingly)"
+          "presets": "A key/value mapping of preset names to target temperatures (in above unit)",
+          "presets_unit": "Temperature unit used for the below presets (!important: if you change this you need to update the numbers in the presets accordingly)"
         }
       }
     }

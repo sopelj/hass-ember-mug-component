@@ -6,9 +6,7 @@
         "data": {
           "address": "Urządzenie (adres MAC)",
           "name": "Nazwa",
-          "temperature_unit": "Jednostka temperatury",
-          "include_extra": "Uwzględnij dodatkowe atrybuty dla rozwoju",
-          "debug": "Log usługi i cechy do rozwoju po połączeniu."
+          "temperature_unit": "Jednostka temperatury"
         }
       }
     },
@@ -16,6 +14,18 @@
       "unknown": "Wystąpił nieznany błąd",
       "cannot_connect": "Nie można połączyć się z kubkiem",
       "no_new_devices": "Nie znaleziono nowych kubków. Upewnij się, że jest w trybie parowania."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Zarządzaj opcjami",
+        "data": {
+          "debug": "Log usługi i cechy do rozwoju po połączeniu.",
+          "presets": "Mapowanie klucz/wartość nazw ustawień domyślnych na temperatury docelowe (w powyższych jednostkach)",
+          "presets_unit": "Jednostki temperatury używane w następujących ustawieniach wstępnych (!Ważne: jeśli to zmienisz, konieczna będzie odpowiednia aktualizacja liczb w ustawieniach wstępnych)"
+        }
+      }
     }
   },
   "entity": {
@@ -30,6 +40,16 @@
       "target_temperature": { "name": "Temperatura docelowa" }
     },
     "select": {
+      "temperature_preset": {
+        "name": "Zadana temperatura",
+        "state": {
+          "Latte": "Latte",
+          "Cappuccino": "Cappuccino",
+          "Coffee": "Kawa",
+          "Black tea": "Czarna herbata",
+          "Green tea": "Zielona herbata"
+        }
+      },
       "temperature_unit": { "name": "Jednostka temperatury" },
       "volume_level": {
         "name": "Głośność dźwięku",

@@ -6,9 +6,7 @@
         "data": {
           "address": "Appareil (adresse MAC)",
           "name": "Nom",
-          "temperature_unit": "Unité de température",
-          "include_extra": "Inclure des attributes supplémentaire pour développement",
-          "debug": "Lister les services et caractéristiques pour développement au connexion"
+          "temperature_unit": "Unité de température"
         }
       }
     },
@@ -18,10 +16,22 @@
       "no_new_devices": "Aucune nouvelle appareil Ember a été trouvé. Veuillez assurer qu'il est en mode de jumelage."
     }
   },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Gérer les options",
+        "data": {
+          "debug": "Lister les services et caractéristiques pour développement au connexion",
+          "presets": "Mappage du nom de préréglage à la température cible (dans unités ci-dessus)",
+          "presets_unit": "Unité de température utilisée pour les préréglages ci-dessous (!important: si vous modifiez ceci, vous devez également mettre à jour les chiffres dans les préréglages en conséquence)"
+        }
+      }
+    }
+  },
   "entity": {
     "binary_sensor": {
       "low_battery": { "name": "Batterie faible" },
-      "power": { "name": "Allimentation" }
+      "power": { "name": "Alimentation" }
     },
     "light": {
       "led": { "name": "DEL" }
@@ -30,6 +40,16 @@
       "target_temp": { "name": "Température cible" }
     },
     "select": {
+      "temperature_preset": {
+        "name": "Température prédéfini",
+        "state": {
+          "Latte": "Latté",
+          "Cappuccino": "Cappuccino",
+          "Coffee": "Café",
+          "Black tea": "Thé noir",
+          "Green tea": "Thé vert"
+        }
+      },
       "temperature_unit": { "name": "Unité de température" },
       "volume_level": {
         "name": "Niveau de volume",
