@@ -132,13 +132,13 @@ async def test_setup_update_temp_preset(
     entity = entity_registry.async_get(entity_id)
     assert entity
     temp_unit_state = hass.states.get(entity_id)
-    assert temp_unit_state.state == "Latte"
+    assert temp_unit_state.state == "latte"
 
     with patch.object(mock_mug, "set_target_temp") as mock_set:
         await hass.services.async_call(
             "select",
             "select_option",
-            {ATTR_ENTITY_ID: entity_id, "option": "Cappuccino"},
+            {ATTR_ENTITY_ID: entity_id, "option": "cappuccino"},
             blocking=True,
         )
         mock_set.assert_called_once_with(56)
