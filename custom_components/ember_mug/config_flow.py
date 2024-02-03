@@ -143,6 +143,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
     ) -> FlowResult:
         """Manage the options."""
         errors: dict[str, str] = {}
+        presets_default = self.config_entry.options.get(CONF_PRESETS, DEFAULT_PRESETS)
 
         if user_input is not None:
             min_temp, max_temp = MIN_TEMP_CELSIUS, MAX_TEMP_CELSIUS
@@ -156,7 +157,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                     {
                         str: vol.All(
                             vol.Union(float, int),
-                            vol.Range(min=min_temp, max=max_temp),
+                            vol.Any(vol.Literal(0), vol.Range(min=min_temp, max=max_temp)),
                         ),
                     },
                 )
@@ -164,6 +165,8 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                     schema(presets)
                 except (vol.Invalid, vol.MultipleInvalid) as e:
                     errors[CONF_PRESETS] = str(e)
+                    # Use as default to avoid clearing the field on the user they can cancel if confused
+                    presets_default = presets
                 else:
                     _LOGGER.debug("Got updated options: %s", user_input)
                     return self.async_create_entry(title="", data=user_input)
@@ -180,7 +183,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                     ),
                     vol.Required(
                         CONF_PRESETS,
-                        default=self.config_entry.options.get(CONF_PRESETS, DEFAULT_PRESETS),
+                        default=presets_default,
                     ): selector.ObjectSelector(),
                     vol.Optional(CONF_DEBUG, default=self.config_entry.options.get(CONF_DEBUG, False)): cv.boolean,
                 },
