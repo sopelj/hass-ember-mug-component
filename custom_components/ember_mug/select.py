@@ -109,7 +109,7 @@ class MugVolumeLevelSelectEntity(MugSelectEntity):
 class MugTemperaturePresetSelectEntity(MugSelectEntity):
     """Configurable SelectEntity to set the mug temperature from a list of presets."""
 
-    _attr_icon = "mdi:thermometer-lines"
+    _attr_icon = "mdi:format-list-bulleted"
 
     def __init__(
         self,
