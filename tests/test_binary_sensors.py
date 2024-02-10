@@ -1,16 +1,20 @@
 """Test Binary Sensor entities."""
 from __future__ import annotations
 
-from unittest.mock import Mock
+from typing import TYPE_CHECKING
 
-from ember_mug import EmberMug
 from ember_mug.consts import LiquidState
 from ember_mug.data import BatteryInfo
 from homeassistant.const import EntityCategory
-from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_registry as er
 
 from .conftest import setup_platform
+
+if TYPE_CHECKING:
+    from unittest.mock import Mock
+
+    from ember_mug import EmberMug
+    from homeassistant.core import HomeAssistant
 
 
 async def test_setup_binary_sensors(

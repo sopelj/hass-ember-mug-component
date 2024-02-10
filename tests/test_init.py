@@ -9,7 +9,6 @@ from custom_components.ember_mug import DOMAIN
 from tests import (
     DEFAULT_CONFIG_DATA,
     MUG_SERVICE_INFO,
-    TEST_BLE_DEVICE,
     TEST_MAC_UNIQUE_ID,
     TEST_MUG_NAME,
     V1_CONFIG_DATA,

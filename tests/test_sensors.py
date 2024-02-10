@@ -1,23 +1,23 @@
 """Test Sensor entities."""
 from __future__ import annotations
 
-from unittest.mock import Mock
+from typing import TYPE_CHECKING
 
-from ember_mug import EmberMug
 from ember_mug.consts import DeviceModel, LiquidState
 from ember_mug.data import ModelInfo
 from homeassistant.components.sensor import SensorStateClass
 from homeassistant.const import PERCENTAGE, UnitOfTemperature
-from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_registry as er
 
-from custom_components.ember_mug.const import (
-    ICON_DEFAULT,
-    ICON_UNAVAILABLE,
-    LIQUID_STATE_OPTIONS,
-)
+from custom_components.ember_mug.const import ICON_DEFAULT, LIQUID_STATE_OPTIONS
 
 from .conftest import setup_platform
+
+if TYPE_CHECKING:
+    from unittest.mock import Mock
+
+    from ember_mug import EmberMug
+    from homeassistant.core import HomeAssistant
 
 
 async def test_setup_sensors(

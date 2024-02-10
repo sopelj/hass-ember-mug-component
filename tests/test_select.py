@@ -1,18 +1,22 @@
 """Test Select entities."""
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
 from unittest.mock import Mock, patch
 
 import pytest
-from ember_mug import EmberMug
 from ember_mug.consts import DeviceModel, VolumeLevel
 from ember_mug.data import ModelInfo
 from homeassistant.const import ATTR_ENTITY_ID, UnitOfTemperature
-from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers import entity_registry as er
 
 from .conftest import setup_platform
+
+if TYPE_CHECKING:
+    from ember_mug import EmberMug
+    from homeassistant.core import HomeAssistant
+
 
 TEMP_OPTIONS = [UnitOfTemperature.CELSIUS.value, UnitOfTemperature.FAHRENHEIT.value]
 

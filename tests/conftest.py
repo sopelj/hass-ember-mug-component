@@ -21,24 +21,24 @@ pytest_plugins = "pytest_homeassistant_custom_component"
 
 
 @pytest.fixture(autouse=True)
-def auto_enable_custom_integrations(enable_custom_integrations):
+def _auto_enable_custom_integrations(enable_custom_integrations):
     """Enable custom integrations defined in the test dir."""
-    yield
+    return
 
 
 @pytest.fixture(autouse=True)
-def mock_bluetooth(enable_bluetooth):
+def _mock_bluetooth(enable_bluetooth):
     """Auto mock bluetooth."""
 
 
 @pytest.fixture(autouse=True)
-def mock_dependencies(hass):
+def _mock_dependencies(hass):
     """Mock dependencies loaded."""
     for component in ("http", "usb", "websocket_api", "bluetooth"):
         hass.config.components.add(component)
 
 
-@pytest.fixture
+@pytest.fixture()
 def mock_mug():
     """Create a mocked Ember Mug instance."""
     mock_mug = EmberMug(TEST_BLE_DEVICE, ModelInfo())
@@ -47,7 +47,7 @@ def mock_mug():
     mock_mug.update_initial = AsyncMock(return_value=[])
     mock_mug.update_all = AsyncMock(return_value=[])
     mock_mug.update_queued_attributes = AsyncMock(return_value=[])
-    yield mock_mug
+    return mock_mug
 
 
 async def setup_platform(

@@ -9,10 +9,14 @@ from homeassistant.const import (
 )
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
-from pytest_homeassistant_custom_component.common import MockConfigEntry
-from voluptuous import MultipleInvalid
 
-from tests import MUG_SERVICE_INFO, TEST_MAC, TEST_MUG_NAME, patch_async_setup_entry
+try:
+    from homeassistant.data_entry_flow import InvalidData
+except ImportError:
+    # Fallback for older versions of Home Assistant
+    from voluptuous.error import MultipleInvalid as InvalidData
+
+from . import MUG_SERVICE_INFO, TEST_MAC, TEST_MUG_NAME, patch_async_setup_entry
 
 
 async def test_bluetooth_discovery(hass: HomeAssistant) -> None:
@@ -25,13 +29,12 @@ async def test_bluetooth_discovery(hass: HomeAssistant) -> None:
     assert result["type"] == FlowResultType.FORM
     assert result["step_id"] == "user"
 
-    with pytest.raises(MultipleInvalid):
-        with patch_async_setup_entry() as mock_setup_entry:
-            result = await hass.config_entries.flow.async_configure(
-                result["flow_id"],
-                {},
-            )
-        await hass.async_block_till_done()
+    with patch_async_setup_entry(), pytest.raises(InvalidData):
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"],
+            {},
+        )
+    await hass.async_block_till_done()
 
     with patch_async_setup_entry() as mock_setup_entry:
         result = await hass.config_entries.flow.async_configure(

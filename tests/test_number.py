@@ -1,17 +1,20 @@
 """Test Text entities."""
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
 from unittest.mock import Mock, patch
 
-from ember_mug import EmberMug
 from ember_mug.consts import DeviceModel
 from ember_mug.data import ModelInfo
 from homeassistant.components.number import NumberMode
 from homeassistant.const import ATTR_ENTITY_ID, UnitOfTemperature
-from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_registry as er
 
 from .conftest import setup_platform
+
+if TYPE_CHECKING:
+    from ember_mug import EmberMug
+    from homeassistant.core import HomeAssistant
 
 
 async def test_setup_number_mug(

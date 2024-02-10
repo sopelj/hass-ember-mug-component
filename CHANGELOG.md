@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.0]
+
+# Added
+* Pre-defined presets to set your temperature [#45](https://github.com/sopelj/hass-ember-mug-component/issues/45)
+
+# Fix
+* Make data serializable for compatibility with MQTT Stream component [#47](https://github.com/sopelj/hass-ember-mug-component/issues/47)
+
 ## [0.9.0]
 
 ### Added

@@ -20,7 +20,7 @@ dependencies = [
     "homeassistant>=2023.9.0",
     "bleak-retry-connector>=3.1.1",
     "bleak>=0.20.2",
-    "python-ember-mug==0.9.0",
+    "python-ember-mug==1.0.0b1",
 ]
 
 [project.optional-dependencies]
@@ -58,10 +58,10 @@ homeassistant = ["2023.9.3", "2023.10.5"]
 
 [[tool.hatch.envs.test.matrix]]
 python = ["3.11", "3.12"]
-homeassistant = ["2023.11.1"]
+homeassistant = ["2023.11.1", "2023.2.1"]
 
 [tool.hatch.envs.test.scripts]
-cov = "pytest --asyncio-mode=auto --cov=custom_components --cov-branch --cov-report=xml --cov-report=term-missing tests"
+cov = "pytest --asyncio-mode=auto --cov=custom_components --cov-branch --cov-report=xml --cov-report=term-missing tests -vvv"
 no-cov = "cov --no-cov"
 
 [tool.black]
@@ -116,7 +116,13 @@ select = [
     "UP",
 ]
 ignore = ["D203", "D212", "PLR2004", "PLR0913"]
-extend-exclude = ["tests"]
+
+[tool.ruff.per-file-ignores]
+"tests/**/*.py" = [
+    "D103",  # No docstrings in tests needed
+    "S101",  # We needs asserts in tests
+    "SLF001",
+]
 
 [tool.mypy]
 ignore_errors = true

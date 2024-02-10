@@ -1,6 +1,7 @@
 """Tests for diagnostics."""
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
 from unittest.mock import AsyncMock, Mock
 
 from bleak import BleakError
@@ -19,20 +20,16 @@ from ember_mug.data import (
     MugFirmwareInfo,
     MugMeta,
 )
-from homeassistant.core import HomeAssistant
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.ember_mug import DOMAIN, HassMugData
 from custom_components.ember_mug.coordinator import MugDataUpdateCoordinator
 from custom_components.ember_mug.diagnostics import async_get_config_entry_diagnostics
 
-from . import (
-    DEFAULT_CONFIG_DATA,
-    MUG_DEVICE_NAME,
-    TEST_BLE_DEVICE,
-    TEST_MAC,
-    TEST_MUG_NAME,
-)
+from . import DEFAULT_CONFIG_DATA, TEST_BLE_DEVICE, TEST_MAC, TEST_MUG_NAME
+
+if TYPE_CHECKING:
+    from homeassistant.core import HomeAssistant
 
 
 async def test_config_entry_diagnostics(hass: HomeAssistant) -> None:
