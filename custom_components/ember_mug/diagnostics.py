@@ -26,7 +26,7 @@ async def async_get_config_entry_diagnostics(
     hass_data: HassMugData = hass.data[DOMAIN][entry.entry_id]
     coordinator = hass_data.coordinator
     data: dict[str, Any] = {
-        "info": coordinator.data.as_dict(),
+        "info": coordinator.data,
         "state": coordinator.data.liquid_state_display,
         "address": coordinator.mug.device.address,
     }
