@@ -293,6 +293,7 @@ Simply tap on the entity you wish to configure and change the value as desired.
 - Rename your device (`sensor.ember_mug_c90f59d633f9_name`)
 - Change the LED colour of the device (`light.ember_mug_c90f59d633f9_led`)
 - Set the desired temperature of your device (`number.ember_mug_c90f59d633f9_target_temp`)
+- Set the desired temperature of your device from a list of presets (`number.ember_mug_c90f59d633f9_temperature_preset`)
 - Set the device's internal temperature unit (`select.ember_mug_c90f59d633f9_temperature_unit`)
 - Set the Travel Mug's volume level (`select.ember_travel_mug_d70f69f623f8_volume_level`)
 
@@ -303,8 +304,24 @@ You can also call these in services for your automations.
 | Mug Name     | text.set_value       | entity_id and value  |
 | LED Colour   | light.turn_on        | entity_id and rgb    |
 | Target Temp  | number.set_value     | entity_id and value  |
+| Temp Preset  | select.select_option | entity_id and option |
 | Temp Unit    | select.select_option | entity_id and option |
 | Volume Level | select.select_option | entity_id and option |
+
+#### Customising presets
+
+If you wish to change or add presets to the preset entity you can do so.
+This can be done via the UI by going to this integration and choosing "Configure" next to your device.
+
+[![Open your Home Assistant instance and show an integration.](https://my.home-assistant.io/badges/integration.svg)](https://my.home-assistant.io/redirect/integration/?domain=ember_mug)
+
+The "Presets" are a key value mapping of the name to desired temperature. You can add, change or remove as you wish. Names can have spaces if desired, just avoid symbols. Mote that new entries will not benefit from translations however as they are not part of the integration.
+
+![Configuration options](./examples/configure.png)
+
+> **Important**
+> The "Unit" here is not for display. It indicates the unit used in the config, so it can be converted for display if needed.
+> If you wish to change it, please remember to update existing entries to that unit as well, as they will be assumed to all be in that unit.
 
 ## Development
 
