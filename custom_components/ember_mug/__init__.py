@@ -84,7 +84,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     ember_mug = EmberMug(
         service_info.device,
         model_info=get_model_info_from_advertiser_data(service_info.advertisement),
-        debug=entry.data.get(CONF_DEBUG, False),
+        debug=entry.options.get(CONF_DEBUG, False),
     )
     mug_coordinator = MugDataUpdateCoordinator(
         hass,
