@@ -1,17 +1,12 @@
 """Tests for diagnostics."""
 from __future__ import annotations
 
+import json
 from typing import TYPE_CHECKING
 from unittest.mock import AsyncMock, Mock
 
 from bleak import BleakError
-from ember_mug.consts import (
-    DeviceColour,
-    DeviceModel,
-    DeviceType,
-    LiquidState,
-    TemperatureUnit,
-)
+from ember_mug.consts import DeviceColour, DeviceModel, LiquidState
 from ember_mug.data import (
     BatteryInfo,
     Colour,
@@ -20,6 +15,7 @@ from ember_mug.data import (
     MugFirmwareInfo,
     MugMeta,
 )
+from homeassistant.helpers.json import JSONEncoder
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.ember_mug import DOMAIN, HassMugData
@@ -80,16 +76,21 @@ async def test_config_entry_diagnostics(hass: HomeAssistant) -> None:
         mug=mock_mug,
     )
     hass.data[DOMAIN] = {config_entry.entry_id: hass_data, "debug": True}
+
+    # Dump diagnostics
     dump = await async_get_config_entry_diagnostics(hass, config_entry)
     mock_mug.discover_services.assert_called_once()
-    assert dump == {
+
+    # Use Home Assistant encoder to parse to ensure it functions and then reload for comparison
+    data = json.loads(json.dumps(dump, cls=JSONEncoder))
+    assert data == {
         "info": {
             "meta_display": "Serial Number: test-serial",
             "model_info": {
                 "capacity": 295,
-                "colour": DeviceColour.BLACK,
-                "device_type": DeviceType.MUG,
-                "model": DeviceModel.MUG_2_10_OZ,
+                "colour": "Black",
+                "device_type": "mug",
+                "model": "CM19/CM21M",
                 "name": "Ember Mug 2 (10oz)",
             },
             "use_metric": True,
@@ -98,10 +99,10 @@ async def test_config_entry_diagnostics(hass: HomeAssistant) -> None:
             "debug": False,
             "battery": {"on_charging_base": False, "percent": 33},
             "firmware": {"bootloader": 10, "hardware": 200, "version": 15},
-            "led_colour": pink,
-            "liquid_state": LiquidState.TARGET_TEMPERATURE,
+            "led_colour": list(pink),
+            "liquid_state": 6,
             "liquid_level": 20,
-            "temperature_unit": TemperatureUnit.CELSIUS,
+            "temperature_unit": "°C",
             "current_temp": 53,
             "target_temp": 45,
             "dsk": "",
