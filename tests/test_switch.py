@@ -35,6 +35,7 @@ async def test_setup_switch_mug(
     assert switch_state is not None
     assert switch_state.attributes == {
         "friendly_name": "Test Mug Temperature Control",
+        "icon": "mdi:sun-snowflake",
     }
     assert switch_state.state == "on"
 

@@ -65,12 +65,14 @@ class MugTemperatureControlEntity(MugSwitchEntity):
 
     async def turn_on(self, **kwargs: Any) -> None:
         """Turn heating/cooling on if there is a stored target temp."""
+        self.coordinator.ensure_writable()
         if not self.coordinator.mug.data.target_temp and self._entry_mug_data.target_temp:
             await self.coordinator.mug.set_target_temp(self._entry_mug_data.target_temp)
 
     async def turn_off(self, **kwargs: Any) -> None:
         """Turn heating/cooling off if it is not already."""
-        if (target_temp := self.coordinator.mug.data.target_temp) not in (0, None):
+        self.coordinator.ensure_writable()
+        if target_temp := self.coordinator.mug.data.target_temp:
             self._entry_mug_data.target_temp = target_temp
             await self.coordinator.mug.set_target_temp(0)
 
