@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Any
 
 import voluptuous as vol
 from bleak import BleakClient, BleakError
+from ember_mug.consts import DEVICE_SERVICE_UUIDS
 from homeassistant import config_entries
 from homeassistant.components.bluetooth import async_discovered_service_info
 from homeassistant.const import (
@@ -80,10 +81,17 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             for service_info in async_discovered_service_info(self.hass):
                 address = service_info.address
                 unique_id = address.replace(":", "").lower()
-                _LOGGER.debug("Found device %s with services: %s", service_info.name, service_info.service_uuids)
                 if unique_id in current_addresses:
+                    _LOGGER.debug("Skipping device %s which is already setup", service_info.address)
                     continue
-                if not service_info.name or not service_info.name.startswith("Ember"):
+                if not set(service_info.service_uuids).intersection(DEVICE_SERVICE_UUIDS) and (
+                    not service_info.name or not service_info.name.startswith("Ember")
+                ):
+                    _LOGGER.debug(
+                        "Skipping unrelated device %s with services: %s",
+                        service_info.name,
+                        service_info.service_uuids,
+                    )
                     continue
                 try:
                     async with BleakClient(service_info.device) as client:
