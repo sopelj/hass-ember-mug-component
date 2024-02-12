@@ -83,7 +83,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 _LOGGER.debug("Found device %s with services: %s", service_info.name, service_info.service_uuids)
                 if unique_id in current_addresses:
                     continue
-                if not service_info.name or not service_info.name.startwith("Ember"):
+                if not service_info.name or not service_info.name.startswith("Ember"):
                     continue
                 try:
                     async with BleakClient(service_info.device) as client:
