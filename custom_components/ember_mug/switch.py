@@ -63,13 +63,13 @@ class MugTemperatureControlEntity(MugSwitchEntity):
         """Shortcut to accessing entry data."""
         return self.hass.data[DOMAIN][self.registry_entry.config_entry_id]
 
-    async def turn_on(self, **kwargs: Any) -> None:
+    async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn heating/cooling on if there is a stored target temp."""
         self.coordinator.ensure_writable()
         if not self.coordinator.mug.data.target_temp and self._entry_mug_data.target_temp:
             await self.coordinator.mug.set_target_temp(self._entry_mug_data.target_temp)
 
-    async def turn_off(self, **kwargs: Any) -> None:
+    async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn heating/cooling off if it is not already."""
         self.coordinator.ensure_writable()
         if target_temp := self.coordinator.mug.data.target_temp:
