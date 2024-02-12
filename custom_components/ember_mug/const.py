@@ -16,6 +16,7 @@ ATTR_BATTERY_VOLTAGE = "battery_voltage"
 CONF_DEBUG = "debug"
 CONF_PRESETS = "presets"
 CONF_PRESETS_UNIT = "presets_unit"
+CONF_TARGET_TEMP_BACKUP = "target_temperature"
 
 MIN_TEMP_CELSIUS: Final[float] = 48.8
 MAX_TEMP_CELSIUS: Final[float] = 63

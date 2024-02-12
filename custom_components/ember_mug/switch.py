@@ -9,6 +9,7 @@ from homeassistant.components.switch import SwitchEntity, SwitchEntityDescriptio
 from homeassistant.const import EntityCategory
 
 from . import DOMAIN
+from .const import CONF_TARGET_TEMP_BACKUP
 from .entity import BaseMugEntity
 
 if TYPE_CHECKING:
@@ -59,21 +60,23 @@ class MugTemperatureControlEntity(MugSwitchEntity):
         return bool(self.coordinator.mug.data.target_temp)
 
     @cached_property
-    def _entry_mug_data(self) -> HassMugData:
+    def _entry_config_data(self) -> dict[str, Any]:
         """Shortcut to accessing entry data."""
-        return self.hass.data[DOMAIN][self.registry_entry.config_entry_id]
+        return self.coordinator.config_entry.data
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn heating/cooling on if there is a stored target temp."""
         self.coordinator.ensure_writable()
-        if not self.coordinator.mug.data.target_temp and self._entry_mug_data.target_temp:
-            await self.coordinator.mug.set_target_temp(self._entry_mug_data.target_temp)
+        if not self.coordinator.mug.data.target_temp and (
+            stored_temp := self._entry_config_data.get(CONF_TARGET_TEMP_BACKUP)
+        ):
+            await self.coordinator.mug.set_target_temp(stored_temp)
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn heating/cooling off if it is not already."""
         self.coordinator.ensure_writable()
         if target_temp := self.coordinator.mug.data.target_temp:
-            self._entry_mug_data.target_temp = target_temp
+            self._entry_config_data[CONF_TARGET_TEMP_BACKUP] = target_temp
             await self.coordinator.mug.set_target_temp(0)
 
 
