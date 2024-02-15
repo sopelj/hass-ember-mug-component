@@ -136,14 +136,14 @@ class MugTemperaturePresetSelectEntity(MugSelectEntity):
     @property
     def current_option(self) -> str | None:
         """Return selected option if found current temp is one of the presets."""
-        target_temp = self.coordinator.mug.data.target_temp
-        return self._temp_to_labels.get(target_temp, None)
+        return self._temp_to_labels.get(self.coordinator.target_temp, None)
 
     async def async_select_option(self, option: str) -> None:
         """Change the target temp of the mug based on preset."""
         if not (target_temp := self._presets.get(option)):
             raise ValueError("Invalid Option")
         await self.coordinator.mug.set_target_temp(target_temp)
+        await self.coordinator.async_request_refresh()
 
 
 async def async_setup_entry(

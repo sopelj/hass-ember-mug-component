@@ -4,7 +4,7 @@ from __future__ import annotations
 import asyncio
 import logging
 from datetime import timedelta
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, TypedDict
 
 from bleak import BleakError
 from bleak_retry_connector import close_stale_connections
@@ -12,9 +12,10 @@ from ember_mug.data import Change, MugData
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.device_registry import CONNECTION_BLUETOOTH
 from homeassistant.helpers.entity import DeviceInfo
+from homeassistant.helpers.storage import Store
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from .const import MANUFACTURER, SUGGESTED_AREA
+from .const import DOMAIN, MANUFACTURER, STORAGE_VERSION, SUGGESTED_AREA
 
 if TYPE_CHECKING:
     from ember_mug import EmberMug
@@ -23,6 +24,12 @@ if TYPE_CHECKING:
 
 
 _LOGGER = logging.getLogger(__name__)
+
+
+class PersistantData(TypedDict):
+    """Data that should persist on disk."""
+
+    target_temp_bkp: float | None
 
 
 class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
@@ -44,6 +51,8 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
             name=f"ember-{device_type.replace('_', '-')}-{base_unique_id}",
             update_interval=timedelta(seconds=15),
         )
+        self._store: Store[PersistantData] = Store(hass, STORAGE_VERSION, DOMAIN)
+        self.persistant_data: PersistantData = None  # type: ignore[assignment]
         self.device_name = device_name
         self.device_type = device_type
         self.base_unique_id = base_unique_id
@@ -56,6 +65,26 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
             self._async_handle_callback,
         )
         _LOGGER.info("%s %s Setup", self.mug.model_name, self.name)
+
+    async def setup_storage(self) -> None:
+        """Initialize file storage for persistent data."""
+        self.persistant_data = await self._store.async_load()
+
+    async def write_to_storage(self, target_temp: float | None) -> None:
+        """
+        Write target temp to file storage.
+
+        This is stored to disk, so it can be restored to the entity even if we restart Home Assistant.
+        """
+        self.persistant_data = {"target_temp_bkp": target_temp}
+        await self._store.async_save(self.persistant_data)
+
+    @property
+    def target_temp(self) -> float:
+        """Shortcut for getting target temp, but showing stored data if temp control is off."""
+        if self.data.target_temp == 0 and (bkp_temp := self.persistant_data.get("target_temp_bkp")):
+            return bkp_temp
+        return self.data.target_temp
 
     async def _async_update_data(self) -> MugData:
         """Poll the device."""

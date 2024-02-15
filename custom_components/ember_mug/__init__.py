@@ -95,7 +95,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         entry.unique_id,
         entry.data.get(CONF_NAME, entry.title),
     )
-
+    await mug_coordinator.setup_storage()
     startup_event = asyncio.Event()
     cancel_first_update = mug_coordinator.mug.register_callback(
         lambda *_: startup_event.set(),

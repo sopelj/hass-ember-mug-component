@@ -7,6 +7,7 @@ from ember_mug.consts import LiquidState
 DOMAIN: Final[str] = "ember_mug"
 MANUFACTURER: Final[str] = "Ember"
 SUGGESTED_AREA: Final[str] = "Kitchen"
+STORAGE_VERSION = 1
 
 ICON_DEFAULT = "mdi:coffee"
 ICON_EMPTY = "mdi:coffee-outline"
@@ -16,7 +17,6 @@ ATTR_BATTERY_VOLTAGE = "battery_voltage"
 CONF_DEBUG = "debug"
 CONF_PRESETS = "presets"
 CONF_PRESETS_UNIT = "presets_unit"
-CONF_TARGET_TEMP_BACKUP = "target_temperature"
 
 MIN_TEMP_CELSIUS: Final[float] = 48.8
 MAX_TEMP_CELSIUS: Final[float] = 63

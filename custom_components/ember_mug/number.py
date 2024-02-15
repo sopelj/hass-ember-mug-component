@@ -13,7 +13,7 @@ from homeassistant.components.number import (
 from homeassistant.const import UnitOfTemperature
 from homeassistant.helpers.entity import EntityCategory
 
-from .const import CONF_TARGET_TEMP_BACKUP, DOMAIN, MAX_TEMP_CELSIUS, MIN_TEMP_CELSIUS
+from .const import DOMAIN, MAX_TEMP_CELSIUS, MIN_TEMP_CELSIUS
 from .entity import BaseMugValueEntity
 
 if TYPE_CHECKING:
@@ -62,19 +62,13 @@ class MugTargetTempNumberEntity(MugNumberEntity):
     @property
     def native_value(self) -> float | None:
         """Return a mug attribute as the state for the sensor."""
-        native_value = super().native_value
-        if (
-            native_value == 0
-            and self.coordinator.config_entry
-            and (stored_temp := self.coordinator.config_entry.data.get(CONF_TARGET_TEMP_BACKUP))
-        ):
-            return stored_temp
-        return native_value
+        return self.coordinator.target_temp
 
     async def async_set_native_value(self, value: float) -> None:
         """Set the mug target temp."""
         self.coordinator.ensure_writable()
         await self.coordinator.mug.set_target_temp(value)
+        await self.coordinator.async_request_refresh()
 
 
 async def async_setup_entry(

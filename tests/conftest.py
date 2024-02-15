@@ -79,6 +79,8 @@ async def setup_platform(
         config_entry.data.get(CONF_NAME, config_entry.title),
     )
     mug_coordinator.update_interval = None
+    mug_coordinator.persistant_data = {"target_temp_bkp": None}
+    mug_coordinator.async_request_refresh = AsyncMock()
     await mug_coordinator.async_config_entry_first_refresh()
     hass.data.setdefault(DOMAIN, {})[config_entry.entry_id] = HassMugData(
         mock_mug,
