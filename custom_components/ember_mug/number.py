@@ -68,7 +68,7 @@ class MugTargetTempNumberEntity(MugNumberEntity):
         """Set the mug target temp."""
         self.coordinator.ensure_writable()
         await self.coordinator.mug.set_target_temp(value)
-        await self.coordinator.async_request_refresh()
+        self.coordinator.refresh_from_mug()
 
 
 async def async_setup_entry(

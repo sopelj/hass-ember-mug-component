@@ -64,6 +64,7 @@ class MugTemperatureControlEntity(MugSwitchEntity):
             stored_temp := self.coordinator.persistant_data.get("target_temp_bkp")
         ):
             await self.coordinator.mug.set_target_temp(stored_temp)
+            self.coordinator.refresh_from_mug()
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn heating/cooling off if it is not already."""
@@ -71,6 +72,7 @@ class MugTemperatureControlEntity(MugSwitchEntity):
         if target_temp := self.coordinator.mug.data.target_temp:
             await self.coordinator.write_to_storage(target_temp)
             await self.coordinator.mug.set_target_temp(0)
+            self.coordinator.refresh_from_mug()
 
 
 async def async_setup_entry(

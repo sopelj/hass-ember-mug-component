@@ -83,6 +83,7 @@ class MugTempUnitSelectEntity(MugSelectEntity):
     ) -> None:
         """Change the selected option."""
         await self.coordinator.mug.set_temperature_unit(option)
+        self.coordinator.refresh_from_mug()
 
 
 class MugVolumeLevelSelectEntity(MugSelectEntity):
@@ -104,6 +105,7 @@ class MugVolumeLevelSelectEntity(MugSelectEntity):
         if isinstance(option, str):
             option = VolumeLevel(option)
         await self.coordinator.mug.set_volume_level(option)
+        self.coordinator.refresh_from_mug()
 
 
 class MugTemperaturePresetSelectEntity(MugSelectEntity):
@@ -143,7 +145,7 @@ class MugTemperaturePresetSelectEntity(MugSelectEntity):
         if not (target_temp := self._presets.get(option)):
             raise ValueError("Invalid Option")
         await self.coordinator.mug.set_target_temp(target_temp)
-        await self.coordinator.async_request_refresh()
+        self.coordinator.refresh_from_mug()
 
 
 async def async_setup_entry(

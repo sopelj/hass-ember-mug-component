@@ -167,6 +167,10 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
         )
         self.hass.loop.create_task(close_stale_connections(service_info.device))
 
+    def refresh_from_mug(self) -> None:
+        """Update stored data from mug data and trigger entities."""
+        self.async_set_updated_data(self.mug.data)
+
     @callback
     def _async_handle_callback(self, mug_data: MugData) -> None:
         """Handle a Bluetooth event."""

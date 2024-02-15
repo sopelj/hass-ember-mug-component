@@ -68,7 +68,7 @@ class MugLightEntity(BaseMugEntity, LightEntity):
             await self.coordinator.mug.set_led_colour(Colour(*rgb, brightness))
             self._attr_rgb_color = tuple(rgb)
             self._attr_brightness = brightness
-            self.async_write_ha_state()
+            self.coordinator.refresh_from_mug()
 
     def turn_off(self, **kwargs: Any) -> None:
         """Do nothing, since these lights can't be turned off."""
