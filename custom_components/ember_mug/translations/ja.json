@@ -113,6 +113,9 @@
         }
       }
     },
+    "switch": {
+      "temperature_control": {"name":  "温度管理"}
+    },
     "text": {
       "name": { "name": "名" }
     }

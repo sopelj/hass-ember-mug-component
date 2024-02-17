@@ -113,6 +113,9 @@
         }
       }
     },
+    "switch": {
+      "temperature_control": {"name":  "Contrôle de la température"}
+    },
     "text": {
       "name": { "name": "Nom" }
     }
