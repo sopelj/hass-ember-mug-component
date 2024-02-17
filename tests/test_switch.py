@@ -34,6 +34,7 @@ async def test_setup_switch_mug(
     switch_state = hass.states.get(entity_name)
     assert switch_state is not None
     assert switch_state.attributes == {
+        "device_class": "switch",
         "friendly_name": "Test Mug Temperature Control",
         "icon": "mdi:sun-snowflake",
     }
