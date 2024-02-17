@@ -293,6 +293,7 @@ Simply tap on the entity you wish to configure and change the value as desired.
 - Rename your device (`sensor.ember_mug_c90f59d633f9_name`)
 - Change the LED colour of the device (`light.ember_mug_c90f59d633f9_led`)
 - Set the desired temperature of your device (`number.ember_mug_c90f59d633f9_target_temp`)
+- Enable/Disable temperature control - off will not try to heat liquid (`switch.ember_mug_c90f59d633f9_temperature_control`)
 - Set the desired temperature of your device from a list of presets (`number.ember_mug_c90f59d633f9_temperature_preset`)
 - Set the device's internal temperature unit (`select.ember_mug_c90f59d633f9_temperature_unit`)
 - Set the Travel Mug's volume level (`select.ember_travel_mug_d70f69f623f8_volume_level`)
@@ -303,6 +304,7 @@ You can also call these in services for your automations.
 |--------------|----------------------|----------------------|
 | Mug Name     | text.set_value       | entity_id and value  |
 | LED Colour   | light.turn_on        | entity_id and rgb    |
+| Temp Control | switch.turn_on/off   | entity_id            |
 | Target Temp  | number.set_value     | entity_id and value  |
 | Temp Preset  | select.select_option | entity_id and option |
 | Temp Unit    | select.select_option | entity_id and option |
