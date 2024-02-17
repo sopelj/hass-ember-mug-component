@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import asyncio
-import contextlib
 import logging
 from typing import TYPE_CHECKING
 
@@ -215,13 +214,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
     if unload_ok:
         hass_mug_data: HassMugData = hass.data[DOMAIN].pop(entry.entry_id)
-        # Check if we need to restore target temp
-        if hass_mug_data.target_temp and hass_mug_data.coordinator.mug.data.target_temp == 0:
-            with contextlib.suppress(BleakError, TimeoutError):
-                # Try to restore target temp before unload to avoid it being lost
-                await hass_mug_data.coordinator.mug.set_target_temp(hass_mug_data.target_temp)
         await hass_mug_data.coordinator.mug.disconnect()
-
         if not hass.config_entries.async_entries(DOMAIN):
             hass.data.pop(DOMAIN)
 
