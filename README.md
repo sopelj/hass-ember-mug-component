@@ -272,9 +272,11 @@ If your mug was initially setup with the mobile app, you can also change certain
 Either via the device page, lovelace or services in automations.
 
 > **Note**
-> Despite being a "light" the LED cannot be turned off. This was simply to provide an easy way to set the colour.
+> Despite being a "light" the LED cannot be turned off. This was simply to provide a convenient UI to set the colour.
 >
-> The "Temperature Unit" selected will be written to the mug, but does not change the value displayed in Home Assistant.
+> The "Temperature Unit" is the internal unit of the mug (used by the app), but does not change the value displayed in Home Assistant.
+> The sensors in Home Assistant will already be displayed using your preferred unit (as per your Home Assistant settings).
+> They can also be overridden in the settings of each entity if desired. Just click on an entity, click the Gear, and choose another "Unit of Measure".
 
 #### Via the UI
 
