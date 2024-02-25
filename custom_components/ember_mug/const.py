@@ -8,6 +8,7 @@ DOMAIN: Final[str] = "ember_mug"
 MANUFACTURER: Final[str] = "Ember"
 SUGGESTED_AREA: Final[str] = "Kitchen"
 STORAGE_VERSION = 1
+CONFIG_VERSION = 3
 
 ICON_DEFAULT = "mdi:coffee"
 ICON_EMPTY = "mdi:coffee-outline"

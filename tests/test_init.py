@@ -6,6 +6,7 @@ from homeassistant.core import HomeAssistant
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.ember_mug import DOMAIN
+from custom_components.ember_mug.const import CONFIG_VERSION
 from tests import (
     DEFAULT_CONFIG_DATA,
     MUG_SERVICE_INFO,
@@ -60,7 +61,7 @@ async def test_init_migration(
     mock_update_multiple: Mock,
     hass: HomeAssistant,
 ):
-    """Test upgrading from V1 config to V2."""
+    """Test upgrading from V1 config to V3."""
     mock_config_entry = MockConfigEntry(
         domain=DOMAIN,
         title=TEST_MUG_NAME,
@@ -74,4 +75,5 @@ async def test_init_migration(
     await hass.async_block_till_done()
 
     assert mock_config_entry.state is ConfigEntryState.LOADED
-    assert mock_config_entry.version == 2
+    assert mock_config_entry.version == CONFIG_VERSION
+    assert mock_config_entry.data == DEFAULT_CONFIG_DATA

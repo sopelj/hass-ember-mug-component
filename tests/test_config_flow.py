@@ -1,12 +1,7 @@
 """Test component setup."""
 import pytest
 from homeassistant.config_entries import SOURCE_BLUETOOTH
-from homeassistant.const import (
-    CONF_ADDRESS,
-    CONF_NAME,
-    CONF_TEMPERATURE_UNIT,
-    UnitOfTemperature,
-)
+from homeassistant.const import CONF_ADDRESS, CONF_NAME
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
 
@@ -51,6 +46,5 @@ async def test_bluetooth_discovery(hass: HomeAssistant) -> None:
     assert result["data"] == {
         CONF_ADDRESS: TEST_MAC,
         CONF_NAME: TEST_MUG_NAME,
-        CONF_TEMPERATURE_UNIT: UnitOfTemperature.CELSIUS,
     }
     assert len(mock_setup_entry.mock_calls) == 1

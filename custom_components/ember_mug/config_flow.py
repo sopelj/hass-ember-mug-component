@@ -9,12 +9,7 @@ from bleak import BleakClient, BleakError
 from ember_mug.consts import DEVICE_SERVICE_UUIDS
 from homeassistant import config_entries
 from homeassistant.components.bluetooth import async_discovered_service_info
-from homeassistant.const import (
-    CONF_ADDRESS,
-    CONF_NAME,
-    CONF_TEMPERATURE_UNIT,
-    UnitOfTemperature,
-)
+from homeassistant.const import CONF_ADDRESS, CONF_NAME, UnitOfTemperature
 from homeassistant.core import callback
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers import selector
@@ -25,6 +20,7 @@ from .const import (
     CONF_DEBUG,
     CONF_PRESETS,
     CONF_PRESETS_UNIT,
+    CONFIG_VERSION,
     DEFAULT_PRESETS,
     DOMAIN,
     MAX_TEMP_CELSIUS,
@@ -39,7 +35,7 @@ if TYPE_CHECKING:
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Config Flow for Ember Mug."""
 
-    VERSION = 3
+    VERSION = CONFIG_VERSION
 
     def __init__(self) -> None:
         """Initialize the config flow."""
@@ -115,12 +111,6 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     },
                 ),
                 vol.Required(CONF_NAME, default=name): str,
-                vol.Required(
-                    CONF_TEMPERATURE_UNIT,
-                    default=UnitOfTemperature.CELSIUS,
-                ): vol.In(
-                    [UnitOfTemperature.CELSIUS, UnitOfTemperature.FAHRENHEIT],
-                ),
             },
         )
         return self.async_show_form(

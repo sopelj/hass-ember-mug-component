@@ -16,4 +16,3 @@ class HassMugData:
 
     mug: EmberMug
     coordinator: MugDataUpdateCoordinator
-    target_temp: float | None = None

@@ -4,13 +4,7 @@ from unittest.mock import patch
 from bleak.backends.scanner import AdvertisementData, BLEDevice
 from ember_mug.consts import DEFAULT_NAME
 from home_assistant_bluetooth import BluetoothServiceInfoBleak
-from homeassistant.const import (
-    CONF_ADDRESS,
-    CONF_MAC,
-    CONF_NAME,
-    CONF_TEMPERATURE_UNIT,
-    UnitOfTemperature,
-)
+from homeassistant.const import CONF_ADDRESS, CONF_MAC, CONF_NAME, CONF_TEMPERATURE_UNIT
 
 
 def patch_async_setup_entry(return_value=True):
@@ -29,7 +23,6 @@ TEST_BLE_DEVICE = BLEDevice(TEST_MAC, MUG_DEVICE_NAME, {}, 1)
 DEFAULT_CONFIG_DATA = {
     CONF_ADDRESS: TEST_MAC,
     CONF_NAME: TEST_MUG_NAME,
-    CONF_TEMPERATURE_UNIT: UnitOfTemperature.CELSIUS,
 }
 V1_CONFIG_DATA = {
     CONF_MAC: TEST_MAC,
