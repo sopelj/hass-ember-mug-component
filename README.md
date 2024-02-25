@@ -126,19 +126,16 @@ If using Bluetooth Proxies please ensure you are using Home Assistant 2023.4 and
 If something isn't working, and you aren't sure why, you can increase logging levels in Home Assistant in your configuration.yaml to get more information.
 Even if you're not sure what it means, it can help debug if you open an issue with this information.
 
-```yaml
-logger:
-    default: error  # or whatever you want
-    logs:
-      custom_components.ember_mug: debug
-      ember_mug: debug
-      bleak.backends.bluezdbus.client: debug
-      bleak_retry_connector: debug
-```
+You can enable debug settings in the Integration's page:
 
-You need to restart for it to take effect. You can see your logs here:
-
-[![Open your Home Assistant instance and show your Home Assistant logs.](https://my.home-assistant.io/badges/logs.svg)](https://my.home-assistant.io/redirect/logs/)
+1. Option the Ember Mug Integration:<br/>
+   [![Open your Home Assistant instance and Ember Mug integration.](https://my.home-assistant.io/badges/integration.svg)](https://my.home-assistant.io/redirect/integration/?domain=ember_mug)
+2. And then choose "Enable Debug Logging"<br/>
+   ![Enable Debug Logging button](./examples/debug_logging_enable.png)
+3. Perform the action that reproduces the issue
+4. Go back and click "Disable Debug Logging"<br/>
+   ![Disable Debug Logging button](./examples/debug_logging_disable.png)
+5. A debug log file download automatically that you can consult to help debugging or to provide information when creating an issue.
 
 Also, if you use Bluetooth proxies you can also activate verbose logging in ESPHome with:
 
@@ -315,7 +312,7 @@ You can also call these in services for your automations.
 If you wish to change or add presets to the preset entity you can do so.
 This can be done via the UI by going to this integration and choosing "Configure" next to your device.
 
-[![Open your Home Assistant instance and show an integration.](https://my.home-assistant.io/badges/integration.svg)](https://my.home-assistant.io/redirect/integration/?domain=ember_mug)
+[![Open your Home Assistant instance and Ember Mug integration.](https://my.home-assistant.io/badges/integration.svg)](https://my.home-assistant.io/redirect/integration/?domain=ember_mug)
 
 The "Presets" are a key value mapping of the name to desired temperature. You can add, change or remove as you wish. Names can have spaces if desired, just avoid symbols. Mote that new entries will not benefit from translations however as they are not part of the integration.
 
