@@ -45,7 +45,7 @@ Bluetooth Proxies seem to be far more reliable now, so, if you have that option 
 Ensure you have at least one [Bluetooth Proxy](https://www.home-assistant.io/integrations/bluetooth/#remote-adapters-bluetooth-proxies) setup with Home Assistant that supports **active connections**.
 Currently, that only includes ESPHome proxies with firmware 2022.9.3 or later. In theory, you can have multiple proxies setup throughout the house as well.
 
-### Option 2 - [Home Assistant's Bluetooth Integration](https://www.home-assistant.io/integrations/bluetooth/) with integrated adapter or dongle
+#### Option 2 - [Home Assistant's Bluetooth Integration](https://www.home-assistant.io/integrations/bluetooth/) with integrated adapter or dongle
 
 Ensure you have the [Home Assistant Bluetooth Integration](https://www.home-assistant.io/integrations/bluetooth/) enabled and have integrated Bluetooth or Bluetooth Dongle setup with it.
 It is recommended to use one of the [officially supported adapters](https://www.home-assistant.io/integrations/bluetooth/#known-working-adapters).

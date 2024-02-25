@@ -173,13 +173,15 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry):
         # No migrations to run
         return False
 
-    config_entry.version = 3
-
     old_data = {**config_entry.data}
+    if config_entry.version == 1:
+        old_data[CONF_ADDRESS] = old_data[CONF_MAC]
+
+    config_entry.version = 3
     hass.config_entries.async_update_entry(
         config_entry,
         data={
-            CONF_ADDRESS: old_data.get(CONF_MAC, old_data.get(CONF_ADDRESS)),
+            CONF_ADDRESS: old_data[CONF_ADDRESS],
             CONF_NAME: old_data[CONF_NAME],
         },
         options={
