@@ -63,16 +63,14 @@ Once you set it up, please forget the mug on your phone or at least disable Blue
    - For the Mug/Cup; hold down the button on the bottom until it flashes blue
    - For the Travel Mug; press and hold the Ember logo until the display shows 'PAIR'
 4. Home Assistant should auto-detect your device, and you should get a notification to set it up<br/>
-   ![Auto discovery Notification](./examples/discovery_setup_1_notification.png)
+   ![Auto discovery Notification](./examples/discovery_setup_1_notification.png)<br/>
    Choose "Check it out" or go to "Settings" -> "Devices"
-5. In your devices you should see an option for the mug<br/>
-   ![Discovered Device](./examples/discovery_setup_2_device.png)
+5. In your devices you should see an option at the top under "Discovered" for the new device<br/>
+   ![Discovered Device](./examples/discovery_setup_2_device.png)<br/>
    Then choose "Configure"
-6. In the prompt change any options you wish.<br/>
-   ![Configuration](./examples/discovery_setup_3_prompt.png)
-   **You probably don't want extra attributes, they are for debugging and development only**
-   Then hit "Next"
-7. It will then try and connect to the device. On success, you be prompted to choose a location.<br/>
+6. In the prompt you can choose a different name if you prefer and then choose "Submit".<br/>
+   ![Configuration](./examples/discovery_setup_3_prompt.png)<br/>
+7. It will then try and connect to the device. On success, you be prompted to choose a location (default is Kitchen).<br/>
    ![Configuration](./examples/discovery_setup_4_location.png )
 8. Your device will exit paring mode automatically and go back to the default colour when it's setup.
 
