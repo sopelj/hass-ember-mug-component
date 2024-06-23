@@ -1,4 +1,5 @@
 """Diagnostics support for Mug."""
+
 from __future__ import annotations
 
 import logging
@@ -6,13 +7,10 @@ from typing import TYPE_CHECKING, Any
 
 from bleak import BleakError
 
-from .const import DOMAIN
-
 if TYPE_CHECKING:
-    from homeassistant.config_entries import ConfigEntry
     from homeassistant.core import HomeAssistant
 
-    from . import HassMugData
+    from . import EmberMugConfigEntry
 
 
 logger = logging.getLogger(__name__)
@@ -20,11 +18,10 @@ logger = logging.getLogger(__name__)
 
 async def async_get_config_entry_diagnostics(
     hass: HomeAssistant,
-    entry: ConfigEntry,
+    entry: EmberMugConfigEntry,
 ) -> dict[str, Any]:
     """Return diagnostics for a config entry."""
-    hass_data: HassMugData = hass.data[DOMAIN][entry.entry_id]
-    coordinator = hass_data.coordinator
+    coordinator = entry.runtime_data
     data: dict[str, Any] = {
         "info": coordinator.data,
         "state": coordinator.data.liquid_state_display,

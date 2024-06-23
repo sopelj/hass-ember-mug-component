@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.1.0]
+
+### Changes
+* Upgrade to python-ember-mug 1.0.1
+* Move data to `entry.runtime_data` introduced in Home Assistant 2024.4
+
+### Notes
+* Requires Home Assistant 2024.4+ and Python 3.12
+
 ## [1.0.0]
 
 # Added

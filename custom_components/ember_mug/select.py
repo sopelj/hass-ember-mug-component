@@ -1,4 +1,5 @@
 """Select Entity for Ember Mug."""
+
 from __future__ import annotations
 
 import logging
@@ -11,15 +12,14 @@ from homeassistant.const import UnitOfTemperature
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.util.unit_conversion import TemperatureConverter
 
-from .const import CONF_PRESETS, CONF_PRESETS_UNIT, DEFAULT_PRESETS, DOMAIN
+from .const import CONF_PRESETS, CONF_PRESETS_UNIT, DEFAULT_PRESETS
 from .entity import BaseMugEntity
 
 if TYPE_CHECKING:
-    from homeassistant.config_entries import ConfigEntry
     from homeassistant.core import HomeAssistant
     from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-    from . import HassMugData
+    from . import EmberMugConfigEntry
     from .coordinator import MugDataUpdateCoordinator
 
 
@@ -150,21 +150,21 @@ class MugTemperaturePresetSelectEntity(MugSelectEntity):
 
 async def async_setup_entry(
     hass: HomeAssistant,
-    entry: ConfigEntry,
+    entry: EmberMugConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up Select Entities."""
     if entry.entry_id is None:
         raise ValueError("Missing config entry ID")
-    data: HassMugData = hass.data[DOMAIN][entry.entry_id]
+    coordinator = entry.runtime_data
     preset_unit = entry.options.get(CONF_PRESETS_UNIT, UnitOfTemperature.CELSIUS)
     temp_presets = entry.options.get(CONF_PRESETS, DEFAULT_PRESETS)
     entities = [
-        MugTemperaturePresetSelectEntity(temp_presets, preset_unit, data.coordinator, "temperature_preset"),
-        MugTempUnitSelectEntity(data.coordinator, "temperature_unit"),
+        MugTemperaturePresetSelectEntity(temp_presets, preset_unit, coordinator, "temperature_preset"),
+        MugTempUnitSelectEntity(coordinator, "temperature_unit"),
     ]
-    if data.mug.has_attribute("volume_level"):
+    if coordinator.mug.has_attribute("volume_level"):
         entities.append(
-            MugVolumeLevelSelectEntity(data.coordinator, "volume_level"),
+            MugVolumeLevelSelectEntity(coordinator, "volume_level"),
         )
     async_add_entities(entities)

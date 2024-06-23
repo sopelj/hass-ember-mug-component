@@ -1,4 +1,5 @@
 """Constants used for mug."""
+
 from enum import StrEnum
 from typing import Final
 

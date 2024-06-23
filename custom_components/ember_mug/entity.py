@@ -1,4 +1,5 @@
 """Generic Entity Logic for multiple platforms."""
+
 from __future__ import annotations
 
 import logging

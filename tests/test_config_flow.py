@@ -1,4 +1,5 @@
 """Test component setup."""
+
 import pytest
 from homeassistant.config_entries import SOURCE_BLUETOOTH
 from homeassistant.const import CONF_ADDRESS, CONF_NAME

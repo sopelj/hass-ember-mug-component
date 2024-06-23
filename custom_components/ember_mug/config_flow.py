@@ -1,4 +1,5 @@
 """Add Config Flow for Ember Mug."""
+
 from __future__ import annotations
 
 import contextlib

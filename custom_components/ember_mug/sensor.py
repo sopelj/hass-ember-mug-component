@@ -1,4 +1,5 @@
 """Sensor Entity for Ember Mug."""
+
 from __future__ import annotations
 
 import logging
@@ -16,7 +17,6 @@ from homeassistant.helpers.entity import EntityCategory
 
 from .const import (
     ATTR_BATTERY_VOLTAGE,
-    DOMAIN,
     ICON_DEFAULT,
     ICON_EMPTY,
     ICON_UNAVAILABLE,
@@ -32,7 +32,6 @@ if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant
     from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-    from . import HassMugData
     from .coordinator import MugDataUpdateCoordinator
 
 
@@ -198,13 +197,13 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up Entities."""
-    data: HassMugData = hass.data[DOMAIN][entry.entry_id]
     if entry.entry_id is None:
         raise ValueError("Missing config entry ID")
+    coordinator = entry.runtime_data
     entities: list[EmberMugSensor] = [
-        EmberMugStateSensor(data.coordinator, "liquid_state"),
-        EmberMugLiquidLevelSensor(data.coordinator, "liquid_level"),
-        EmberMugTemperatureSensor(data.coordinator, "current_temp"),
-        EmberMugBatterySensor(data.coordinator, "battery.percent"),
+        EmberMugStateSensor(coordinator, "liquid_state"),
+        EmberMugLiquidLevelSensor(coordinator, "liquid_level"),
+        EmberMugTemperatureSensor(coordinator, "current_temp"),
+        EmberMugBatterySensor(coordinator, "battery.percent"),
     ]
     async_add_entities(entities)

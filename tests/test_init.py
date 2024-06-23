@@ -1,4 +1,5 @@
 """Test Ember Mug Integration init."""
+
 from typing import Any
 from unittest.mock import AsyncMock, Mock, patch
 

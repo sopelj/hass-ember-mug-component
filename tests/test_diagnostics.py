@@ -1,4 +1,5 @@
 """Tests for diagnostics."""
+
 from __future__ import annotations
 
 import json
@@ -18,7 +19,7 @@ from ember_mug.data import (
 from homeassistant.helpers.json import JSONEncoder
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.ember_mug import DOMAIN, HassMugData
+from custom_components.ember_mug import DOMAIN
 from custom_components.ember_mug.coordinator import MugDataUpdateCoordinator
 from custom_components.ember_mug.diagnostics import async_get_config_entry_diagnostics
 
@@ -65,17 +66,14 @@ async def test_config_entry_diagnostics(hass: HomeAssistant) -> None:
     mock_mug.discover_services = AsyncMock(return_value=expected_services)
     mock_mug.debug = True
     mock_mug.device = TEST_BLE_DEVICE
-    hass_data = HassMugData(
-        coordinator=MugDataUpdateCoordinator(
-            hass,
-            Mock(),
-            mock_mug,
-            "unique-id",
-            "device-name",
-        ),
-        mug=mock_mug,
+    config_entry.runtime_data = MugDataUpdateCoordinator(
+        hass,
+        Mock(),
+        mock_mug,
+        "unique-id",
+        "device-name",
     )
-    hass.data[DOMAIN] = {config_entry.entry_id: hass_data, "debug": True}
+    hass.data[DOMAIN] = {"debug": True}
 
     # Dump diagnostics
     dump = await async_get_config_entry_diagnostics(hass, config_entry)

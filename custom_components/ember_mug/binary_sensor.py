@@ -1,4 +1,5 @@
 """Binary Sensor Entity for Ember Mug."""
+
 from __future__ import annotations
 
 import logging
@@ -10,18 +11,16 @@ from homeassistant.components.binary_sensor import (
     BinarySensorEntity,
     BinarySensorEntityDescription,
 )
-from homeassistant.helpers.entity import EntityCategory
+from homeassistant.const import EntityCategory
 
-from .const import DOMAIN
 from .entity import BaseMugEntity
 
 if TYPE_CHECKING:
-    from homeassistant.config_entries import ConfigEntry
     from homeassistant.core import HomeAssistant
     from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
+    from . import EmberMugConfigEntry
     from .coordinator import MugDataUpdateCoordinator
-    from .models import HassMugData
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -81,16 +80,16 @@ class MugLowBatteryBinarySensor(MugBinarySensor):
 
 async def async_setup_entry(
     hass: HomeAssistant,
-    entry: ConfigEntry,
+    entry: EmberMugConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up Binary Sensor Entities."""
     if entry.entry_id is None:
         raise ValueError("Missing Entry ID")
-    data: HassMugData = hass.data[DOMAIN][entry.entry_id]
+    coordinator = entry.runtime_data
     async_add_entities(
         [
-            MugBinarySensor(data.coordinator, "battery.on_charging_base"),
-            MugLowBatteryBinarySensor(data.coordinator, "battery.percent"),
+            MugBinarySensor(coordinator, "battery.on_charging_base"),
+            MugLowBatteryBinarySensor(coordinator, "battery.percent"),
         ],
     )

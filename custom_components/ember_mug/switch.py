@@ -1,4 +1,5 @@
 """Switch entities."""
+
 from __future__ import annotations
 
 import logging
@@ -11,15 +12,13 @@ from homeassistant.components.switch import (
 )
 from homeassistant.const import EntityCategory
 
-from . import DOMAIN
 from .entity import BaseMugEntity
 
 if TYPE_CHECKING:
-    from homeassistant.config_entries import ConfigEntry
     from homeassistant.core import HomeAssistant
     from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-    from . import HassMugData
+    from . import EmberMugConfigEntry
     from .coordinator import MugDataUpdateCoordinator
 
 
@@ -82,11 +81,11 @@ class MugTemperatureControlEntity(MugSwitchEntity):
 
 async def async_setup_entry(
     hass: HomeAssistant,
-    entry: ConfigEntry,
+    entry: EmberMugConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up Switch Entities."""
     if entry.entry_id is None:
         raise ValueError("Missing config entry ID")
-    data: HassMugData = hass.data[DOMAIN][entry.entry_id]
-    async_add_entities([MugTemperatureControlEntity(data.coordinator, "target_temp")])
+    coordinator = entry.runtime_data
+    async_add_entities([MugTemperatureControlEntity(coordinator, "target_temp")])

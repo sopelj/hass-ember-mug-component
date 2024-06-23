@@ -1,4 +1,5 @@
 """Text Entity for Ember Mug."""
+
 from __future__ import annotations
 
 import logging
@@ -8,7 +9,6 @@ from ember_mug.consts import MUG_NAME_PATTERN
 from homeassistant.components.text import TextEntity, TextEntityDescription
 from homeassistant.helpers.entity import EntityCategory
 
-from .const import DOMAIN
 from .entity import BaseMugValueEntity
 
 if TYPE_CHECKING:
@@ -16,7 +16,6 @@ if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant
     from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-    from . import HassMugData
     from .coordinator import MugDataUpdateCoordinator
 
 
@@ -66,8 +65,8 @@ async def async_setup_entry(
     """Set up Text Entities."""
     if entry.entry_id is None:
         raise ValueError("Missing config entry ID")
-    data: HassMugData = hass.data[DOMAIN][entry.entry_id]
+    coordinator = entry.runtime_data
     entities = []
-    if data.mug.has_attribute("name"):
-        entities = [MugTextEntity(data.coordinator, attr) for attr in TEXT_TYPES]
+    if coordinator.mug.has_attribute("name"):
+        entities = [MugTextEntity(coordinator, attr) for attr in TEXT_TYPES]
     async_add_entities(entities)

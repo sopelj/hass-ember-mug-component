@@ -1,4 +1,5 @@
 """Configure pytest."""
+
 from unittest.mock import AsyncMock, Mock
 
 import pytest
@@ -9,7 +10,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.setup import async_setup_component
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.ember_mug import DOMAIN, HassMugData, MugDataUpdateCoordinator
+from custom_components.ember_mug import DOMAIN, MugDataUpdateCoordinator
 from tests import (
     DEFAULT_CONFIG_DATA,
     TEST_BLE_DEVICE,
@@ -82,10 +83,7 @@ async def setup_platform(
     mug_coordinator.persistant_data = {"target_temp_bkp": None}
     mug_coordinator.async_request_refresh = AsyncMock()
     await mug_coordinator.async_config_entry_first_refresh()
-    hass.data.setdefault(DOMAIN, {})[config_entry.entry_id] = HassMugData(
-        mock_mug,
-        mug_coordinator,
-    )
+    config_entry.runtime_data = mug_coordinator
 
     assert await async_setup_component(hass, DOMAIN, {}) is True
 

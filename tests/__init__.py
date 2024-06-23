@@ -1,4 +1,5 @@
 """Tests for this Integration."""
+
 from unittest.mock import patch
 
 from bleak.backends.scanner import AdvertisementData, BLEDevice
@@ -55,6 +56,7 @@ MUG_SERVICE_INFO = BluetoothServiceInfoBleak(
         platform_data=((),),
         tx_power=-127,
     ),
+    tx_power=-127,
     device=TEST_BLE_DEVICE,
     time=0,
     connectable=True,

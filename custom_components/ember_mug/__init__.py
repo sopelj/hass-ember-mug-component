@@ -1,4 +1,5 @@
 """Ember Mug Custom Integration."""
+
 from __future__ import annotations
 
 import asyncio
@@ -24,12 +25,14 @@ from homeassistant.exceptions import ConfigEntryNotReady
 
 from .const import CONF_DEBUG, CONFIG_VERSION, DOMAIN
 from .coordinator import MugDataUpdateCoordinator
-from .models import HassMugData
 
 if TYPE_CHECKING:
     from home_assistant_bluetooth import BluetoothServiceInfoBleak
     from homeassistant.config_entries import ConfigEntry
     from homeassistant.core import Event, HomeAssistant
+
+
+type EmberMugConfigEntry = ConfigEntry[MugDataUpdateCoordinator]
 
 
 PLATFORMS = [
@@ -46,9 +49,6 @@ _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Mug Platform."""
-    if DOMAIN not in hass.data:
-        hass.data[DOMAIN] = {}
-
     address: str = entry.data[CONF_ADDRESS].upper()
     service_info = bluetooth.async_last_service_info(hass, address, connectable=True)
 
@@ -135,10 +135,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         ),
     )
 
-    hass.data.setdefault(DOMAIN, {})[entry.entry_id] = HassMugData(
-        ember_mug,
-        mug_coordinator,
-    )
+    entry.runtime_data = mug_coordinator
     entry.async_on_unload(entry.add_update_listener(async_update_listener))
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
@@ -192,12 +189,12 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: ConfigEntry):
     return True
 
 
-async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+async def async_unload_entry(hass: HomeAssistant, entry: EmberMugConfigEntry) -> bool:
     """Unload a config entry."""
     unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
     if unload_ok:
-        hass_mug_data: HassMugData = hass.data[DOMAIN].pop(entry.entry_id)
-        await hass_mug_data.coordinator.mug.disconnect()
+        mug_coordinator = entry.runtime_data
+        await mug_coordinator.mug.disconnect()
         if not hass.config_entries.async_entries(DOMAIN):
             hass.data.pop(DOMAIN)
 

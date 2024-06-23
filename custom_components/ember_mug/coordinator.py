@@ -1,7 +1,7 @@
 """Coordinator for all the sensors."""
+
 from __future__ import annotations
 
-import asyncio
 import logging
 from datetime import timedelta
 from typing import TYPE_CHECKING, Any, TypedDict
@@ -102,11 +102,11 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
                 changed += await self.mug.update_queued_attributes()
             self._last_refresh_was_full = not self._last_refresh_was_full
             self.available = True
-        except (asyncio.TimeoutError, BleakError) as e:
+        except (TimeoutError, BleakError) as e:
             if isinstance(e, BleakError):
                 _LOGGER.debug("An error occurred trying to update the mug: %s", e)
             if self.available is True:
-                _LOGGER.debug("%s is not available: %s", e)
+                _LOGGER.debug("%s is not available: %s", self.mug.model_name, e)
                 self.available = False
             if self._initial_update is True:
                 raise UpdateFailed(

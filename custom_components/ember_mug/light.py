@@ -1,4 +1,5 @@
 """Expose the Mug's LEDs as a light entity."""
+
 from __future__ import annotations
 
 import logging
@@ -15,16 +16,13 @@ from homeassistant.components.light import (
 from homeassistant.core import callback
 from homeassistant.helpers.entity import EntityCategory
 
-from .const import DOMAIN
 from .entity import BaseMugEntity
 
 if TYPE_CHECKING:
-    from homeassistant.config_entries import ConfigEntry
     from homeassistant.core import HomeAssistant
     from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-    from .models import HassMugData
-
+    from . import EmberMugConfigEntry
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -55,7 +53,7 @@ class MugLightEntity(BaseMugEntity, LightEntity):
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Change the LED colour if defined."""
-        _LOGGER.debug(f"Received turn on with {kwargs}")
+        _LOGGER.debug("Received turn on with %s", kwargs)
         self.coordinator.ensure_writable()
         current_colour = self.coordinator.mug.data.led_colour
         rgb: tuple[int, int, int]
@@ -80,14 +78,14 @@ class MugLightEntity(BaseMugEntity, LightEntity):
 
 async def async_setup_entry(
     hass: HomeAssistant,
-    entry: ConfigEntry,
+    entry: EmberMugConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the mug light."""
     if entry.entry_id is None:
         raise ValueError("Missing config entry ID")
-    data: HassMugData = hass.data[DOMAIN][entry.entry_id]
+    coordinator = entry.runtime_data
     entities = []
-    if data.mug.has_attribute("led_colour"):
-        entities = [MugLightEntity(data.coordinator, "led_colour")]
+    if coordinator.mug.has_attribute("led_colour"):
+        entities = [MugLightEntity(coordinator, "led_colour")]
     async_add_entities(entities)

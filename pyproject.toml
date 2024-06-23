@@ -1,26 +1,25 @@
 [project]
-name = "ember_mug"
+name = "ember_mug_component"
 readme = "README.md"
 description = "Home Assistant Custom Integration for Ember Mugs."
 authors = [
     { name = "Jesse Sopel", email = "jesse.sopel@gmail.com" },
 ]
 license = { file = "LICENSE.md" }
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 dynamic = ["version"]
 classifiers=[
-    'Intended Audience :: Developers',
-    'License :: OSI Approved :: MIT License',
-    'Natural Language :: English',
-    'Programming Language :: Python :: 3',
-    'Programming Language :: Python :: 3.11',
-    'Programming Language :: Python :: 3.12',
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
 ]
 dependencies = [
-    "homeassistant>=2023.9.0",
-    "bleak-retry-connector>=3.1.1",
-    "bleak>=0.20.2",
-    "python-ember-mug==1.0.0",
+    "homeassistant>=2024.4.0",
+    "bleak-retry-connector>=3.5.0",
+    "bleak>=0.21.1",
+    "python-ember-mug==1.0.1b1",
 ]
 
 [project.optional-dependencies]
@@ -32,15 +31,15 @@ test = [
   "pytest-homeassistant-custom-component",
   # Requirements for HASS
   "pyserial>=3.5",  # For HASS serial component
-  "bluetooth-auto-recovery>=1.2.1",  # For HASS Bluetooth component
+  "bluetooth-auto-recovery>=1.4.0",  # For HASS Bluetooth component
   "aiohttp-cors>=0.7.0", # For HASS http component
   "pyudev==0.23.2",  # For HASS usb component
 ]
 
 [project.urls]
-"Source code" = "https://github.com/sopelj/python-ember-mug/"
-"Bug Tracker" = "https://github.com/sopelj/python-ember-mug/issues"
-"Changelog" = "https://github.com/sopelj/python-ember-mug/blob/main/CHANGELOG.md"
+"Source code" = "https://github.com/sopelj/hass-ember-mug-component/"
+"Bug Tracker" = "https://github.com/sopelj/hass-ember-mug-component/issues"
+"Changelog" = "https://github.com/sopelj/hass-ember-mug-component/blob/main/CHANGELOG.md"
 
 [tool.hatch.version]
 path = "custom_components/ember_mug/manifest.json"
@@ -53,12 +52,8 @@ python = "3.12"
 features = ["test"]
 
 [[tool.hatch.envs.test.matrix]]
-python = ["3.11"]
-homeassistant = ["2023.9.3", "2023.10.5"]
-
-[[tool.hatch.envs.test.matrix]]
-python = ["3.11", "3.12"]
-homeassistant = ["2023.11.1", "2023.2.1"]
+python = ["3.12"]
+homeassistant = ["2024.4.4", "2024.6.1"]
 
 [tool.hatch.envs.test.scripts]
 cov = "pytest --asyncio-mode=auto --cov=custom_components --cov-branch --cov-report=xml --cov-report=term-missing tests -vvv"
@@ -66,7 +61,7 @@ no-cov = "cov --no-cov"
 
 [tool.black]
 line-length = 120
-target-version = ['py311']
+target-version = ['py312']
 
 [tool.coverage.report]
 exclude_lines = [
@@ -84,7 +79,8 @@ exclude_lines = [
 [tool.ruff]
 fix = true
 line-length = 120
-target-version = "py311"
+target-version = "py312"
+[tool.ruff.lint]
 select = [
     "A",
     "ASYNC",
@@ -115,9 +111,9 @@ select = [
     "TCH",
     "UP",
 ]
-ignore = ["D203", "D212", "PLR2004", "PLR0913"]
+ignore = ["D203", "D212", "PLR2004", "PLR0913", "RUF012"]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "tests/**/*.py" = [
     "D103",  # No docstrings in tests needed
     "S101",  # We needs asserts in tests
