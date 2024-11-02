@@ -3,8 +3,13 @@
 from unittest.mock import patch
 
 from bleak.backends.scanner import AdvertisementData, BLEDevice
-from ember_mug.consts import DEFAULT_NAME, TemperatureUnit
-from home_assistant_bluetooth import BluetoothServiceInfoBleak
+from ember_mug.consts import (
+    DEFAULT_NAME,
+    EMBER_BLE_SIG,
+    MugCharacteristic,
+    TemperatureUnit,
+)
+from home_assistant_bluetooth import SOURCE_LOCAL, BluetoothServiceInfoBleak
 from homeassistant.const import CONF_ADDRESS, CONF_MAC, CONF_NAME, CONF_TEMPERATURE_UNIT
 
 from custom_components.ember_mug import CONF_DEBUG
@@ -39,23 +44,25 @@ CONFIG_DATA_V2 = {
     CONF_DEBUG: True,
 }
 
+MUG_SERVICE_UUID = str(MugCharacteristic.STANDARD_SERVICE)
+DEFAULT_MUG_ADVERTISEMENT_DATA = AdvertisementData(
+    local_name=MUG_DEVICE_NAME,
+    manufacturer_data={EMBER_BLE_SIG: b"\x81"},
+    service_data={},
+    service_uuids=[MUG_SERVICE_UUID],
+    rssi=-127,
+    platform_data=((),),
+    tx_power=-127,
+)
 MUG_SERVICE_INFO = BluetoothServiceInfoBleak(
     name=MUG_DEVICE_NAME,
-    manufacturer_data={89: b"\xfd`0U\x92W"},
+    manufacturer_data={EMBER_BLE_SIG: b"\xfd`0U\x92W"},
     service_data={"": b""},
-    service_uuids=["cba20d00-224d-11e6-9fb8-0002a5d5c51b"],
+    service_uuids=[MUG_SERVICE_UUID],
     address=TEST_MAC,
     rssi=-50,
-    source="local",
-    advertisement=AdvertisementData(
-        local_name=MUG_DEVICE_NAME,
-        manufacturer_data={0x03C1: b"\x81"},
-        service_data={},
-        service_uuids=["fc543622-236c-4c94-8fa9-944a3e5353fa"],
-        rssi=-127,
-        platform_data=((),),
-        tx_power=-127,
-    ),
+    source=SOURCE_LOCAL,
+    advertisement=DEFAULT_MUG_ADVERTISEMENT_DATA,
     tx_power=-127,
     device=TEST_BLE_DEVICE,
     time=0,

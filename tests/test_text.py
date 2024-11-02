@@ -65,7 +65,7 @@ async def test_setup_text_cup(
     mock_mug: EmberMug | Mock,
 ) -> None:
     """Test cup has no sensors as it cannot be named."""
-    mock_mug.is_cup = True
+    mock_mug.data.model_info = ModelInfo(DeviceModel.CUP_6_OZ)
     assert len(hass.states.async_all()) == 0
     await setup_platform(hass, mock_mug, TEXT_DOMAIN)
     assert len(hass.states.async_all()) == 0

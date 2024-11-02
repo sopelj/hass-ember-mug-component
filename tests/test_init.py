@@ -1,7 +1,7 @@
 """Test Ember Mug Integration init."""
 
 from typing import Any
-from unittest.mock import AsyncMock, Mock, patch
+from unittest.mock import Mock, patch
 
 import pytest
 from homeassistant.config_entries import ConfigEntryState
@@ -14,22 +14,16 @@ from tests import (
     CONFIG_DATA_V1,
     CONFIG_DATA_V2,
     DEFAULT_CONFIG_DATA,
-    MUG_SERVICE_INFO,
+    TEST_BLE_DEVICE,
     TEST_MAC_UNIQUE_ID,
     TEST_MUG_NAME,
 )
+from tests.conftest import inject_ble_device_discovery_info
 
 
-@patch(
-    "custom_components.ember_mug.bluetooth.async_last_service_info",
-    return_value=MUG_SERVICE_INFO,
-)
 @patch("custom_components.ember_mug.EmberMug._update_multiple", return_value=[])
-@patch("custom_components.ember_mug.asyncio.Event.wait", new_callable=AsyncMock)
 async def test_init(
-    mock_setup: Mock,
     mock_update_multiple: Mock,
-    mock_async_event_wait: AsyncMock,
     hass: HomeAssistant,
 ) -> None:
     """Test initializing integration."""
@@ -42,6 +36,7 @@ async def test_init(
         version=2,
     )
     mock_config_entry.add_to_hass(hass)
+    inject_ble_device_discovery_info(hass, TEST_BLE_DEVICE)
     await hass.config_entries.async_setup(mock_config_entry.entry_id)
     await hass.async_block_till_done()
 
@@ -61,14 +56,8 @@ async def test_init(
         (2, CONFIG_DATA_V2, {CONF_DEBUG: True}),
     ],
 )
-@patch(
-    "custom_components.ember_mug.bluetooth.async_last_service_info",
-    return_value=MUG_SERVICE_INFO,
-)
 @patch("custom_components.ember_mug.EmberMug._update_multiple", return_value=[])
-@patch("custom_components.ember_mug.asyncio.Event", new=AsyncMock)
 async def test_init_migration_v1(
-    mock_setup: Mock,
     mock_update_multiple: Mock,
     hass: HomeAssistant,
     start_version: int,
@@ -85,6 +74,7 @@ async def test_init_migration_v1(
         version=start_version,
     )
     mock_config_entry.add_to_hass(hass)
+    inject_ble_device_discovery_info(hass, TEST_BLE_DEVICE)
     await hass.config_entries.async_setup(mock_config_entry.entry_id)
     await hass.async_block_till_done()
 

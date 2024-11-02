@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.2.0]
+
+### Added
+* Model ID in DeviceInfo (added in 2024.8)
+
+### Changes
+* Use new async_setup method (added in 2024.8)
+* Don't trigger update, if data is unchanged.
+* Bumped library versions for HASS 2024.8
+
+### Notes
+* Requires Home Assistant 2024.8+
+
 ## [1.1.0]
 
 ### Changes

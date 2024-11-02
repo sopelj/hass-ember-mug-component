@@ -16,10 +16,10 @@ classifiers=[
     "Programming Language :: Python :: 3.12",
 ]
 dependencies = [
-    "homeassistant>=2024.4.0",
+    "homeassistant>=2024.8.1",
     "bleak-retry-connector>=3.5.0",
-    "bleak>=0.21.1",
-    "python-ember-mug==1.0.1b1",
+    "bleak>=0.22.2",
+    "python-ember-mug==1.1.0b1",
 ]
 
 [project.optional-dependencies]
@@ -31,9 +31,8 @@ test = [
   "pytest-homeassistant-custom-component",
   # Requirements for HASS
   "pyserial>=3.5",  # For HASS serial component
-  "bluetooth-auto-recovery>=1.4.0",  # For HASS Bluetooth component
-  "aiohttp-cors>=0.7.0", # For HASS http component
-  "pyudev==0.23.2",  # For HASS usb component
+  "bluetooth-auto-recovery>=1.4.2",  # For HASS Bluetooth component
+  "pyudev==0.24.1",  # For HASS usb component
 ]
 
 [project.urls]
@@ -53,7 +52,7 @@ features = ["test"]
 
 [[tool.hatch.envs.test.matrix]]
 python = ["3.12"]
-homeassistant = ["2024.4.4", "2024.6.1"]
+homeassistant = ["2024.8.3", "2024.10.4"]
 
 [tool.hatch.envs.test.scripts]
 cov = "pytest --asyncio-mode=auto --cov=custom_components --cov-branch --cov-report=xml --cov-report=term-missing tests -vvv"

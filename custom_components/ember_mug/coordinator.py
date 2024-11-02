@@ -26,7 +26,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class PersistantData(TypedDict):
+class PersistentData(TypedDict):
     """Data that should persist on disk."""
 
     target_temp_bkp: float | None
@@ -50,41 +50,33 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
             logger=logger,
             name=f"ember-{device_type.replace('_', '-')}-{base_unique_id}",
             update_interval=timedelta(seconds=15),
+            always_update=False,
         )
-        self._store: Store[PersistantData] = Store(hass, STORAGE_VERSION, DOMAIN)
-        self.persistant_data: PersistantData = None  # type: ignore[assignment]
+        self._store: Store[PersistentData] = Store(hass, STORAGE_VERSION, DOMAIN)
+        self.persistent_data: PersistentData = None  # type: ignore[assignment]
         self.device_name = device_name
         self.device_type = device_type
         self.base_unique_id = base_unique_id
         self.mug = mug
         self.data = self.mug.data
         self.available = False
-        self._initial_update = True
-        self._last_refresh_was_full = False
-        self._cancel_callback = self.mug.register_callback(
-            self._async_handle_callback,
-        )
+        self._last_refresh_was_full = True
         _LOGGER.info("%s %s Setup", self.mug.model_name, self.name)
 
-    async def setup_storage(self) -> None:
-        """Initialize file storage for persistent data."""
-        self.persistant_data = await self._store.async_load()
-
-    async def write_to_storage(self, target_temp: float | None) -> None:
-        """
-        Write target temp to file storage.
-
-        This is stored to disk, so it can be restored to the entity even if we restart Home Assistant.
-        """
-        self.persistant_data = {"target_temp_bkp": target_temp}
-        await self._store.async_save(self.persistant_data)
-
-    @property
-    def target_temp(self) -> float:
-        """Shortcut for getting target temp, but showing stored data if temp control is off."""
-        if self.data.target_temp == 0 and (bkp_temp := self.persistant_data.get("target_temp_bkp")):
-            return bkp_temp
-        return self.data.target_temp
+    async def _async_setup(self) -> None:
+        """Initialize coordinator and fetch initial data."""
+        # Setup storage
+        self.persistent_data = await self._store.async_load()
+        try:
+            await self.mug.update_initial()
+            await self.mug.update_all()
+            _LOGGER.debug("[Initial Update] values: %s", self.mug.data)
+        except (TimeoutError, BleakError) as e:
+            if isinstance(e, BleakError):
+                _LOGGER.debug("An error occurred trying to update the %s: %s", self.mug.model_name, e)
+            raise UpdateFailed(
+                f"An error occurred updating {self.mug.model_name}: {e=}",
+            ) from e
 
     async def _async_update_data(self) -> MugData:
         """Poll the device."""
@@ -92,9 +84,6 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
         full_update = not self._last_refresh_was_full
         changed: list[Change] | None = []
         try:
-            if self._initial_update is True:
-                changed = await self.mug.update_initial()
-                self._initial_update = False
             if self._last_refresh_was_full is False:
                 # Only fully poll all data every other call to limit time
                 changed += await self.mug.update_all()
@@ -104,14 +93,10 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
             self.available = True
         except (TimeoutError, BleakError) as e:
             if isinstance(e, BleakError):
-                _LOGGER.debug("An error occurred trying to update the mug: %s", e)
+                _LOGGER.debug("An error occurred trying to update the %s: %s", self.mug.model_name, e)
             if self.available is True:
                 _LOGGER.debug("%s is not available: %s", self.mug.model_name, e)
                 self.available = False
-            if self._initial_update is True:
-                raise UpdateFailed(
-                    f"An error occurred updating {self.mug.model_name}: {e=}",
-                ) from e
             changed = None
         except Exception as e:
             _LOGGER.error(
@@ -137,6 +122,22 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
             raise ValueError(
                 f"Unable to write to {self.mug.data.model_info.device_type.value}",
             )
+
+    async def write_to_storage(self, target_temp: float | None) -> None:
+        """
+        Write target temp to file storage.
+
+        This is stored to disk, so it can be restored to the entity even if we restart Home Assistant.
+        """
+        self.persistent_data = {"target_temp_bkp": target_temp}
+        await self._store.async_save(self.persistent_data)
+
+    @property
+    def target_temp(self) -> float:
+        """Shortcut for getting target temp, but showing stored data if temp control is off."""
+        if self.data.target_temp == 0 and (bkp_temp := self.persistent_data.get("target_temp_bkp")):
+            return bkp_temp
+        return self.data.target_temp
 
     @callback
     def handle_unavailable(
@@ -193,8 +194,10 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
         firmware = self.data.firmware
         return DeviceInfo(
             connections={(CONNECTION_BLUETOOTH, self.mug.device.address)},
+            identifiers={(DOMAIN, self.mug.device.address)},
             name=name if (name := self.data.name) and name != "Ember Device" else self.device_name,
             model=self.data.model_info.name,
+            model_id=str(self.data.model_info.model),
             serial_number=self.data.meta.serial_number if self.data.meta else None,
             suggested_area=SUGGESTED_AREA,
             hw_version=str(firmware.hardware) if firmware else None,

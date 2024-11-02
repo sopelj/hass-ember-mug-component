@@ -65,7 +65,7 @@ class MugTemperatureControlEntity(MugSwitchEntity):
         """Turn heating/cooling on if there is a stored target temp."""
         self.coordinator.ensure_writable()
         if not self.coordinator.mug.data.target_temp and (
-            stored_temp := self.coordinator.persistant_data.get("target_temp_bkp")
+            stored_temp := self.coordinator.persistent_data.get("target_temp_bkp")
         ):
             await self.coordinator.mug.set_target_temp(stored_temp)
             self.coordinator.refresh_from_mug()
