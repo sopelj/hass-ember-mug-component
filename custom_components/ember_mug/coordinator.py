@@ -162,21 +162,11 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
             change,
         )
         self.mug.ble_event_callback(service_info.device, service_info.advertisement)
-        # Register or update callback
-        self._cancel_callback = self.mug.register_callback(
-            self._async_handle_callback,
-        )
         self.hass.loop.create_task(close_stale_connections(service_info.device))
 
     def refresh_from_mug(self) -> None:
         """Update stored data from mug data and trigger entities."""
         self.async_set_updated_data(self.mug.data)
-
-    @callback
-    def _async_handle_callback(self, mug_data: MugData) -> None:
-        """Handle a Bluetooth event."""
-        _LOGGER.debug("Callback called in Home Assistant")
-        self.async_set_updated_data(mug_data)
 
     def get_device_attr(self, device_attr: str) -> Any:
         """Get a device attribute by name (recursively) or return None."""
