@@ -197,7 +197,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
             identifiers={(DOMAIN, self.mug.device.address)},
             name=name if (name := self.data.name) and name != "Ember Device" else self.device_name,
             model=self.data.model_info.name,
-            model_id=str(self.data.model_info.model),
+            model_id=self.data.model_info.model.value,
             serial_number=self.data.meta.serial_number if self.data.meta else None,
             suggested_area=SUGGESTED_AREA,
             hw_version=str(firmware.hardware) if firmware else None,
