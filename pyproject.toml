@@ -19,7 +19,7 @@ dependencies = [
     "homeassistant>=2024.8.1",
     "bleak-retry-connector>=3.5.0",
     "bleak>=0.22.2",
-    "python-ember-mug==1.1.0b1",
+    "python-ember-mug==1.1.0",
 ]
 
 [project.optional-dependencies]
