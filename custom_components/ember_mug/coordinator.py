@@ -78,6 +78,10 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
                 f"An error occurred updating {self.mug.model_name}: {e=}",
             ) from e
 
+        self.mug.register_callback(
+            self._async_handle_callback,
+        )
+
     async def _async_update_data(self) -> MugData:
         """Poll the device."""
         _LOGGER.debug("Updating")
@@ -165,6 +169,12 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
         )
         self.mug.ble_event_callback(service_info.device, service_info.advertisement)
         self.hass.loop.create_task(close_stale_connections(service_info.device))
+
+    @callback
+    def _async_handle_callback(self, mug_data: MugData) -> None:
+        """Handle a Bluetooth event."""
+        _LOGGER.debug("Callback called in Home Assistant")
+        self.async_set_updated_data(mug_data)
 
     def refresh_from_mug(self) -> None:
         """Update stored data from mug data and trigger entities."""
