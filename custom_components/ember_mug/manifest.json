@@ -19,13 +19,23 @@
       "manufacturer_id": 961
     }
   ],
-  "codeowners": ["@sopelj"],
+  "codeowners": [
+    "@sopelj"
+  ],
   "config_flow": true,
-  "dependencies": ["bluetooth_adapters"],
+  "dependencies": [
+    "bluetooth_adapters"
+  ],
   "documentation": "https://github.com/sopelj/hass_ember_mug",
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/sopelj/hass_ember_mug/issues",
-  "loggers": ["bleak", "bleak_retry_connector", "ember_mug"],
-  "requirements": ["python-ember-mug==1.1.0"],
-  "version": "1.2.0"
+  "loggers": [
+    "bleak",
+    "bleak_retry_connector",
+    "ember_mug"
+  ],
+  "requirements": [
+    "python-ember-mug==1.1.0"
+  ],
+  "version": "1.2.1"
 }
