@@ -1,5 +1,6 @@
-* Home Assistant Version (eg. 2023.11):
-* Ember Mug Component Version (eg. 0.8.0):
+* Home Assistant Version (eg. 2024.12):
+* Ember Mug Component Version (eg. 1.2.1):
+* What Ember device are you using (eg. Travel Mug, Mug 2 14oz):
 * Which device(s) are you using for Bluetooth (e.g. Bluetooth Dongle / ESPHome Proxy):
 
 ### Description
