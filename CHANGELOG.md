@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.2.1]
+
+### Fixes
+- Prevent error on startup caused Model info not being available
+
 ## [1.2.0]
 
 ### Added
