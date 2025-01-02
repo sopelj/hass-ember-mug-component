@@ -38,7 +38,7 @@ def _mock_bluetooth(enable_bluetooth: None) -> None:
     """Auto mock bluetooth."""
 
 
-@pytest.fixture()
+@pytest.fixture
 def mock_mug():
     """Create a mocked Ember Mug instance."""
     mock_mug = EmberMug(TEST_BLE_DEVICE, ModelInfo())
