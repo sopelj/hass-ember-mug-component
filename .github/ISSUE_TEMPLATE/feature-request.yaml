@@ -1,0 +1,13 @@
+name: Feature Request
+description: Request a change or new feature
+title: "Feature: "
+labels: ["feature"]
+assignees: ["sopelj"]
+body:
+  - type: textarea
+    id: new-feature
+    attributes:
+      label: What would you like changed or implemented?
+      description: Please explain in detail what you would like to see changed or added
+    validations:
+      required: true

@@ -1,0 +1,74 @@
+name: Bug Report
+description: File a bug report.
+title: "Bug: "
+labels: ["bug"]
+assignees: ["sopelj"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Sorry you're having troubles. Please provide a bit of context to help resolve it.
+        Also, did you check the [Troubleshooting section of the README](https://github.com/sopelj/hass-ember-mug-component?tab=readme-ov-file#troubleshooting)?"
+  - type: input
+    id: home-assistant-version
+    attributes:
+      label: Home Assistant Version
+      description: What version of Home Assistant are you using?
+      placeholder: "2025.1"
+    validations:
+      required: true
+  - type: input
+    id: mug-integration-version
+    attributes:
+      label: Ember Mug Integration Version
+      description: What version of this integration are you using?
+      placeholder: "1.2.1"
+    validations:
+      required: true
+  - type: dropdown
+    id: device
+    attributes:
+      label: What device(s) are you using?
+      multiple: true
+      options:
+        - Mug
+        - Cup
+        - Travel Mug
+        - Tumbler
+    validations:
+      required: true
+  - type: dropdown
+    id: bluetooth
+    attributes:
+      label: Which device(s) are you using for Bluetooth?
+      multiple: true
+      options:
+        - A Single ESPHome Bluetooth Proxy
+        - Multiple ESPHome Bluetooth Proxies
+        - A Bluetooth Dongle
+        - Integrated Bluetooth Adapter
+    validations:
+      required: true
+  - type: textarea
+    id: unexpected-behaviour
+    attributes:
+      label: Unexpected behaviour
+      description: What happened that you did not expect/want?
+      placeholder: I tried to do X, but got Y result
+    validations:
+      required: true
+  - type: textarea
+    id: expected-behaviour
+    attributes:
+      label: Expected behaviour
+      description: What did you expect to happen?
+      placeholder: I expected Z result
+  - type: textarea
+    id: errors
+    attributes:
+      label: Errors/Logs
+      description: |
+        Please copy and paste any relevant errors or log messages.
+        > [!NOTE]
+        > This will be automatically formatted as code. No need to format.
+      render: shell
