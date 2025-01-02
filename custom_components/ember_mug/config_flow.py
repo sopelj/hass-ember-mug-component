@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Any
 import voluptuous as vol
 from bleak import BleakClient, BleakError
 from ember_mug.consts import DEVICE_SERVICE_UUIDS
+from ember_mug.utils import get_model_info_from_advertiser_data
 from homeassistant import config_entries
 from homeassistant.components.bluetooth import async_discovered_service_info
 from homeassistant.const import CONF_ADDRESS, CONF_NAME, UnitOfTemperature
@@ -52,8 +53,9 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self._abort_if_unique_id_configured()
 
         self._discovery_info = discovery_info
+        model = get_model_info_from_advertiser_data(discovery_info.advertisement)
         self.context["title_placeholders"] = {
-            CONF_NAME: discovery_info.name,
+            CONF_NAME: model.name if model is not None else "Ember Mug",
             CONF_ADDRESS: discovery_info.address,
         }
         return await self.async_step_user()
