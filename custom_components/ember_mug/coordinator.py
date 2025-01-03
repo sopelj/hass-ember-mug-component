@@ -70,6 +70,8 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
         try:
             await self.mug.update_initial()
             await self.mug.update_all()
+            if not self.persistent_data:
+                await self.write_to_storage(self.mug.data.target_temp)
             _LOGGER.debug("[Initial Update] values: %s", self.mug.data)
         except (TimeoutError, BleakError) as e:
             if isinstance(e, BleakError):
@@ -141,7 +143,11 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
     @property
     def target_temp(self) -> float:
         """Shortcut for getting target temp, but showing stored data if temp control is off."""
-        if self.data.target_temp == 0 and (bkp_temp := self.persistent_data.get("target_temp_bkp")):
+        if (
+            self.data.target_temp == 0
+            and self.persistent_data
+            and (bkp_temp := self.persistent_data.get("target_temp_bkp"))
+        ):
             return bkp_temp
         return self.data.target_temp
 
