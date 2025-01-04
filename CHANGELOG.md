@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.0]
+
+### Changes
+- Default name will now vary based on device type
+
+### Fixes
+- Prevent error with persistent data [#67](https://github.com/sopelj/hass-ember-mug-component/issues/67)
+
 ## [1.2.1]
 
 ### Fixes
