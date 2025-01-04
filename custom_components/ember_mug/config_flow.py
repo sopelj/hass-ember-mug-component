@@ -30,6 +30,7 @@ from .const import (
 )
 
 if TYPE_CHECKING:
+    from ember_mug.data import ModelInfo
     from homeassistant.components.bluetooth import BluetoothServiceInfoBleak
     from homeassistant.data_entry_flow import FlowResult
 
@@ -42,6 +43,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     def __init__(self) -> None:
         """Initialize the config flow."""
         self._discovery_info: BluetoothServiceInfoBleak | None = None
+        self._model_info: ModelInfo | None = None
 
     async def async_step_bluetooth(
         self,
@@ -53,9 +55,9 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self._abort_if_unique_id_configured()
 
         self._discovery_info = discovery_info
-        model = get_model_info_from_advertiser_data(discovery_info.advertisement)
+        self._model_info = get_model_info_from_advertiser_data(discovery_info.advertisement)
         self.context["title_placeholders"] = {
-            CONF_NAME: model.name if model is not None else "Ember Mug",
+            CONF_NAME: self._model_info.name if self._model_info.model is not None else "Ember Mug",
             CONF_ADDRESS: discovery_info.address,
         }
         return await self.async_step_user()
@@ -113,7 +115,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                         self._discovery_info.address: f"{name} ({self._discovery_info.address})",
                     },
                 ),
-                vol.Required(CONF_NAME, default=name): str,
+                vol.Required(CONF_NAME, default=self._model_info.name if self._model_info else name): str,
             },
         )
         return self.async_show_form(
