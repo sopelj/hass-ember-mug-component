@@ -2,11 +2,12 @@
 
 ## [1.3.0]
 
-### Changes
-- Default name will now vary based on device type
-
 ### Fixes
 - Prevent error with persistent data [#67](https://github.com/sopelj/hass-ember-mug-component/issues/67)
+- Update config flow for 2024.11
+
+### Notes
+* Requires Home Assistant 2024.11+ ([config flow change](https://developers.home-assistant.io/blog/2024/11/12/options-flow/))
 
 ## [1.2.1]
 
