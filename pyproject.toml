@@ -2,13 +2,11 @@
 name = "ember_mug_component"
 readme = "README.md"
 description = "Home Assistant Custom Integration for Ember Mugs."
-authors = [
-    { name = "Jesse Sopel", email = "jesse.sopel@gmail.com" },
-]
+authors = [{ name = "Jesse Sopel", email = "jesse.sopel@gmail.com" }]
 license = { file = "LICENSE.md" }
 requires-python = ">=3.13"
 dynamic = ["version"]
-classifiers=[
+classifiers = [
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Natural Language :: English",
@@ -19,21 +17,21 @@ dependencies = [
     "homeassistant>=2024.11.1",
     "bleak-retry-connector>=3.5.0",
     "bleak>=0.22.2",
-    "python-ember-mug==1.1.0",
+    "python-ember-mug==1.1.1",
 ]
 
 [project.optional-dependencies]
 test = [
-  "pytest>=7.2.1",
-  "pytest-cov>=3.0.0",
-  "pytest-asyncio>=0.20.2",
-  "home-assistant-bluetooth",
-  "pytest-homeassistant-custom-component",
-  # Requirements for HASS
-  "aiousbwatcher",
-  "pyserial>=3.5",  # For HASS serial component
-  "bluetooth-auto-recovery>=1.4.2",  # For HASS Bluetooth component
-  "pyudev==0.24.1",  # For HASS usb component
+    "pytest>=7.2.1",
+    "pytest-cov>=3.0.0",
+    "pytest-asyncio>=0.20.2",
+    "home-assistant-bluetooth",
+    "pytest-homeassistant-custom-component",
+    # Requirements for HASS
+    "aiousbwatcher",
+    "pyserial>=3.5",                  # For HASS serial component
+    "bluetooth-auto-recovery>=1.4.2", # For HASS Bluetooth component
+    "pyudev==0.24.1",                 # For HASS usb component
 ]
 
 [project.urls]
@@ -65,15 +63,15 @@ target-version = ["py313"]
 
 [tool.coverage.report]
 exclude_lines = [
-  "pragma: no cover",
-  "def __repr__",
-  "def __str__",
-  "def main",
-  "raise AssertionError",
-  "raise NotImplementedError",
-  "if __name__ == .__main__.:",
-  "if TYPE_CHECKING:",
-  "if typing.TYPE_CHECKING:"
+    "pragma: no cover",
+    "def __repr__",
+    "def __str__",
+    "def main",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "if typing.TYPE_CHECKING:",
 ]
 
 [tool.ruff]
@@ -115,8 +113,8 @@ ignore = ["D203", "D212", "PLR2004", "PLR0913", "RUF012"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**/*.py" = [
-    "D103",  # No docstrings in tests needed
-    "S101",  # We needs asserts in tests
+    "D103",   # No docstrings in tests needed
+    "S101",   # We needs asserts in tests
     "SLF001",
 ]
 
