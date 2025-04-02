@@ -77,6 +77,11 @@ Once you set it up, please forget the mug on your phone or at least disable Blue
 > **Note**
 > If using the Bluetooth integration you may need to open `bluetoothctl` in order for the pairing to be allowed
 
+#### Dashboard
+
+For an easy and beautiful way to display the state of your device [@Flight-Lab](https://github.com/Flight-Lab/ember-mug-card)
+made an [Ember Mug Card](https://github.com/Flight-Lab/ember-mug-card) for this integration.
+
 #### Troubleshooting
 
 ##### Changing modes / button functions
@@ -183,7 +188,7 @@ automation:
           - heating
           - cooling
     action:
-      service: notify.mobile_app_jesse_s_pixel_7  # Mobile device notify or other action
+      service: notify.mobile_app_jesse_s_pink_razr  # Mobile device notify or other action
       data:
         message: Your mug has been filled
 
@@ -198,7 +203,7 @@ automation:
           - cooling
         to: perfect
     action:
-      service: notify.mobile_app_jesse_s_pixel_7  # Mobile device notify or other action
+      service: notify.mobile_app_jesse_s_pink_razr  # Mobile device notify or other action
       data_template:
         message: "Your mug is at the desired {{ states('sensor.ember_mug_c90f59d633f9_current_temp') }}."
 
@@ -211,54 +216,10 @@ automation:
         for:
           minutes: 10
     action:
-      service: notify.mobile_app_jesse_s_pixel_7  # Mobile device notify or other action
+      service: notify.mobile_app_jesse_s_pink_razr  # Mobile device notify or other action
       data_template:
         message: "Your mug battery is low ({{ states('sensor.ember_mug_c90f59d633f9_battery_percent') }}%)."
 
-```
-
-### Lovelace
-
-An example for what I use in my lovelace config.
-This uses a couple custom lovelace cards, you could do something similar with base widgets, but I've used these here
-([battery-state-card](https://github.com/maxwroc/battery-state-card), [lovelace-multiple-entity-row](https://github.com/benct/lovelace-multiple-entity-row) and [stack-in-card](https://github.com/custom-cards/stack-in-card))
-
-![Lovelace Example](./examples/lovelace_example.png)
-
-```yaml
-type: custom:stack-in-card
-cards:
-  - type: entities
-    title: Coffee Time
-    icon: mdi:coffee-maker
-    show_header_toggle: false
-    entities:
-      - entity: sensor.ember_mug_c90f59d633f9_state
-        type: custom:multiple-entity-row
-        entities:
-          - entity: light.ember_mug_c90f59d633f9_led
-            state_color: true
-            icon: mdi:lightbulb
-            name: false
-      - entity: sensor.ember_mug_c90f59d633f9_current_temp
-        type: custom:multiple-entity-row
-        name: Temperature
-        state_color: true
-        show_state: false
-        entities:
-          - entity: sensor.ember_mug_c90f59d633f9_current_temp
-            name: Current
-          - entity: number.ember_mug_c90f59d633f9_target_temp
-            name: Target
-      - type: custom:template-entity-row
-        entity: sensor.ember_mug_c90f59d633f9_liquid_level
-        name: Liquid Level
-        unit: '%'
-      - type: custom:battery-state-entity
-        name: Battery
-        entity: sensor.ember_mug_c90f59d633f9_battery_percent
-        charging_state:
-          entity_id: binary_sensor.ember_mug_c90f59d633f9_power
 ```
 
 ### Changing Mug values
