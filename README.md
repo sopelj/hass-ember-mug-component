@@ -79,7 +79,7 @@ Once you set it up, please forget the mug on your phone or at least disable Blue
 
 #### Dashboard
 
-For an easy and beautiful way to display the state of your device [@Flight-Lab](https://github.com/Flight-Lab/ember-mug-card)
+For an easy and beautiful way to display the state of your device [@Flight-Lab](https://github.com/Flight-Lab)
 made an [Ember Mug Card](https://github.com/Flight-Lab/ember-mug-card) for this integration.
 
 #### Troubleshooting
