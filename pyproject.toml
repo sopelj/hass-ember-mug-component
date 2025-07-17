@@ -16,7 +16,7 @@ classifiers = [
 dependencies = [
     "homeassistant>=2024.11.1",
     "bleak-retry-connector>=3.5.0",
-    "bleak>=0.22.2",
+    "bleak>=0.22.2,<1.0.0",
     "python-ember-mug==1.1.1",
 ]
 
@@ -51,7 +51,7 @@ features = ["test"]
 
 [[tool.hatch.envs.test.matrix]]
 python = ["3.13"]
-homeassistant = ["2024.12", "2025.3"]
+homeassistant = ["2024.12", "2025.3", "2025.7"]
 
 [tool.hatch.envs.test.scripts]
 cov = "pytest --asyncio-mode=auto --cov=custom_components --cov-branch --cov-report=xml --cov-report=term-missing tests -vvv"
