@@ -6,6 +6,7 @@
 - Prevent error with persistent data [#67](https://github.com/sopelj/hass-ember-mug-component/issues/67)
 - Update config flow for 2024.11
 - [Fix manufacture data detection for 14oz model](https://github.com/sopelj/python-ember-mug/pull/68) (thanks @Flight-Lab)
+- Bump python-ember-mug to 1.2.0 to remove tests folder
 
 ### Notes
 * Requires Home Assistant 2024.11+ ([config flow change](https://developers.home-assistant.io/blog/2024/11/12/options-flow/))
