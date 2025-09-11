@@ -34,7 +34,7 @@ def _auto_enable_custom_integrations(enable_custom_integrations):
 
 
 @pytest.fixture(autouse=True)
-def _mock_bluetooth(enable_bluetooth: None) -> None:
+def _mock_bluetooth(enable_bluetooth: None, mock_bluetooth: None) -> None:
     """Auto mock bluetooth."""
 
 
