@@ -26,7 +26,7 @@ test = [
     "pytest-cov>=3.0.0",
     "pytest-asyncio>=0.20.2",
     "home-assistant-bluetooth",
-    "pytest-homeassistant-custom-component<=0.13.272",
+    "pytest-homeassistant-custom-component<=0.13.291",
     # Requirements for HASS
     "aiousbwatcher",
     "pyserial>=3.5",                  # For HASS serial component
