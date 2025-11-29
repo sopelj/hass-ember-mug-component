@@ -33,7 +33,6 @@ NUMBER_TYPES = {
         native_min_value=MIN_TEMP_CELSIUS,
         native_max_value=MAX_TEMP_CELSIUS,
         native_step=0.1,
-        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         device_class=NumberDeviceClass.TEMPERATURE,
         entity_category=EntityCategory.CONFIG,
     ),
@@ -54,6 +53,11 @@ class MugNumberEntity(BaseMugValueEntity, NumberEntity):
         """Initialize the Mug Number."""
         self.entity_description = NUMBER_TYPES[device_attr]
         super().__init__(coordinator, device_attr)
+
+    @property
+    def native_unit_of_measurement(self) -> str | None:
+        """Set unit of measurement based on device settings."""
+        return self.coordinator.mug.data.temperature_unit or UnitOfTemperature.CELSIUS
 
 
 class MugTargetTempNumberEntity(MugNumberEntity):

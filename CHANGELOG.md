@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.4.0]
+
+### Changes
+- Internal changes for temperature handling
+
+### Fixes
+- [Fix manufacture data detection for 14oz Stainless Steel Mug](https://github.com/sopelj/hass-ember-mug-component/issues/101)
+
+### Notes
+* Requires Home Assistant 2025.8+ (`bleak` version incompatibilities)
+
 ## [1.3.0]
 
 ### Fixes

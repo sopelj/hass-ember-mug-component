@@ -50,7 +50,6 @@ SENSOR_TYPES = {
     "current_temp": SensorEntityDescription(
         key="current_temp",
         suggested_display_precision=1,
-        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         state_class=SensorStateClass.MEASUREMENT,
         device_class=SensorDeviceClass.TEMPERATURE,
     ),
@@ -166,6 +165,11 @@ class EmberMugTemperatureSensor(EmberMugSensor):
             "thermometer",
         )
         return f"mdi:{icon}"
+
+    @property
+    def native_unit_of_measurement(self) -> str | None:
+        """Set unit of measurement based on device settings."""
+        return self.coordinator.mug.data.temperature_unit or UnitOfTemperature.CELSIUS
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
