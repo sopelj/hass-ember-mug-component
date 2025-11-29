@@ -30,7 +30,7 @@ test = [
     "aiousbwatcher",
     "pyserial>=3.5",                  # For HASS serial component
     "bluetooth-auto-recovery>=1.4.2", # For HASS Bluetooth component
-    "pyudev==0.24.1",                 # For HASS usb component
+    "pyudev==0.24.4",                 # For HASS usb component
 ]
 
 [project.urls]
