@@ -22,6 +22,8 @@ CONF_PRESETS_UNIT = "presets_unit"
 
 MIN_TEMP_CELSIUS: Final[float] = 48.8
 MAX_TEMP_CELSIUS: Final[float] = 63
+MIN_TEMP_FAHRENHEIT: Final[float] = 120
+MAX_TEMP_FAHRENHEIT: Final[float] = 150
 
 DEFAULT_PRESETS = {
     "latte": 55,

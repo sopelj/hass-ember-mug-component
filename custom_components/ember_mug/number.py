@@ -14,7 +14,12 @@ from homeassistant.components.number import (
 from homeassistant.const import UnitOfTemperature
 from homeassistant.helpers.entity import EntityCategory
 
-from .const import MAX_TEMP_CELSIUS, MIN_TEMP_CELSIUS
+from .const import (
+    MAX_TEMP_CELSIUS,
+    MAX_TEMP_FAHRENHEIT,
+    MIN_TEMP_CELSIUS,
+    MIN_TEMP_FAHRENHEIT,
+)
 from .entity import BaseMugValueEntity
 
 if TYPE_CHECKING:
@@ -30,8 +35,6 @@ _LOGGER = logging.getLogger(__name__)
 NUMBER_TYPES = {
     "target_temp": NumberEntityDescription(
         key="target_temp",
-        native_min_value=MIN_TEMP_CELSIUS,
-        native_max_value=MAX_TEMP_CELSIUS,
         native_step=0.1,
         device_class=NumberDeviceClass.TEMPERATURE,
         entity_category=EntityCategory.CONFIG,
@@ -53,6 +56,20 @@ class MugNumberEntity(BaseMugValueEntity, NumberEntity):
         """Initialize the Mug Number."""
         self.entity_description = NUMBER_TYPES[device_attr]
         super().__init__(coordinator, device_attr)
+
+    @property
+    def native_min_value(self) -> float:
+        """Return the minimum value based on internal unit."""
+        if self.coordinator.mug.data.temperature_unit == UnitOfTemperature.FAHRENHEIT:
+            return MIN_TEMP_FAHRENHEIT
+        return MIN_TEMP_CELSIUS
+
+    @property
+    def native_max_value(self) -> float:
+        """Return the maximum value based on internal unit."""
+        if self.coordinator.mug.data.temperature_unit == UnitOfTemperature.FAHRENHEIT:
+            return MAX_TEMP_FAHRENHEIT
+        return MAX_TEMP_CELSIUS
 
     @property
     def native_unit_of_measurement(self) -> str | None:
