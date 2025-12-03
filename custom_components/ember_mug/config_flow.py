@@ -78,7 +78,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             return self.async_create_entry(title=user_input[CONF_NAME], data=user_input)
 
         if not self._discovery_info:
-            current_addresses = self._async_current_ids()
+            current_addresses = self._async_current_ids(include_ignore=False)
             for service_info in async_discovered_service_info(self.hass):
                 address = service_info.address
                 unique_id = address.replace(":", "").lower()
