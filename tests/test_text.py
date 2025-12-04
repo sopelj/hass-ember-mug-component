@@ -10,6 +10,8 @@ from homeassistant.components.text import TextMode
 from homeassistant.components.text.const import DOMAIN as TEXT_DOMAIN
 from homeassistant.helpers import entity_registry as er
 
+from custom_components.ember_mug import DOMAIN
+
 from .conftest import setup_platform
 
 if TYPE_CHECKING:
@@ -30,9 +32,9 @@ async def test_setup_text_mug(
     assert len(hass.states.async_all()) == 1
     entity_registry = er.async_get(hass)
 
-    entity_name = f"text.ember_mug_{config.unique_id}_name"
+    entity_id = entity_registry.async_get_entity_id("text", DOMAIN, f"ember_mug_{config.unique_id}_name")
 
-    name_state = hass.states.get(entity_name)
+    name_state = hass.states.get(entity_id)
     assert name_state is not None
     assert name_state.attributes == {
         "friendly_name": "Test Mug Name",
@@ -43,7 +45,7 @@ async def test_setup_text_mug(
     }
     assert name_state.state == "EMBER"
 
-    name_entity = entity_registry.async_get(entity_name)
+    name_entity = entity_registry.async_get(entity_id)
     assert name_entity.translation_key == "name"
     assert name_entity.original_name == "Name"
 

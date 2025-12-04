@@ -21,6 +21,7 @@ from homeassistant.const import (
     Platform,
 )
 from homeassistant.exceptions import ConfigEntryNotReady
+from homeassistant.util.unit_system import METRIC_SYSTEM
 
 from .const import CONF_DEBUG, CONFIG_VERSION, DOMAIN
 from .coordinator import MugDataUpdateCoordinator
@@ -78,10 +79,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         service_info.manufacturer_data,
     )
 
+    use_metric = hass.config.units is METRIC_SYSTEM
     ember_mug = EmberMug(
         service_info.device,
         model_info=get_model_info_from_advertiser_data(service_info.advertisement),
         debug=entry.options.get(CONF_DEBUG, False),
+        use_metric=use_metric,
     )
     mug_coordinator = MugDataUpdateCoordinator(
         hass,

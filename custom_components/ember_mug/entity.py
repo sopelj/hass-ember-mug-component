@@ -57,7 +57,6 @@ class BaseMugEntity(CoordinatorEntity):
         self._attr_translation_key = entity_key
         self._attr_device_info = coordinator.device_info
         self._attr_unique_id = f"ember_{coordinator.device_type}_{coordinator.base_unique_id}_{entity_key}"
-        self.entity_id = f"{self._domain}.{self._attr_unique_id}"
 
     @property
     def available(self) -> bool:

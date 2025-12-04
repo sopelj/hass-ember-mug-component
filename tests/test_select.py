@@ -12,6 +12,8 @@ from homeassistant.const import ATTR_ENTITY_ID, UnitOfTemperature
 from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers import entity_registry as er
 
+from custom_components.ember_mug import DOMAIN
+
 from .conftest import setup_platform
 
 if TYPE_CHECKING:
@@ -33,9 +35,9 @@ async def test_setup_select_mug(
     assert len(hass.states.async_all()) == 2
     entity_registry = er.async_get(hass)
 
-    entity_name = f"select.ember_mug_{config.unique_id}_temperature_unit"
+    entity_id = entity_registry.async_get_entity_id("select", DOMAIN, f"ember_mug_{config.unique_id}_temperature_unit")
 
-    temperature_unit_state = hass.states.get(entity_name)
+    temperature_unit_state = hass.states.get(entity_id)
     assert temperature_unit_state is not None
     assert temperature_unit_state.attributes == {
         "friendly_name": "Test Mug Temperature unit",
@@ -44,7 +46,7 @@ async def test_setup_select_mug(
     }
     assert temperature_unit_state.state == UnitOfTemperature.CELSIUS
 
-    name_entity = entity_registry.async_get(entity_name)
+    name_entity = entity_registry.async_get(entity_id)
     assert name_entity.translation_key == "temperature_unit"
     assert name_entity.original_name == "Temperature unit"
 
@@ -60,9 +62,13 @@ async def test_setup_select_travel_mug(
     assert len(hass.states.async_all()) == 3
     entity_registry = er.async_get(hass)
 
-    base_entity_name = f"select.ember_travel_mug_{config.unique_id}"
+    entity_id = entity_registry.async_get_entity_id(
+        "select",
+        DOMAIN,
+        f"ember_travel_mug_{config.unique_id}_temperature_unit",
+    )
 
-    temperature_unit_state = hass.states.get(f"{base_entity_name}_temperature_unit")
+    temperature_unit_state = hass.states.get(entity_id)
     assert temperature_unit_state is not None
     assert temperature_unit_state.attributes == {
         "friendly_name": "Test Mug Temperature unit",
@@ -71,11 +77,16 @@ async def test_setup_select_travel_mug(
     }
     assert temperature_unit_state.state == UnitOfTemperature.CELSIUS
 
-    name_entity = entity_registry.async_get(f"{base_entity_name}_temperature_unit")
+    name_entity = entity_registry.async_get(entity_id)
     assert name_entity.translation_key == "temperature_unit"
     assert name_entity.original_name == "Temperature unit"
 
-    volume_level_state = hass.states.get(f"{base_entity_name}_volume_level")
+    entity_id = entity_registry.async_get_entity_id(
+        "select",
+        DOMAIN,
+        f"ember_travel_mug_{config.unique_id}_volume_level",
+    )
+    volume_level_state = hass.states.get(entity_id)
     assert volume_level_state is not None
     assert volume_level_state.attributes == {
         "friendly_name": "Test Mug Volume Level",
@@ -84,7 +95,7 @@ async def test_setup_select_travel_mug(
     }
     assert volume_level_state.state == "unknown"
 
-    volume_level_entity = entity_registry.async_get(f"{base_entity_name}_volume_level")
+    volume_level_entity = entity_registry.async_get(entity_id)
     assert volume_level_entity.translation_key == "volume_level"
     assert volume_level_entity.original_name == "Volume Level"
 
@@ -108,7 +119,7 @@ async def test_setup_update_temp_unit(
     config = await setup_platform(hass, mock_mug, "select")
 
     entity_registry = er.async_get(hass)
-    entity_id = f"select.ember_mug_{config.unique_id}_temperature_unit"
+    entity_id = entity_registry.async_get_entity_id("select", DOMAIN, f"ember_mug_{config.unique_id}_temperature_unit")
     entity = entity_registry.async_get(entity_id)
     assert entity
     temp_unit_state = hass.states.get(entity_id)
@@ -133,7 +144,11 @@ async def test_setup_update_temp_preset(
     config = await setup_platform(hass, mock_mug, "select")
 
     entity_registry = er.async_get(hass)
-    entity_id = f"select.ember_mug_{config.unique_id}_temperature_preset"
+    entity_id = entity_registry.async_get_entity_id(
+        "select",
+        DOMAIN,
+        f"ember_mug_{config.unique_id}_temperature_preset",
+    )
     entity = entity_registry.async_get(entity_id)
     assert entity
     temp_unit_state = hass.states.get(entity_id)
@@ -167,7 +182,11 @@ async def test_update_volume_travel_mug(
     config = await setup_platform(hass, mock_mug, "select")
 
     entity_registry = er.async_get(hass)
-    entity_id = f"select.ember_travel_mug_{config.unique_id}_volume_level"
+    entity_id = entity_registry.async_get_entity_id(
+        "select",
+        DOMAIN,
+        f"ember_travel_mug_{config.unique_id}_volume_level",
+    )
     entity = entity_registry.async_get(entity_id)
     assert entity
     assert not entity.disabled

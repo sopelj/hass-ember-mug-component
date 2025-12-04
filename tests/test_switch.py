@@ -9,6 +9,8 @@ from ember_mug.data import ModelInfo
 from homeassistant.const import Platform
 from homeassistant.helpers import entity_registry as er
 
+from custom_components.ember_mug import DOMAIN
+
 from .conftest import setup_platform
 
 if TYPE_CHECKING:
@@ -30,9 +32,13 @@ async def test_setup_switch_mug(
     assert len(hass.states.async_all()) == 1
     entity_registry = er.async_get(hass)
 
-    entity_name = f"switch.ember_mug_{config.unique_id}_temperature_control"
+    entity_id = entity_registry.async_get_entity_id(
+        "switch",
+        DOMAIN,
+        f"ember_mug_{config.unique_id}_temperature_control",
+    )
 
-    switch_state = hass.states.get(entity_name)
+    switch_state = hass.states.get(entity_id)
     assert switch_state is not None
     assert switch_state.attributes == {
         "device_class": "switch",
@@ -41,6 +47,6 @@ async def test_setup_switch_mug(
     }
     assert switch_state.state == "on"
 
-    switch_entity = entity_registry.async_get(entity_name)
+    switch_entity = entity_registry.async_get(entity_id)
     assert switch_entity.translation_key == "temperature_control"
     assert switch_entity.original_name == "Temperature Control"

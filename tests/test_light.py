@@ -9,6 +9,8 @@ from ember_mug.data import ModelInfo
 from homeassistant.components.light import ColorMode
 from homeassistant.helpers import entity_registry as er
 
+from custom_components.ember_mug import DOMAIN
+
 from .conftest import setup_platform
 
 if TYPE_CHECKING:
@@ -28,10 +30,9 @@ async def test_setup_light_mug(
     config = await setup_platform(hass, mock_mug, "light")
     assert len(hass.states.async_all()) == 1
     entity_registry = er.async_get(hass)
+    entity_id = entity_registry.async_get_entity_id("light", DOMAIN, f"ember_mug_{config.unique_id}_led")
 
-    entity_name = f"light.ember_mug_{config.unique_id}_led"
-
-    led_state = hass.states.get(entity_name)
+    led_state = hass.states.get(entity_id)
     assert led_state is not None
     assert led_state.attributes == {
         "friendly_name": "Test Mug LED",
@@ -45,7 +46,7 @@ async def test_setup_light_mug(
     }
     assert led_state.state == "on"
 
-    name_entity = entity_registry.async_get(entity_name)
+    name_entity = entity_registry.async_get(entity_id)
     assert name_entity.translation_key == "led"
     assert name_entity.original_name == "LED"
 

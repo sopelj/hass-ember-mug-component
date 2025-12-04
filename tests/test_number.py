@@ -11,6 +11,8 @@ from homeassistant.components.number import NumberMode
 from homeassistant.const import ATTR_ENTITY_ID, UnitOfTemperature
 from homeassistant.helpers import entity_registry as er
 
+from custom_components.ember_mug import DOMAIN
+
 from .conftest import setup_platform
 
 if TYPE_CHECKING:
@@ -28,7 +30,8 @@ async def test_setup_number_mug(
     assert len(hass.states.async_all()) == 1
     entity_registry = er.async_get(hass)
 
-    entity_id = f"number.ember_mug_{config.unique_id}_target_temp"
+    unique_id = f"ember_mug_{config.unique_id}_target_temp"
+    entity_id = entity_registry.async_get_entity_id("number", DOMAIN, unique_id)
 
     target_temp_state = hass.states.get(entity_id)
     assert target_temp_state is not None
@@ -67,7 +70,8 @@ async def test_setup_update_number(
     config = await setup_platform(hass, mock_mug, "number")
 
     entity_registry = er.async_get(hass)
-    entity_id = f"number.ember_mug_{config.unique_id}_target_temp"
+    unique_id = f"ember_mug_{config.unique_id}_target_temp"
+    entity_id = entity_registry.async_get_entity_id("number", DOMAIN, unique_id)
     entity = entity_registry.async_get(entity_id)
     assert entity
     assert not entity.disabled
