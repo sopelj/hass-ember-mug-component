@@ -3,21 +3,31 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
+from unittest.mock import Mock
 
 from ember_mug.consts import DeviceModel
-from ember_mug.data import ModelInfo
+from ember_mug.data import Colour, ModelInfo
 from homeassistant.components.light import ColorMode
 from homeassistant.helpers import entity_registry as er
 
-from custom_components.ember_mug import DOMAIN
+from custom_components.ember_mug import DOMAIN, MugDataUpdateCoordinator
+from custom_components.ember_mug.light import MugLightEntity
 
 from .conftest import setup_platform
 
 if TYPE_CHECKING:
-    from unittest.mock import Mock
-
     from ember_mug import EmberMug
     from homeassistant.core import HomeAssistant
+
+
+def test_light_update_callback(hass: HomeAssistant, mock_mug: EmberMug | Mock):
+    """Test Light update methods."""
+    mock_mug.data.led_colour = Colour(120, 0, 100, 255)
+    coordinator = MugDataUpdateCoordinator(hass, Mock(), mock_mug, "id", "name")
+    mug_light = MugLightEntity(coordinator, "led")
+    mug_light._async_update_attrs()
+    assert mug_light._attr_brightness == 255
+    assert mug_light._attr_rgb_color == (120, 0, 100)
 
 
 async def test_setup_light_mug(
@@ -46,9 +56,9 @@ async def test_setup_light_mug(
     }
     assert led_state.state == "on"
 
-    name_entity = entity_registry.async_get(entity_id)
-    assert name_entity.translation_key == "led"
-    assert name_entity.original_name == "LED"
+    light_entity = entity_registry.async_get(entity_id)
+    assert light_entity.translation_key == "led"
+    assert light_entity.original_name == "LED"
 
 
 async def test_setup_light_travel_mug(

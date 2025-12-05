@@ -203,7 +203,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
         return DeviceInfo(
             connections={(CONNECTION_BLUETOOTH, self.mug.device.address)},
             identifiers={(DOMAIN, self.mug.device.address)},
-            name=name if (name := self.data.name) and name != "Ember Device" else self.device_name,
+            name=self.device_name,
             model=self.data.model_info.name,
             model_id=self.data.model_info.model.value if self.data.model_info.model else None,
             serial_number=self.data.meta.serial_number if self.data.meta else None,

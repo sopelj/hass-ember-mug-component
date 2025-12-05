@@ -108,6 +108,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 return self.async_abort(reason="no_new_devices")
 
         name = self._discovery_info.name
+        default_name = self._model_info.name.split("(")[0].strip() if self._model_info else name
         data_schema = vol.Schema(
             {
                 vol.Required(CONF_ADDRESS): vol.In(
@@ -115,7 +116,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                         self._discovery_info.address: f"{name} ({self._discovery_info.address})",
                     },
                 ),
-                vol.Required(CONF_NAME, default=self._model_info.name if self._model_info else name): str,
+                vol.Required(CONF_NAME, default=default_name): str,
             },
         )
         return self.async_show_form(
