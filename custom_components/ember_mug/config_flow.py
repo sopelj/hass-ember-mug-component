@@ -7,8 +7,8 @@ from typing import TYPE_CHECKING, Any
 
 import voluptuous as vol
 from bleak import BleakClient, BleakError
-from ember_mug.consts import DEVICE_SERVICE_UUIDS
-from ember_mug.utils import get_model_info_from_advertiser_data
+from ember_mug.consts import DEVICE_SERVICE_UUIDS, MugCharacteristic
+from ember_mug.utils import encode_byte_string, get_model_info_from_advertiser_data
 from homeassistant import config_entries
 from homeassistant.components.bluetooth import async_discovered_service_info
 from homeassistant.const import CONF_ADDRESS, CONF_NAME, UnitOfTemperature
@@ -35,6 +35,30 @@ if TYPE_CHECKING:
     from homeassistant.data_entry_flow import FlowResult
 
 
+async def _try_initial_setup(client: BleakClient) -> None:
+    """Try and initialize the device for usage."""
+    _LOGGER.debug("Attempt to initialize device: %s", client.address)
+
+    # Try pairing. Errors are raised in pairing impossible or if it's already paired.
+    with contextlib.suppress(BleakError, EOFError):
+        await client.pair()
+        _LOGGER.debug("Paired to device: %s", client.address)
+
+    # Try and make writable
+    with contextlib.suppress(BleakError):
+        udsk_data = await client.read_gatt_char(MugCharacteristic.UDSK)
+        _LOGGER.debug("Device %s as UDSK %s", client.address, str(udsk_data))
+        if udsk_data != bytearray([0] * 20):
+            # Already set. Ignore
+            return
+        # Write random string for test
+        await client.write_gatt_char(
+            MugCharacteristic.UDSK,
+            bytearray(encode_byte_string("sad")),
+        )
+        _LOGGER.debug("UDSK Written to %s", client.address)
+
+
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Config Flow for Ember Mug."""
 
@@ -54,10 +78,18 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         await self.async_set_unique_id(discovery_info.address.replace(":", "").lower())
         self._abort_if_unique_id_configured()
 
+        try:
+            async with BleakClient(discovery_info.device) as client:
+                await client.connect()
+                await _try_initial_setup(client)
+        except BleakError:
+            self.async_abort(reason="cannot_connect")
+
         self._discovery_info = discovery_info
         self._model_info = get_model_info_from_advertiser_data(discovery_info.advertisement)
+        default_name = self._model_info.name.split("(")[0].strip() if self._model_info else "Ember Mug"
         self.context["title_placeholders"] = {
-            CONF_NAME: self._model_info.name if self._model_info.model is not None else "Ember Mug",
+            CONF_NAME: default_name,
             CONF_ADDRESS: discovery_info.address,
         }
         return await self.async_step_user()
@@ -97,9 +129,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 try:
                     async with BleakClient(service_info.device) as client:
                         await client.connect()
-                        with contextlib.suppress(BleakError, EOFError):
-                            # An error will be raised if already paired
-                            await client.pair()
+                        await _try_initial_setup(client)
                 except BleakError:
                     self.async_abort(reason="cannot_connect")
                 self._discovery_info = service_info
