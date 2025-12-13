@@ -149,11 +149,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 vol.Required(CONF_NAME, default=default_name): str,
             },
         )
-        return self.async_show_form(
-            step_id="user",
-            data_schema=data_schema,
-            errors=errors,
-        )
+        return self.async_show_form(step_id="user", data_schema=data_schema, errors=errors)
 
     @staticmethod
     @callback

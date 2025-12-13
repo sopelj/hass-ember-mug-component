@@ -15,6 +15,7 @@ from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.storage import Store
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
+from .config_flow import _try_initial_setup
 from .const import DOMAIN, MANUFACTURER, STORAGE_VERSION, SUGGESTED_AREA
 
 if TYPE_CHECKING:
@@ -73,6 +74,8 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
             if not self.persistent_data:
                 await self.write_to_storage(self.mug.data.target_temp)
             _LOGGER.debug("[Initial Update] values: %s", self.mug.data)
+            # WIP: Test during setup
+            await _try_initial_setup(self.mug._client)  # noqa: SLF001
         except (TimeoutError, BleakError) as e:
             if isinstance(e, BleakError):
                 _LOGGER.debug("An error occurred trying to update the %s: %s", self.mug.model_name, e)
@@ -80,9 +83,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
                 f"An error occurred updating {self.mug.model_name}: {e=}",
             ) from e
 
-        self.mug.register_callback(
-            self._async_handle_callback,
-        )
+        self.mug.register_callback(self._async_handle_callback)
 
     async def _async_update_data(self) -> MugData:
         """Poll the device."""
@@ -90,7 +91,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
         full_update = not self._last_refresh_was_full
         changed: list[Change] | None = []
         try:
-            if self._last_refresh_was_full is False:
+            if not self._last_refresh_was_full:
                 # Only fully poll all data every other call to limit time
                 changed += await self.mug.update_all()
             else:
@@ -100,7 +101,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
         except (TimeoutError, BleakError) as e:
             if isinstance(e, BleakError):
                 _LOGGER.debug("An error occurred trying to update the %s: %s", self.mug.model_name, e)
-            if self.available is True:
+            if self.available:
                 _LOGGER.debug("%s is not available: %s", self.mug.model_name, e)
                 self.available = False
             changed = None
@@ -126,7 +127,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
 
     def ensure_writable(self) -> None:
         """Writable check for service methods."""
-        if self.mug.can_write is False:
+        if not self.mug.can_write:
             raise ValueError(
                 f"Unable to write to {self.mug.data.model_info.device_type.value}",
             )
@@ -137,7 +138,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
 
         This is stored to disk, so it can be restored to the entity even if we restart Home Assistant.
         """
-        self.persistent_data = {"target_temp_bkp": target_temp}
+        self.persistent_data: PersistentData = {"target_temp_bkp": target_temp}
         await self._store.async_save(self.persistent_data)
 
     @property
@@ -165,7 +166,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
     def handle_bluetooth_event(
         self,
         service_info: BluetoothServiceInfoBleak,
-        change: BluetoothChange,
+        change: BluetoothChange.ADVERTISEMENT,
     ) -> None:
         """Handle a Bluetooth event."""
         _LOGGER.debug(
