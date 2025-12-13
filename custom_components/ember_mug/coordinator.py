@@ -16,7 +16,7 @@ from homeassistant.helpers.storage import Store
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .const import DOMAIN, MANUFACTURER, STORAGE_VERSION, SUGGESTED_AREA
-from .utils import try_initial_setup
+from .utils import try_initial_setup, try_pair
 
 if TYPE_CHECKING:
     from ember_mug import EmberMug
@@ -69,13 +69,14 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
         # Setup storage
         self.persistent_data = await self._store.async_load()
         try:
+            await try_pair(self.mug._client)  # noqa: SLF001
             await self.mug.update_initial()
             await self.mug.update_all()
             if not self.persistent_data:
                 await self.write_to_storage(self.mug.data.target_temp)
             _LOGGER.debug("[Initial Update] values: %s", self.mug.data)
             # WIP: Test during setup
-            await try_initial_setup(self.mug._client)  # noqa: SLF001
+            await try_initial_setup(self.mug)
         except (TimeoutError, BleakError) as e:
             if isinstance(e, BleakError):
                 _LOGGER.debug("An error occurred trying to update the %s: %s", self.mug.model_name, e)
