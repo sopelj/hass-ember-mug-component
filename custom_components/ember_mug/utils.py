@@ -26,7 +26,7 @@ async def try_initial_setup(client: BleakClient) -> None:
         _LOGGER.debug("Paired to device: %s", client.address)
 
     # Try and make writable
-    with contextlib.suppress(BleakError):
+    try:
         udsk_data = await client.read_gatt_char(MugCharacteristic.UDSK)
         _LOGGER.debug("Device %s as UDSK %s", client.address, str(udsk_data))
         if udsk_data != bytearray([0] * 20):
@@ -38,3 +38,5 @@ async def try_initial_setup(client: BleakClient) -> None:
             bytearray(encode_byte_string("sad")),
         )
         _LOGGER.debug("UDSK Written to %s", client.address)
+    except BleakError as e:
+        _LOGGER.debug("Failed to initialize device: %s. Error: %s", client.address, e, exc_info=True)
