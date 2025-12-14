@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import contextlib
 from typing import TYPE_CHECKING, Any
 
 import voluptuous as vol
@@ -27,7 +28,6 @@ from .const import (
     MAX_TEMP_CELSIUS,
     MIN_TEMP_CELSIUS,
 )
-from .utils import try_pair
 
 if TYPE_CHECKING:
     from ember_mug.data import ModelInfo
@@ -57,7 +57,8 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         try:
             async with BleakClient(discovery_info.device) as client:
                 await client.connect()
-                await try_pair(client)
+                with contextlib.suppress(BleakError, EOFError):
+                    await client.pair()
         except BleakError:
             self.async_abort(reason="cannot_connect")
 
@@ -105,7 +106,8 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 try:
                     async with BleakClient(service_info.device) as client:
                         await client.connect()
-                        await try_pair(client)
+                        with contextlib.suppress(BleakError, EOFError):
+                            await client.pair()
                 except BleakError:
                     self.async_abort(reason="cannot_connect")
                 self._discovery_info = service_info

@@ -35,7 +35,7 @@
     "ember_mug"
   ],
   "requirements": [
-    "python-ember-mug==1.3.0b3"
+    "python-ember-mug==1.3.0b4"
   ],
   "version": "1.4.0"
 }

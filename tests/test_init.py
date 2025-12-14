@@ -1,7 +1,7 @@
 """Test Ember Mug Integration init."""
 
 from typing import Any
-from unittest.mock import AsyncMock, Mock, patch
+from unittest.mock import Mock, patch
 
 import pytest
 from homeassistant.config_entries import ConfigEntryState
@@ -21,9 +21,10 @@ from tests import (
 from tests.conftest import inject_ble_device_discovery_info
 
 
-@patch("custom_components.ember_mug.coordinator.try_pair", AsyncMock())
+@patch("custom_components.ember_mug.EmberMug.pair", return_value=None)
 @patch("custom_components.ember_mug.EmberMug._update_multiple", return_value=[])
 async def test_init(
+    mock_pair: Mock,
     mock_update_multiple: Mock,
     hass: HomeAssistant,
 ) -> None:
@@ -57,9 +58,10 @@ async def test_init(
         (2, CONFIG_DATA_V2, {CONF_DEBUG: True}),
     ],
 )
-@patch("custom_components.ember_mug.coordinator.try_pair", AsyncMock())
+@patch("custom_components.ember_mug.EmberMug.pair", return_value=None)
 @patch("custom_components.ember_mug.EmberMug._update_multiple", return_value=[])
 async def test_init_migration_v1(
+    mock_pair: Mock,
     mock_update_multiple: Mock,
     hass: HomeAssistant,
     start_version: int,
