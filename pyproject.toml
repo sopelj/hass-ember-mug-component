@@ -16,7 +16,7 @@ classifiers = [
 dependencies = [
     "homeassistant>=2025.8.3",
     "bleak-retry-connector>=4.0.2",
-    "bleak>=1.0.1,<1.1.0",
+    "bleak>=1.0.1,<2.2.0",
     "python-ember-mug==1.3.0b4",
 ]
 
