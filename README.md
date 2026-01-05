@@ -1,7 +1,7 @@
 # [Ember Mug Integration for Home Assistant](https://github.com/sopelj/hass-ember-mug-component)
 
 [![GitHub Release](https://img.shields.io/github/release/sopelj/hass-ember-mug-component.svg?style=for-the-badge)](https://github.com/sopelj/hass-ember-mug-component/releases)
-![Project Maintenance](https://img.shields.io/maintenance/yes/2025.svg?style=for-the-badge)
+![Project Maintenance](https://img.shields.io/maintenance/yes/2026.svg?style=for-the-badge)
 [![Maintainer](https://img.shields.io/badge/maintainer-%40sopelj-blue.svg?style=for-the-badge)](https://github.com/sopelj)
 [![License](https://img.shields.io/github/license/sopelj/hass-ember-mug-component.svg?style=for-the-badge)](LICENSE.md)
 [![HACS](https://img.shields.io/badge/HACS-Default-41BDF5.svg?style=for-the-badge)](https://github.com/custom-components/hacs)
