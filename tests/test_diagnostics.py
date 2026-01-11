@@ -78,6 +78,7 @@ async def test_config_entry_diagnostics(hass: HomeAssistant) -> None:
     # Dump diagnostics
     dump = await async_get_config_entry_diagnostics(hass, config_entry)
     mock_mug.discover_services.assert_called_once()
+    mock_mug.data.use_metric = True
 
     # Use Home Assistant encoder to parse to ensure it functions and then reload for comparison
     data = json.loads(json.dumps(dump, cls=JSONEncoder))
@@ -91,7 +92,6 @@ async def test_config_entry_diagnostics(hass: HomeAssistant) -> None:
                 "model": "CM19/CM21M",
                 "name": "Ember Mug 2 (10oz)",
             },
-            "use_metric": True,
             "name": TEST_MUG_NAME,
             "meta": {"mug_id": "test-id", "serial_number": "test-serial"},
             "debug": False,

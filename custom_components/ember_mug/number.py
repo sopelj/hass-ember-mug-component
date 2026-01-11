@@ -78,7 +78,7 @@ class MugNumberEntity(BaseMugValueEntity, NumberEntity):
 
 
 class MugTargetTempNumberEntity(MugNumberEntity):
-    """Configurable NumerEntity for the Mug's target temp."""
+    """Configurable NumberEntity for the Mug's target temp."""
 
     @property
     def native_value(self) -> float | None:

@@ -6,7 +6,7 @@ import logging
 from enum import Enum
 from typing import TYPE_CHECKING, Literal
 
-from ember_mug.consts import VolumeLevel
+from ember_mug.consts import TemperatureUnit, VolumeLevel
 from homeassistant.components.select import SelectEntity, SelectEntityDescription
 from homeassistant.const import UnitOfTemperature
 from homeassistant.helpers.entity import EntityCategory
@@ -122,7 +122,10 @@ class MugTemperaturePresetSelectEntity(MugSelectEntity):
     ) -> None:
         """Set temperature presets and select options base on configs."""
         super().__init__(coordinator, device_attr)
-        if presets_unit != UnitOfTemperature.CELSIUS and coordinator.mug.data.use_metric:
+        if (
+            presets_unit != UnitOfTemperature.CELSIUS
+            and coordinator.mug.data.temperature_unit != TemperatureUnit.CELSIUS
+        ):
             presets = {
                 label: TemperatureConverter.convert(
                     temp,
@@ -159,7 +162,7 @@ async def async_setup_entry(
     coordinator = entry.runtime_data
     preset_unit = entry.options.get(CONF_PRESETS_UNIT, UnitOfTemperature.CELSIUS)
     temp_presets = entry.options.get(CONF_PRESETS, DEFAULT_PRESETS)
-    entities = [
+    entities: list[BaseMugEntity] = [
         MugTemperaturePresetSelectEntity(temp_presets, preset_unit, coordinator, "temperature_preset"),
         MugTempUnitSelectEntity(coordinator, "temperature_unit"),
     ]

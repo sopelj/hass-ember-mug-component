@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Any
 
-from ember_mug.consts import DeviceType
+from ember_mug.consts import DeviceType, TemperatureUnit
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntity,
@@ -118,7 +118,7 @@ class EmberMugStateSensor(EmberMugSensor):
                 "udsk": data.udsk,
                 "dsk": data.dsk,
             }
-        return attrs | super().extra_state_attributes
+        return attrs | dict(super().extra_state_attributes)
 
 
 class EmberMugLiquidLevelSensor(EmberMugSensor):
@@ -169,15 +169,14 @@ class EmberMugTemperatureSensor(EmberMugSensor):
     @property
     def native_unit_of_measurement(self) -> str | None:
         """Set unit of measurement based on device settings."""
-        return self.coordinator.mug.data.temperature_unit or UnitOfTemperature.CELSIUS
+        if self.coordinator.mug.data.temperature_unit == TemperatureUnit.FAHRENHEIT:
+            return UnitOfTemperature.FAHRENHEIT
+        return UnitOfTemperature.CELSIUS
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
         """Return device specific state attributes."""
-        return {
-            "native_value": self.coordinator.data.current_temp,
-            **super().extra_state_attributes,
-        }
+        return {"native_value": self.coordinator.data.current_temp, **super().extra_state_attributes}
 
 
 class EmberMugBatterySensor(EmberMugSensor):
@@ -192,7 +191,7 @@ class EmberMugBatterySensor(EmberMugSensor):
         }
         if self.coordinator.mug.has_attribute("battery_voltage"):
             attrs[ATTR_BATTERY_VOLTAGE] = data.battery_voltage
-        return attrs | super().extra_state_attributes
+        return attrs | dict(super().extra_state_attributes)
 
 
 async def async_setup_entry(

@@ -25,6 +25,7 @@ jobs:
         with:
           python-version: |
             3.13
+            3.14
 
       - name: Install dependencies
         run: |
