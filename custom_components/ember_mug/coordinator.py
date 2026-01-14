@@ -81,6 +81,13 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
                 f"An error occurred updating {self.mug.model_name}: {e=}",
             ) from e
 
+        try:
+            is_writable = await self.mug.make_writable()
+            _LOGGER.debug("Mug writability: %s", is_writable)
+        except (TimeoutError, BleakError) as e:
+            if isinstance(e, BleakError):
+                _LOGGER.debug("An error occurred trying to make the %s writable: %s", self.mug.model_name, e)
+
         self.mug.register_callback(self._async_handle_callback)
 
     async def _async_update_data(self) -> MugData:
