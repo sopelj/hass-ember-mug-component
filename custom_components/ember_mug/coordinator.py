@@ -74,8 +74,6 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
             if not self.persistent_data:
                 await self.write_to_storage(self.mug.data.target_temp)
             _LOGGER.debug("[Initial Update] values: %s", self.mug.data)
-            is_writable = await self.mug.make_writable()
-            _LOGGER.debug("Mug writability: %s", is_writable)
         except (TimeoutError, BleakError) as e:
             if isinstance(e, BleakError):
                 _LOGGER.debug("An error occurred trying to update the %s: %s", self.mug.model_name, e)
