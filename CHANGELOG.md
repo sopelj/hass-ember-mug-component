@@ -7,6 +7,7 @@
 
 ### Fixes
 - [Fix manufacture data detection for 14oz Stainless Steel Mug](https://github.com/sopelj/hass-ember-mug-component/issues/101)
+- [Move startup to background task to speedup startup time](https://github.com/sopelj/hass-ember-mug-component/pull/107)(Thanks @jianyu-li)
 
 ### Notes
 * Requires Home Assistant 2025.8+ (`bleak` version incompatibilities)
