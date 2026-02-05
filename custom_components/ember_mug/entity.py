@@ -7,33 +7,14 @@ from typing import TYPE_CHECKING, Any
 
 from homeassistant.core import callback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
-from homeassistant.util.unit_conversion import TemperatureConverter, UnitOfTemperature
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
-
-    from ember_mug.consts import TemperatureUnit
 
     from .coordinator import MugDataUpdateCoordinator
 
 
 _LOGGER = logging.getLogger(__name__)
-
-
-def ensure_celsius(
-    value: float | None,
-    source_unit: UnitOfTemperature | TemperatureUnit,
-) -> float | None:
-    """Convert unit back to Celsius for a base and round."""
-    if value is None:
-        return None
-    if source_unit != UnitOfTemperature.CELSIUS:
-        value = TemperatureConverter.convert(
-            value,
-            source_unit,
-            UnitOfTemperature.CELSIUS,
-        )
-    return value
 
 
 class BaseMugEntity(CoordinatorEntity):

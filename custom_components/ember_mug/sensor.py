@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Any
 
-from ember_mug.consts import DeviceType, TemperatureUnit
+from ember_mug.consts import DeviceType
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntity,
@@ -52,6 +52,7 @@ SENSOR_TYPES = {
         suggested_display_precision=1,
         state_class=SensorStateClass.MEASUREMENT,
         device_class=SensorDeviceClass.TEMPERATURE,
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
     ),
     "battery.percent": SensorEntityDescription(
         key="battery_percent",
@@ -165,13 +166,6 @@ class EmberMugTemperatureSensor(EmberMugSensor):
             "thermometer",
         )
         return f"mdi:{icon}"
-
-    @property
-    def native_unit_of_measurement(self) -> str | None:
-        """Set unit of measurement based on device settings."""
-        if self.coordinator.mug.data.temperature_unit == TemperatureUnit.FAHRENHEIT:
-            return UnitOfTemperature.FAHRENHEIT
-        return UnitOfTemperature.CELSIUS
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
