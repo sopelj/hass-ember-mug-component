@@ -81,7 +81,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         service_info.device,
         model_info=get_model_info_from_advertiser_data(service_info.advertisement),
         debug=entry.options.get(CONF_DEBUG, False),
-        use_metric=True,
+        use_metric=None,
     )
     mug_coordinator = MugDataUpdateCoordinator(
         hass,
