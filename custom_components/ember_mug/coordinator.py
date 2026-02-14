@@ -89,6 +89,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
                 _LOGGER.debug("An error occurred trying to make the %s writable: %s", self.mug.model_name, e)
 
         self.mug.register_callback(self._async_handle_callback)
+        self.async_update_listeners()
 
     async def _async_update_data(self) -> MugData:
         """Poll the device."""
