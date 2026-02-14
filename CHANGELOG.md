@@ -6,8 +6,9 @@
 - Internal changes for temperature handling
 
 ### Fixes
-- [Fix manufacture data detection for 14oz Stainless Steel Mug](https://github.com/sopelj/hass-ember-mug-component/issues/101)
+- [Fix manufacture data detection for 14oz Stainless Steel and Copper Mugs](https://github.com/sopelj/hass-ember-mug-component/issues/101)
 - [Move startup to background task to speedup startup time](https://github.com/sopelj/hass-ember-mug-component/pull/107)(Thanks @jianyu-li)
+- Fix rounding/conversion errors with Fahrenheit [#97](https://github.com/sopelj/hass-ember-mug-component/issues/97) & [#106](https://github.com/sopelj/hass-ember-mug-component/issues/106)
 
 ### Notes
 * Requires Home Assistant 2025.8+ (`bleak` version incompatibilities)
