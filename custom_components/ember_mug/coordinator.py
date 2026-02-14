@@ -181,6 +181,8 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
             change,
         )
         self.mug.ble_event_callback(service_info.device, service_info.advertisement)
+        self.available = True
+        self.async_update_listeners()
         self.hass.loop.create_task(close_stale_connections(service_info.device))
 
     @callback
