@@ -124,14 +124,14 @@ class MugTemperaturePresetSelectEntity(MugSelectEntity):
         super().__init__(coordinator, device_attr)
         if (
             presets_unit != UnitOfTemperature.CELSIUS
-            and coordinator.mug.data.temperature_unit != TemperatureUnit.CELSIUS
+            and coordinator.mug.data.temperature_unit == TemperatureUnit.CELSIUS
         ):
             presets = {
-                label: TemperatureConverter.convert(
+                label: round(TemperatureConverter.convert(
                     temp,
                     presets_unit,
                     UnitOfTemperature.CELSIUS,
-                )
+                ), 1)
                 for label, temp in presets.items()
             }
         self._presets = presets
@@ -141,7 +141,7 @@ class MugTemperaturePresetSelectEntity(MugSelectEntity):
     @property
     def current_option(self) -> str | None:
         """Return selected option if found current temp is one of the presets."""
-        return self._temp_to_labels.get(self.coordinator.target_temp, None)
+        return self._temp_to_labels.get(round(self.coordinator.target_temp, 1), None)
 
     async def async_select_option(self, option: str) -> None:
         """Change the target temp of the mug based on preset."""
