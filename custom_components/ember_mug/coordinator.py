@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import traceback
 from datetime import timedelta
 from typing import TYPE_CHECKING, Any, TypedDict
 
@@ -118,9 +119,8 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
                 e,
             )
             self.available = False
-            raise UpdateFailed(
-                f"An error occurred updating {self.mug.model_name}: {e=}",
-            ) from e
+            _LOGGER.debug("Stacktrace: %s", traceback.format_exception(e))
+            raise UpdateFailed(f"An error occurred updating {self.mug.model_name}: {e}") from e
 
         _LOGGER.debug(
             "[%s Update] Changed: %s",
