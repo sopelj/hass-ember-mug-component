@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.4.1]
+
+### Changes
+- [Add check for testing SIG for Copper Mug](https://github.com/sopelj/hass-ember-mug-component/issues/101)
+
 ## [1.4.0]
 
 ### Changes
