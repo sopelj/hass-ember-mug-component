@@ -122,10 +122,7 @@ class MugTemperaturePresetSelectEntity(MugSelectEntity):
     ) -> None:
         """Set temperature presets and select options base on configs."""
         super().__init__(coordinator, device_attr)
-        if (
-            presets_unit != UnitOfTemperature.CELSIUS
-            and coordinator.mug.data.temperature_unit == TemperatureUnit.CELSIUS
-        ):
+        if presets_unit != UnitOfTemperature.CELSIUS:
             presets = {
                 label: round(TemperatureConverter.convert(
                     temp,
