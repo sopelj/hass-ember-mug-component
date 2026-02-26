@@ -6,7 +6,7 @@ import logging
 from enum import Enum
 from typing import TYPE_CHECKING, Literal
 
-from ember_mug.consts import TemperatureUnit, VolumeLevel
+from ember_mug.consts import VolumeLevel
 from homeassistant.components.select import SelectEntity, SelectEntityDescription
 from homeassistant.const import UnitOfTemperature
 from homeassistant.helpers.entity import EntityCategory
@@ -124,11 +124,14 @@ class MugTemperaturePresetSelectEntity(MugSelectEntity):
         super().__init__(coordinator, device_attr)
         if presets_unit != UnitOfTemperature.CELSIUS:
             presets = {
-                label: round(TemperatureConverter.convert(
-                    temp,
-                    presets_unit,
-                    UnitOfTemperature.CELSIUS,
-                ), 1)
+                label: round(
+                    TemperatureConverter.convert(
+                        temp,
+                        presets_unit,
+                        UnitOfTemperature.CELSIUS,
+                    ),
+                    1,
+                )
                 for label, temp in presets.items()
             }
         self._presets = presets
