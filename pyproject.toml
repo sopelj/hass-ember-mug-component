@@ -65,10 +65,6 @@ homeassistant = ["2025.11", "2026.1"]
 cov = "pytest --asyncio-mode=auto --cov=custom_components --cov-branch --cov-report=xml --cov-report=term-missing tests -vvv"
 no-cov = "cov --no-cov"
 
-[tool.black]
-line-length = 120
-target-version = ["py313"]
-
 [tool.coverage.report]
 exclude_lines = [
     "pragma: no cover",
@@ -116,8 +112,9 @@ select = [
     "TD",
     "TCH",
     "UP",
+    "TRY"
 ]
-ignore = ["D203", "D212", "PLR2004", "PLR0913", "RUF012"]
+ignore = ["D203", "D212", "PLR2004", "PLR0913", "RUF012", "TRY003"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**/*.py" = [

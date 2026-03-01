@@ -3,9 +3,10 @@
 [![GitHub Release](https://img.shields.io/github/release/sopelj/hass-ember-mug-component.svg?style=for-the-badge)](https://github.com/sopelj/hass-ember-mug-component/releases)
 ![Project Maintenance](https://img.shields.io/maintenance/yes/2026.svg?style=for-the-badge)
 [![Maintainer](https://img.shields.io/badge/maintainer-%40sopelj-blue.svg?style=for-the-badge)](https://github.com/sopelj)
-[![License](https://img.shields.io/github/license/sopelj/hass-ember-mug-component.svg?style=for-the-badge)](LICENSE.md)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 [![HACS](https://img.shields.io/badge/HACS-Default-41BDF5.svg?style=for-the-badge)](https://github.com/custom-components/hacs)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?style=for-the-badge)](https://github.com/pre-commit/pre-commit)
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-support-blue?style=for-the-badge&logo=buy-me-a-coffee)](https://buymeacoffee.com/sopelj)
 
 ![Device View](./examples/device_example.png)
 
@@ -294,7 +295,7 @@ hatch run test:cov
 ### Linting
 
 ```bash
-pre-commit run --all-files
+prek run --all-files
 ```
 
 

@@ -113,10 +113,9 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
                 self.available = False
             changed = None
         except Exception as e:
-            _LOGGER.error(
-                "An unexpected error occurred whilst updating the %s: %s",
+            _LOGGER.exception(
+                "An unexpected error occurred whilst updating the %s",
                 self.mug.model_name,
-                e,
             )
             self.available = False
             _LOGGER.debug("Stacktrace: %s", traceback.format_exception(e))

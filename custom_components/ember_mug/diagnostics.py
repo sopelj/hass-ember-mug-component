@@ -31,8 +31,8 @@ async def async_get_config_entry_diagnostics(
         services: dict[str, Any] | None = None
         try:
             services = await coordinator.mug.discover_services()
-        except BleakError as e:
-            logger.error("Failed to log services, %s", e)
+        except BleakError:
+            logger.exception("Failed to log services")
         if services is not None:
             # Ensure bytes are converted into strings for serialization
             for service in services.values():
