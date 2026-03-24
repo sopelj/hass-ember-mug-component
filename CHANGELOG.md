@@ -4,6 +4,7 @@
 
 ### Changes
 - [Add check for testing SIG for Copper Mug](https://github.com/sopelj/hass-ember-mug-component/issues/101)
+- [Add 0x82 for White Mug](https://github.com/sopelj/hass-ember-mug-component/issues/101)
 
 ## [1.4.0]
 
