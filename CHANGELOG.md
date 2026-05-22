@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.5.0]
+
+### Fixes
+- [Add timeout to disconnect callback to fix blocking shutdown #126](https://github.com/sopelj/hass-ember-mug-component/issues/126)
+
 ## [1.4.1]
 
 ### Changes

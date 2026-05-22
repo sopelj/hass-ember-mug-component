@@ -25,6 +25,8 @@ MAX_TEMP_CELSIUS: Final[float] = 63
 MIN_TEMP_FAHRENHEIT: Final[float] = 120
 MAX_TEMP_FAHRENHEIT: Final[float] = 150
 
+SHUTDOWN_TIMEOUT: Final[int] = 15
+
 DEFAULT_PRESETS = {
     "latte": 55,
     "cappuccino": 56,

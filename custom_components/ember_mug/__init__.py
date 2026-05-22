@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import logging
 from typing import TYPE_CHECKING
 
@@ -22,7 +23,7 @@ from homeassistant.const import (
 )
 from homeassistant.exceptions import ConfigEntryNotReady
 
-from .const import CONF_DEBUG, CONFIG_VERSION, DOMAIN
+from .const import CONF_DEBUG, CONFIG_VERSION, DOMAIN, SHUTDOWN_TIMEOUT
 from .coordinator import MugDataUpdateCoordinator
 
 if TYPE_CHECKING:
@@ -103,7 +104,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         ),
     )
 
-    hass.async_create_task(mug_coordinator.async_config_entry_first_refresh())
+    startup_task = hass.async_create_task(mug_coordinator.async_config_entry_first_refresh())
 
     entry.async_on_unload(
         bluetooth.async_track_unavailable(
@@ -118,8 +119,15 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
     async def _async_stop(event: Event) -> None:
-        """Close the connection."""
-        await mug_coordinator.mug.disconnect()
+        """Close the connection before shutting down."""
+        try:
+            async with asyncio.timeout(SHUTDOWN_TIMEOUT):
+                await mug_coordinator.mug.disconnect()
+        except TimeoutError:
+            _LOGGER.debug("Timed out disconnecting from mug during shutdown.")
+
+        if startup_task and not startup_task.done():
+            startup_task.cancel("Shutting down")
 
     entry.async_on_unload(
         hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STOP, _async_stop),
