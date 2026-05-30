@@ -1,9 +1,11 @@
 """Test component setup."""
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 import pytest
 from homeassistant.config_entries import SOURCE_BLUETOOTH
 from homeassistant.const import CONF_ADDRESS, CONF_NAME
-from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
 
 try:
@@ -13,6 +15,9 @@ except ImportError:
     from voluptuous.error import MultipleInvalid as InvalidData
 
 from . import MUG_SERVICE_INFO, TEST_MAC, TEST_MUG_NAME, patch_async_setup_entry
+
+if TYPE_CHECKING:
+    from homeassistant.core import HomeAssistant
 
 
 async def test_bluetooth_discovery(hass: HomeAssistant) -> None:

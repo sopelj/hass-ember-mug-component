@@ -3,7 +3,11 @@
 ## [1.5.0]
 
 ### Fixes
+- [Use version 1.4.0 of python-ember-mug to fix bleak deps #131](https://github.com/sopelj/hass-ember-mug-component/issues/131)
 - [Add timeout to disconnect callback to fix blocking shutdown #126](https://github.com/sopelj/hass-ember-mug-component/issues/126)
+
+### Notes
+* Requires Home Assistant 2026.6+ (`bleak` version incompatibilities)
 
 ## [1.4.1]
 

@@ -1,11 +1,10 @@
 """Test Ember Mug Integration init."""
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
 from unittest.mock import Mock, patch
 
 import pytest
 from homeassistant.config_entries import ConfigEntryState
-from homeassistant.core import HomeAssistant
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.ember_mug import DOMAIN
@@ -19,6 +18,9 @@ from tests import (
     TEST_MUG_NAME,
 )
 from tests.conftest import inject_ble_device_discovery_info
+
+if TYPE_CHECKING:
+    from homeassistant.core import HomeAssistant
 
 
 @patch("custom_components.ember_mug.EmberMug.pair", return_value=None)

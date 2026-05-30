@@ -4,20 +4,19 @@ readme = "README.md"
 description = "Home Assistant Custom Integration for Ember Mugs."
 authors = [{ name = "Jesse Sopel", email = "jesse@sopelj.ca" }]
 license = { file = "LICENSE.md" }
-requires-python = ">=3.13"
+requires-python = ">=3.14"
 dynamic = ["version"]
 classifiers = [
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Natural Language :: English",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
 ]
 dependencies = [
-    "homeassistant>=2025.8.3",
-    "bleak-retry-connector>=4.0.2",
-    "bleak>=1.0.1",
+    "homeassistant>=2026.6.0b0",
+    "bleak-retry-connector>=4.6.1",
+    "bleak>=3.0.2",
     "python-ember-mug==1.4.0b2",
 ]
 
@@ -25,14 +24,12 @@ dependencies = [
 test = [
     "pytest>=9.0.0",
     "pytest-cov>=3.0.0",
-    "pycares<5.0.0",
     "pytest-asyncio>=1.3.0",
-    "pytest-homeassistant-custom-component",
+    "pytest-homeassistant-custom-component>=0.13.334",
     # Requirements for HASS
-    "aiousbwatcher>=1.1.1",
-    "pyserial>=3.5",                  # For HASS serial component
-    "bluetooth-auto-recovery>=1.4.2", # For HASS Bluetooth component
-    "pyudev==0.24.1",                 # For HASS usb component
+    "aioesphomeapi>=45.3.1",
+    "aiousbwatcher>=1.1.2",
+    "serialx>=1.8.0",                 # For HASS serial component
 ]
 
 [project.urls]
@@ -52,14 +49,14 @@ build-backend = "hatchling.build"
 packages = ["custom_component/ember_mug"]
 
 [tool.hatch.envs.default]
-python = "3.13"
+python = "3.14"
 
 [tool.hatch.envs.test]
 features = ["test"]
 
 [[tool.hatch.envs.test.matrix]]
-python = ["3.13", "3.14"]
-homeassistant = ["2025.11", "2026.1", "2026.6.0b0"]
+python = ["3.14"]
+homeassistant = ["2026.6.0b0"]
 
 [tool.hatch.envs.test.scripts]
 cov = "pytest --asyncio-mode=auto --cov=custom_components --cov-branch --cov-report=xml --cov-report=term-missing tests -vvv"
@@ -81,7 +78,7 @@ exclude_lines = [
 [tool.ruff]
 fix = true
 line-length = 120
-target-version = "py313"
+target-version = "py314"
 [tool.ruff.lint]
 select = [
     "A",

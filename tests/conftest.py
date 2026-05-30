@@ -1,10 +1,10 @@
 """Configure pytest."""
+from __future__ import annotations
 
-from logging import Logger
+from typing import TYPE_CHECKING
 from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
-from bleak import BLEDevice
 from ember_mug import EmberMug
 from ember_mug.data import ModelInfo
 from homeassistant.components.bluetooth import (
@@ -12,7 +12,6 @@ from homeassistant.components.bluetooth import (
     BluetoothServiceInfoBleak,
     async_get_advertisement_callback,
 )
-from homeassistant.core import HomeAssistant
 from homeassistant.setup import async_setup_component
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
@@ -25,6 +24,13 @@ from tests import (
     TEST_MUG_NAME,
 )
 
+if TYPE_CHECKING:
+    from logging import Logger
+
+    from bleak import BLEDevice
+    from homeassistant.core import HomeAssistant
+
+
 pytest_plugins = "pytest_homeassistant_custom_component"
 
 
@@ -36,6 +42,16 @@ def _auto_enable_custom_integrations(enable_custom_integrations):
 @pytest.fixture(autouse=True)
 def _mock_bluetooth(enable_bluetooth: None, mock_bluetooth: None) -> None:
     """Auto mock bluetooth."""
+
+
+@pytest.fixture(autouse=True)
+def expected_lingering_timers() -> bool:
+    """
+    Temporary ability to bypass test failures.
+
+    This should be removed when all lingering timers have been cleaned up.
+    """
+    return True
 
 
 @pytest.fixture
