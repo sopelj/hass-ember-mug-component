@@ -52,7 +52,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         """Handle the bluetooth discovery step."""
         _LOGGER.debug("Discovered bluetooth device: %s", discovery_info)
         await self.async_set_unique_id(discovery_info.address.replace(":", "").lower())
-        self._abort_if_unique_id_configured()
+        self._abort_if_unique_id_configured(reload_on_update=False)
 
         try:
             async with BleakClient(discovery_info.device) as client:
@@ -83,7 +83,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 address.replace(":", "").lower(),
                 raise_on_progress=False,
             )
-            self._abort_if_unique_id_configured()
+            self._abort_if_unique_id_configured(reload_on_update=False)
             return self.async_create_entry(title=user_input[CONF_NAME], data=user_input)
 
         if not self._discovery_info:
