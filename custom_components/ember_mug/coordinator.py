@@ -126,8 +126,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
             "Full" if full_update else "Partial",
             changed,
         )
-        if changed:
-            self.async_update_listeners()
+        self.async_update_listeners()
         return self.mug.data
 
     def ensure_writable(self) -> None:
