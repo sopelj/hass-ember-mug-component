@@ -8,6 +8,7 @@
 
 ### Notes
 * Requires Home Assistant 2026.6+ (`bleak` version incompatibilities)
+* Will add more changes to minor version, but I didn't want to delay
 
 ## [1.4.1]
 
