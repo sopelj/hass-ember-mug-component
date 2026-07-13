@@ -48,7 +48,7 @@ repos:
           - --configfile=tests/bandit.yaml
         types: [ python ]
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v2.1.0
+    rev: v2.2.0
     hooks:
       - id: mypy
         args:
