@@ -62,7 +62,7 @@ async def test_init(
 )
 @patch("custom_components.ember_mug.EmberMug.pair", return_value=None)
 @patch("custom_components.ember_mug.EmberMug._update_multiple", return_value=[])
-async def test_init_migration_v1(
+async def test_init_migration_v1(  # noqa: PLR0917
     mock_pair: Mock,
     mock_update_multiple: Mock,
     hass: HomeAssistant,
