@@ -27,7 +27,7 @@ jobs:
             3.14
 
       - name: Run prek (pre-commit alternative)
-        uses: j178/prek-action@v2
+        uses: j178/prek-action@v2.0.6
 
       - name: Install dependencies
         run: |
