@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 import traceback
 from datetime import timedelta
-from typing import TYPE_CHECKING, Any, TypedDict
+from typing import TYPE_CHECKING, Any
 
 from bleak import BleakError
 from bleak_retry_connector import close_stale_connections
@@ -27,10 +27,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class PersistentData(TypedDict):
-    """Data that should persist on disk."""
-
-    target_temp_bkp: float | None
+type PersistentData = dict[str, float | None]
 
 
 class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
@@ -68,6 +65,11 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
         """Initialize coordinator and fetch initial data."""
         # Setup storage
         self.persistent_data = await self._store.async_load()
+
+        # Migrate from previous storage format
+        if legacy_temp := self.persistent_data.pop("target_temp_bkp", None):
+            await self.write_to_storage(legacy_temp)
+
         try:
             await self.mug.pair()
             await self.mug.update_initial()
@@ -142,7 +144,9 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
 
         This is stored to disk, so it can be restored to the entity even if we restart Home Assistant.
         """
-        self.persistent_data: PersistentData = {"target_temp_bkp": target_temp}
+        self.persistent_data: PersistentData = (
+           self.persistent_data | {f"{self.config_entry.unique_id}_target_temp_bkp": target_temp}
+        )
         await self._store.async_save(self.persistent_data)
 
     @property
@@ -151,7 +155,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
         if (
             self.data.target_temp == 0
             and self.persistent_data
-            and (bkp_temp := self.persistent_data.get("target_temp_bkp"))
+            and (bkp_temp := self.persistent_data.get(f"{self.config_entry.unique_id}_target_temp_bkp"))
         ):
             return bkp_temp
         return self.data.target_temp
