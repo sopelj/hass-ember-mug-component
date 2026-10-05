@@ -104,7 +104,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         ),
     )
 
-    startup_task = hass.async_create_task(mug_coordinator.async_config_entry_first_refresh())
+    # Background task so an unreachable mug cannot hold up Home Assistant's startup
+    # while the first refresh retries the connection; cancelled on unload.
+    startup_task = entry.async_create_background_task(
+        hass,
+        mug_coordinator.async_config_entry_first_refresh(),
+        name=f"{DOMAIN} first refresh {entry.title}",
+    )
 
     entry.async_on_unload(
         bluetooth.async_track_unavailable(
