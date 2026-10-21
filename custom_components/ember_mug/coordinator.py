@@ -144,9 +144,9 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
 
         This is stored to disk, so it can be restored to the entity even if we restart Home Assistant.
         """
-        self.persistent_data: PersistentData = (
-           self.persistent_data | {f"{self.config_entry.unique_id}_target_temp_bkp": target_temp}
-        )
+        self.persistent_data: PersistentData = self.persistent_data | {
+            f"{self.config_entry.unique_id}_target_temp_bkp": target_temp,
+        }
         await self._store.async_save(self.persistent_data)
 
     @property
