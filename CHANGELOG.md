@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.5.1]
+
+### Changes
+- Update to python-ember-mug==1.5.0
+
+### Added
+- Local brand assets (Thanks [@frenck](https://github.com/frenck!)
+
+### Fixes
+- Async startup job (Thanks [@GizmoGoody](https://github.com/GizmoGoody)!)
+- Make update not fail if name attribute is missing attribute[#142](https://github.com/sopelj/hass-ember-mug-component/issues/142)
+
 ## [1.5.0]
 
 ### Fixes
@@ -23,7 +35,7 @@
 
 ### Fixes
 - [Fix manufacture data detection for 14oz Stainless Steel and Copper Mugs](https://github.com/sopelj/hass-ember-mug-component/issues/101)
-- [Move startup to background task to speedup startup time](https://github.com/sopelj/hass-ember-mug-component/pull/107)(Thanks @jianyu-li)
+- [Move startup to background task to speedup startup time](https://github.com/sopelj/hass-ember-mug-component/pull/107)(Thanks [@jianyu-li](https://github.com/jianyu-li))
 - Fix rounding/conversion errors with Fahrenheit [#97](https://github.com/sopelj/hass-ember-mug-component/issues/97) & [#106](https://github.com/sopelj/hass-ember-mug-component/issues/106)
 
 ### Notes
@@ -34,7 +46,7 @@
 ### Fixes
 - Prevent error with persistent data [#67](https://github.com/sopelj/hass-ember-mug-component/issues/67)
 - Update config flow for 2024.11
-- [Fix manufacture data detection for 14oz model](https://github.com/sopelj/python-ember-mug/pull/68) (thanks @Flight-Lab)
+- [Fix manufacture data detection for 14oz model](https://github.com/sopelj/python-ember-mug/pull/68) (thanks [@Flight-Lab](https://github.com/Flight-Lab))
 - Bump python-ember-mug to 1.2.0 to remove tests folder
 
 ### Notes
