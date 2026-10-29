@@ -23,12 +23,14 @@
     "@sopelj"
   ],
   "config_flow": true,
+  "categories": ["appliances_cleaning"],
   "dependencies": [
     "bluetooth_adapters"
   ],
   "documentation": "https://github.com/sopelj/hass_ember_mug",
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/sopelj/hass_ember_mug/issues",
+  "integration_type": "device",
   "loggers": [
     "bleak",
     "bleak_retry_connector",
