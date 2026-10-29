@@ -7,6 +7,7 @@
 
 ### Added
 - Local brand assets (Thanks [@frenck](https://github.com/frenck!)
+- Add integration category for the new Marketplace
 
 ### Fixes
 - Async startup job (Thanks [@GizmoGoody](https://github.com/GizmoGoody)!)
