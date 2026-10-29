@@ -95,7 +95,7 @@ async def test_config_entry_diagnostics(hass: HomeAssistant) -> None:
             "name": TEST_MUG_NAME,
             "meta": {"mug_id": "test-id", "serial_number": "test-serial"},
             "debug": False,
-            "battery": {"on_charging_base": False, "percent": 33},
+            "battery": {"on_charging_base": False, "percent": 33, "temperature": None},
             "firmware": {"bootloader": 10, "hardware": 200, "version": 15},
             "led_colour": list(pink),
             "liquid_state": 6,
