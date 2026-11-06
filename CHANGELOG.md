@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.5.2]
+
+### Fixes
+- Fix incorrect key name for `switch.turn_on` for temperature [#172](https://github.com/sopelj/hass-ember-mug-component/issues/172)
+
 ## [1.5.1]
 
 ### Changes
