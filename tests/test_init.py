@@ -5,7 +5,7 @@ from unittest.mock import Mock, patch
 
 import pytest
 from homeassistant.config_entries import ConfigEntryState
-from pytest_homeassistant_custom_component.common import MockConfigEntry
+from pytest_homeassistant.common import MockConfigEntry
 
 from custom_components.ember_mug import DOMAIN
 from custom_components.ember_mug.const import CONF_DEBUG, CONFIG_VERSION
