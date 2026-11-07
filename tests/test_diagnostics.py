@@ -17,7 +17,7 @@ from ember_mug.data import (
     MugMeta,
 )
 from homeassistant.helpers.json import JSONEncoder
-from pytest_homeassistant_custom_component.common import MockConfigEntry
+from pytest_homeassistant.common import MockConfigEntry
 
 from custom_components.ember_mug import DOMAIN
 from custom_components.ember_mug.coordinator import MugDataUpdateCoordinator

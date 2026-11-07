@@ -14,7 +14,7 @@ from homeassistant.components.bluetooth import (
     async_get_advertisement_callback,
 )
 from homeassistant.setup import async_setup_component
-from pytest_homeassistant_custom_component.common import MockConfigEntry
+from pytest_homeassistant.common import MockConfigEntry
 
 from custom_components.ember_mug import CONFIG_VERSION, DOMAIN, MugDataUpdateCoordinator
 from tests import (
@@ -30,9 +30,6 @@ if TYPE_CHECKING:
 
     from bleak import BLEDevice
     from homeassistant.core import HomeAssistant
-
-
-pytest_plugins = "pytest_homeassistant_custom_component"
 
 
 @pytest.fixture(autouse=True)
