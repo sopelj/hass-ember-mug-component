@@ -41,7 +41,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
         base_unique_id: str,
         device_name: str,
     ) -> None:
-        """Initialize global Mug data updater."""
+        """Initialise global Mug data updater."""
         device_type = mug.data.model_info.device_type.value
         super().__init__(
             hass=hass,
@@ -51,7 +51,7 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
             always_update=False,
         )
         self._store: Store[PersistentData] = Store(hass, STORAGE_VERSION, DOMAIN)
-        self.persistent_data: PersistentData = None  # type: ignore[assignment]
+        self.persistent_data: PersistentData = {}
         self.device_name = device_name
         self.device_type = device_type
         self.base_unique_id = base_unique_id
@@ -62,9 +62,9 @@ class MugDataUpdateCoordinator(DataUpdateCoordinator[MugData]):
         _LOGGER.info("%s %s Setup", self.mug.model_name, self.name)
 
     async def _async_setup(self) -> None:
-        """Initialize coordinator and fetch initial data."""
+        """Initialise coordinator and fetch initial data."""
         # Setup storage
-        self.persistent_data = await self._store.async_load()
+        self.persistent_data = (await self._store.async_load()) or {}
 
         # Migrate from previous storage format
         if legacy_temp := self.persistent_data.pop("target_temp_bkp", None):

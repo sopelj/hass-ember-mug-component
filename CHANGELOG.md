@@ -4,6 +4,7 @@
 
 ### Fixes
 - Raise error as before if all attributes fail to update [#174](https://github.com/sopelj/hass-ember-mug-component/issues/174)
+- Fix initialisation of persistent_data [#175](https://github.com/sopelj/hass-ember-mug-component/issues/175)
 
 ## [1.5.2]
 
